@@ -1,0 +1,13 @@
+# Python dependencies for the Vercel function (api/index.py). Mirrors backend/pyproject.toml
+# core dependencies; Google Cloud SDKs and psycopg are added when GCP / PostgreSQL are connected.
+fastapi>=0.115
+uvicorn>=0.32
+sqlalchemy>=2.0.36
+alembic>=1.14
+pydantic[email]>=2.10
+pydantic-settings>=2.6
+pyjwt>=2.10
+bcrypt>=4.2
+python-multipart>=0.0.18
+pypdf>=5.1
+httpx>=0.28
