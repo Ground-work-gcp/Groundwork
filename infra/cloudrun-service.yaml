@@ -1,0 +1,57 @@
+# The single Groundwork service (one per environment: groundwork-staging, groundwork-prod).
+# Placeholders (__X__) are filled by infra/cloudbuild.yaml or infra/scripts/promote.ps1.
+# Secrets come from Secret Manager; Google APIs use the runtime service account's identity —
+# no key files. Logs/metrics go to Cloud Logging / Cloud Monitoring automatically.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: __SERVICE__
+  labels: { app: groundwork, env: __ENV__ }
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      labels: { app: groundwork, env: __ENV__ }
+      annotations:
+        run.googleapis.com/cloudsql-instances: __INSTANCE__
+        autoscaling.knative.dev/minScale: "0"     # scale to zero: no idle cost
+        autoscaling.knative.dev/maxScale: "3"     # 3 × pool(5+5) = 30 connections, under db-f1-micro/g1-small limits
+        run.googleapis.com/cpu-throttling: "true"
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      serviceAccountName: __SA__@__PROJECT__.iam.gserviceaccount.com
+      containerConcurrency: 40
+      timeoutSeconds: 120
+      containers:
+        - image: __IMAGE__
+          ports: [{ name: http1, containerPort: 8080 }]
+          env:
+            - { name: ENVIRONMENT, value: production }
+            - { name: GCP_PROJECT, value: __PROJECT__ }
+            - { name: GCP_LOCATION, value: __REGION__ }
+            - { name: STORAGE_BACKEND, value: gcs }
+            - { name: GCS_BUCKET, value: __PROJECT__-groundwork-evidence-__ENV__ }
+            - { name: EXTRACTION_BACKEND, value: documentai }
+            - { name: DOCUMENTAI_LOCATION, value: us }
+            - { name: AI_BACKEND, value: vertex }
+            - { name: GEMINI_MODEL, value: gemini-2.5-flash }
+            - { name: PII_BACKEND, value: dlp }
+            - { name: DB_POOL_SIZE, value: "5" }
+            - { name: DB_MAX_OVERFLOW, value: "5" }
+            - { name: DOCUMENTAI_PROCESSOR_ID, valueFrom: { secretKeyRef: { name: groundwork-documentai-processor, key: latest } } }
+            - { name: DATABASE_URL, valueFrom: { secretKeyRef: { name: groundwork-database-url-__ENV__, key: latest } } }
+            - { name: JWT_SECRET, valueFrom: { secretKeyRef: { name: groundwork-jwt-secret, key: latest } } }
+            - { name: WEBHOOK_SIGNING_SECRET, valueFrom: { secretKeyRef: { name: groundwork-webhook-secret, key: latest } } }
+            - { name: CORS_ORIGINS, value: "" }   # same-origin app: no cross-origin callers needed
+          resources: { limits: { cpu: "1", memory: 1Gi } }
+          startupProbe:
+            httpGet: { path: /ready, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 24
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet: { path: /health, port: 8080 }
+            periodSeconds: 30
+            timeoutSeconds: 3

@@ -1,0 +1,622 @@
+line_id,journal_id,posted_at,account,debit,credit,memo
+jrnl_aaqq0ch0_0,jrnl_aaqq0ch0,2026-06-03,Bank,1157147.71,0.00,Settlement setl_tt6dw9rq
+jrnl_aaqq0ch0_1,jrnl_aaqq0ch0,2026-06-03,Payment Gateway Fees,18157.50,0.00,Settlement setl_tt6dw9rq
+jrnl_aaqq0ch0_2,jrnl_aaqq0ch0,2026-06-03,GST Input,3268.36,0.00,Settlement setl_tt6dw9rq
+jrnl_aaqq0ch0_3,jrnl_aaqq0ch0,2026-06-03,Razorpay Clearing,0.00,1178573.57,Settlement setl_tt6dw9rq
+jrnl_22efpguc_4,jrnl_22efpguc,2026-06-03,Bank,679189.12,0.00,Settlement setl_eq1q91bo
+jrnl_22efpguc_5,jrnl_22efpguc,2026-06-03,Payment Gateway Fees,10387.13,0.00,Settlement setl_eq1q91bo
+jrnl_22efpguc_6,jrnl_22efpguc,2026-06-03,GST Input,1869.68,0.00,Settlement setl_eq1q91bo
+jrnl_22efpguc_7,jrnl_22efpguc,2026-06-03,Razorpay Clearing,0.00,691445.93,Settlement setl_eq1q91bo
+jrnl_paqwsvhf_8,jrnl_paqwsvhf,2026-06-03,Bank,100050.30,0.00,Settlement setl_htxr37wr
+jrnl_paqwsvhf_9,jrnl_paqwsvhf,2026-06-03,Payment Gateway Fees,1949.76,0.00,Settlement setl_htxr37wr
+jrnl_paqwsvhf_10,jrnl_paqwsvhf,2026-06-03,GST Input,350.95,0.00,Settlement setl_htxr37wr
+jrnl_paqwsvhf_11,jrnl_paqwsvhf,2026-06-03,Razorpay Clearing,0.00,102351.01,Settlement setl_htxr37wr
+jrnl_lildyw02_12,jrnl_lildyw02,2026-06-04,Bank,774501.92,0.00,Settlement setl_2ln2pp5t
+jrnl_lildyw02_13,jrnl_lildyw02,2026-06-04,Payment Gateway Fees,10431.46,0.00,Settlement setl_2ln2pp5t
+jrnl_lildyw02_14,jrnl_lildyw02,2026-06-04,GST Input,1877.67,0.00,Settlement setl_2ln2pp5t
+jrnl_lildyw02_15,jrnl_lildyw02,2026-06-04,Razorpay Clearing,0.00,786811.05,Settlement setl_2ln2pp5t
+jrnl_9853ycbx_16,jrnl_9853ycbx,2026-06-04,Bank,502122.06,0.00,Settlement setl_xvviv1x4
+jrnl_9853ycbx_17,jrnl_9853ycbx,2026-06-04,Payment Gateway Fees,4219.77,0.00,Settlement setl_xvviv1x4
+jrnl_9853ycbx_18,jrnl_9853ycbx,2026-06-04,GST Input,759.57,0.00,Settlement setl_xvviv1x4
+jrnl_9853ycbx_19,jrnl_9853ycbx,2026-06-04,Razorpay Clearing,0.00,507101.40,Settlement setl_xvviv1x4
+jrnl_5y25kfkd_20,jrnl_5y25kfkd,2026-06-05,Bank,400213.75,0.00,Settlement setl_82fh40t4
+jrnl_5y25kfkd_21,jrnl_5y25kfkd,2026-06-05,Payment Gateway Fees,5303.61,0.00,Settlement setl_82fh40t4
+jrnl_5y25kfkd_22,jrnl_5y25kfkd,2026-06-05,GST Input,954.68,0.00,Settlement setl_82fh40t4
+jrnl_5y25kfkd_23,jrnl_5y25kfkd,2026-06-05,Refunds,296.54,0.00,Settlement setl_82fh40t4
+jrnl_5y25kfkd_24,jrnl_5y25kfkd,2026-06-05,Razorpay Clearing,0.00,406768.58,Settlement setl_82fh40t4
+jrnl_kglt2m3y_25,jrnl_kglt2m3y,2026-06-05,Bank,358508.79,0.00,Settlement setl_fjxqoj5h
+jrnl_kglt2m3y_26,jrnl_kglt2m3y,2026-06-05,Payment Gateway Fees,5419.70,0.00,Settlement setl_fjxqoj5h
+jrnl_kglt2m3y_27,jrnl_kglt2m3y,2026-06-05,GST Input,975.58,0.00,Settlement setl_fjxqoj5h
+jrnl_kglt2m3y_28,jrnl_kglt2m3y,2026-06-05,Razorpay Clearing,0.00,364904.07,Settlement setl_fjxqoj5h
+jrnl_9agxfjy4_29,jrnl_9agxfjy4,2026-06-05,Bank,36945.80,0.00,Settlement setl_yvl6vst3
+jrnl_9agxfjy4_30,jrnl_9agxfjy4,2026-06-05,Payment Gateway Fees,487.52,0.00,Settlement setl_yvl6vst3
+jrnl_9agxfjy4_31,jrnl_9agxfjy4,2026-06-05,GST Input,87.75,0.00,Settlement setl_yvl6vst3
+jrnl_9agxfjy4_32,jrnl_9agxfjy4,2026-06-05,Razorpay Clearing,0.00,37521.07,Settlement setl_yvl6vst3
+jrnl_4g25xm0v_33,jrnl_4g25xm0v,2026-06-08,Bank,621796.23,0.00,Settlement setl_5jiimw0k
+jrnl_4g25xm0v_34,jrnl_4g25xm0v,2026-06-08,Payment Gateway Fees,10221.44,0.00,Settlement setl_5jiimw0k
+jrnl_4g25xm0v_35,jrnl_4g25xm0v,2026-06-08,GST Input,1839.83,0.00,Settlement setl_5jiimw0k
+jrnl_4g25xm0v_36,jrnl_4g25xm0v,2026-06-08,Refunds,20774.15,0.00,Settlement setl_5jiimw0k
+jrnl_4g25xm0v_37,jrnl_4g25xm0v,2026-06-08,Razorpay Clearing,0.00,654631.65,Settlement setl_5jiimw0k
+jrnl_degtixd9_38,jrnl_degtixd9,2026-06-08,Bank,1084051.65,0.00,Settlement setl_a4guiybx
+jrnl_degtixd9_39,jrnl_degtixd9,2026-06-08,Payment Gateway Fees,13668.81,0.00,Settlement setl_a4guiybx
+jrnl_degtixd9_40,jrnl_degtixd9,2026-06-08,GST Input,2460.34,0.00,Settlement setl_a4guiybx
+jrnl_degtixd9_41,jrnl_degtixd9,2026-06-08,Razorpay Clearing,0.00,1100180.80,Settlement setl_a4guiybx
+jrnl_wan9gl2g_42,jrnl_wan9gl2g,2026-06-08,Bank,570843.07,0.00,Settlement setl_gb8ybcwk
+jrnl_wan9gl2g_43,jrnl_wan9gl2g,2026-06-08,Payment Gateway Fees,9844.09,0.00,Settlement setl_gb8ybcwk
+jrnl_wan9gl2g_44,jrnl_wan9gl2g,2026-06-08,GST Input,1771.95,0.00,Settlement setl_gb8ybcwk
+jrnl_wan9gl2g_45,jrnl_wan9gl2g,2026-06-08,Razorpay Clearing,0.00,582459.11,Settlement setl_gb8ybcwk
+jrnl_9jvyc4jl_46,jrnl_9jvyc4jl,2026-06-08,Bank,262897.99,0.00,Settlement setl_ssvd0oo0
+jrnl_9jvyc4jl_47,jrnl_9jvyc4jl,2026-06-08,Payment Gateway Fees,2552.59,0.00,Settlement setl_ssvd0oo0
+jrnl_9jvyc4jl_48,jrnl_9jvyc4jl,2026-06-08,GST Input,459.45,0.00,Settlement setl_ssvd0oo0
+jrnl_9jvyc4jl_49,jrnl_9jvyc4jl,2026-06-08,Razorpay Clearing,0.00,265910.03,Settlement setl_ssvd0oo0
+jrnl_sf9br01r_50,jrnl_sf9br01r,2026-06-08,Bank,344202.92,0.00,Settlement setl_zba1ods2
+jrnl_sf9br01r_51,jrnl_sf9br01r,2026-06-08,Payment Gateway Fees,4033.97,0.00,Settlement setl_zba1ods2
+jrnl_sf9br01r_52,jrnl_sf9br01r,2026-06-08,GST Input,726.12,0.00,Settlement setl_zba1ods2
+jrnl_sf9br01r_53,jrnl_sf9br01r,2026-06-08,Razorpay Clearing,0.00,348963.01,Settlement setl_zba1ods2
+jrnl_bpsg7y1l_54,jrnl_bpsg7y1l,2026-06-08,Bank,668331.20,0.00,Settlement setl_i3qkz7r5
+jrnl_bpsg7y1l_55,jrnl_bpsg7y1l,2026-06-08,Payment Gateway Fees,5610.06,0.00,Settlement setl_i3qkz7r5
+jrnl_bpsg7y1l_56,jrnl_bpsg7y1l,2026-06-08,GST Input,1009.84,0.00,Settlement setl_i3qkz7r5
+jrnl_bpsg7y1l_57,jrnl_bpsg7y1l,2026-06-08,Razorpay Clearing,0.00,674951.10,Settlement setl_i3qkz7r5
+jrnl_1y8t3dzf_58,jrnl_1y8t3dzf,2026-06-08,Bank,636409.41,0.00,Settlement setl_zfqvok6y
+jrnl_1y8t3dzf_59,jrnl_1y8t3dzf,2026-06-08,Payment Gateway Fees,6698.61,0.00,Settlement setl_zfqvok6y
+jrnl_1y8t3dzf_60,jrnl_1y8t3dzf,2026-06-08,GST Input,1205.76,0.00,Settlement setl_zfqvok6y
+jrnl_1y8t3dzf_61,jrnl_1y8t3dzf,2026-06-08,Razorpay Clearing,0.00,644313.78,Settlement setl_zfqvok6y
+jrnl_4u1j9v26_62,jrnl_4u1j9v26,2026-06-08,Bank,190250.05,0.00,Settlement setl_o63xmvih
+jrnl_4u1j9v26_63,jrnl_4u1j9v26,2026-06-08,Payment Gateway Fees,1256.85,0.00,Settlement setl_o63xmvih
+jrnl_4u1j9v26_64,jrnl_4u1j9v26,2026-06-08,GST Input,226.25,0.00,Settlement setl_o63xmvih
+jrnl_4u1j9v26_65,jrnl_4u1j9v26,2026-06-08,Razorpay Clearing,0.00,191733.15,Settlement setl_o63xmvih
+jrnl_xay6iw79_66,jrnl_xay6iw79,2026-06-08,Bank,84338.03,0.00,Settlement setl_2ogz7f78
+jrnl_xay6iw79_67,jrnl_xay6iw79,2026-06-08,Payment Gateway Fees,1454.11,0.00,Settlement setl_2ogz7f78
+jrnl_xay6iw79_68,jrnl_xay6iw79,2026-06-08,GST Input,261.76,0.00,Settlement setl_2ogz7f78
+jrnl_xay6iw79_69,jrnl_xay6iw79,2026-06-08,Razorpay Clearing,0.00,86053.90,Settlement setl_2ogz7f78
+jrnl_xosuzfja_70,jrnl_xosuzfja,2026-06-09,Bank,669578.67,0.00,Settlement setl_l486t2a4
+jrnl_xosuzfja_71,jrnl_xosuzfja,2026-06-09,Payment Gateway Fees,9580.11,0.00,Settlement setl_l486t2a4
+jrnl_xosuzfja_72,jrnl_xosuzfja,2026-06-09,GST Input,1724.43,0.00,Settlement setl_l486t2a4
+jrnl_xosuzfja_73,jrnl_xosuzfja,2026-06-09,Refunds,3733.87,0.00,Settlement setl_l486t2a4
+jrnl_xosuzfja_74,jrnl_xosuzfja,2026-06-09,Chargebacks,210.00,0.00,Settlement setl_l486t2a4
+jrnl_xosuzfja_75,jrnl_xosuzfja,2026-06-09,Razorpay Clearing,0.00,684827.08,Settlement setl_l486t2a4
+jrnl_cy12okt6_76,jrnl_cy12okt6,2026-06-10,Bank,231506.82,0.00,Settlement setl_5sgfi1ft
+jrnl_cy12okt6_77,jrnl_cy12okt6,2026-06-10,Payment Gateway Fees,1966.22,0.00,Settlement setl_5sgfi1ft
+jrnl_cy12okt6_78,jrnl_cy12okt6,2026-06-10,GST Input,353.91,0.00,Settlement setl_5sgfi1ft
+jrnl_cy12okt6_79,jrnl_cy12okt6,2026-06-10,Refunds,36156.20,0.00,Settlement setl_5sgfi1ft
+jrnl_cy12okt6_80,jrnl_cy12okt6,2026-06-10,Razorpay Clearing,0.00,269983.15,Settlement setl_5sgfi1ft
+jrnl_6atdzd9t_81,jrnl_6atdzd9t,2026-06-10,Bank,562819.66,0.00,Settlement setl_q1sytvyw
+jrnl_6atdzd9t_82,jrnl_6atdzd9t,2026-06-10,Payment Gateway Fees,4469.95,0.00,Settlement setl_q1sytvyw
+jrnl_6atdzd9t_83,jrnl_6atdzd9t,2026-06-10,GST Input,804.60,0.00,Settlement setl_q1sytvyw
+jrnl_6atdzd9t_84,jrnl_6atdzd9t,2026-06-10,Razorpay Clearing,0.00,568094.21,Settlement setl_q1sytvyw
+jrnl_m1vjiydw_85,jrnl_m1vjiydw,2026-06-10,Bank,378791.79,0.00,Settlement setl_13g06bw6
+jrnl_m1vjiydw_86,jrnl_m1vjiydw,2026-06-10,Payment Gateway Fees,1605.15,0.00,Settlement setl_13g06bw6
+jrnl_m1vjiydw_87,jrnl_m1vjiydw,2026-06-10,GST Input,288.93,0.00,Settlement setl_13g06bw6
+jrnl_m1vjiydw_88,jrnl_m1vjiydw,2026-06-10,Razorpay Clearing,0.00,380685.87,Settlement setl_13g06bw6
+jrnl_t5uaxlmb_89,jrnl_t5uaxlmb,2026-06-11,Bank,157285.19,0.00,Settlement setl_u2l9oyfi
+jrnl_t5uaxlmb_90,jrnl_t5uaxlmb,2026-06-11,Payment Gateway Fees,3487.30,0.00,Settlement setl_u2l9oyfi
+jrnl_t5uaxlmb_91,jrnl_t5uaxlmb,2026-06-11,GST Input,627.70,0.00,Settlement setl_u2l9oyfi
+jrnl_t5uaxlmb_92,jrnl_t5uaxlmb,2026-06-11,Refunds,170356.24,0.00,Settlement setl_u2l9oyfi
+jrnl_t5uaxlmb_93,jrnl_t5uaxlmb,2026-06-11,Razorpay Clearing,0.00,331756.43,Settlement setl_u2l9oyfi
+jrnl_sjwrgi5j_94,jrnl_sjwrgi5j,2026-06-11,Bank,278180.54,0.00,Settlement setl_98fh6s9m
+jrnl_sjwrgi5j_95,jrnl_sjwrgi5j,2026-06-11,Payment Gateway Fees,3921.80,0.00,Settlement setl_98fh6s9m
+jrnl_sjwrgi5j_96,jrnl_sjwrgi5j,2026-06-11,GST Input,705.93,0.00,Settlement setl_98fh6s9m
+jrnl_sjwrgi5j_97,jrnl_sjwrgi5j,2026-06-11,Razorpay Clearing,0.00,282808.27,Settlement setl_98fh6s9m
+jrnl_negrplls_98,jrnl_negrplls,2026-06-11,Bank,6622.75,0.00,Settlement setl_vdezorn2
+jrnl_negrplls_99,jrnl_negrplls,2026-06-11,Payment Gateway Fees,114.62,0.00,Settlement setl_vdezorn2
+jrnl_negrplls_100,jrnl_negrplls,2026-06-11,GST Input,20.63,0.00,Settlement setl_vdezorn2
+jrnl_negrplls_101,jrnl_negrplls,2026-06-11,Razorpay Clearing,0.00,6758.00,Settlement setl_vdezorn2
+jrnl_vjpyz8ia_102,jrnl_vjpyz8ia,2026-06-12,Bank,664632.98,0.00,Settlement setl_nm0b740b
+jrnl_vjpyz8ia_103,jrnl_vjpyz8ia,2026-06-12,Payment Gateway Fees,6957.09,0.00,Settlement setl_nm0b740b
+jrnl_vjpyz8ia_104,jrnl_vjpyz8ia,2026-06-12,GST Input,1252.28,0.00,Settlement setl_nm0b740b
+jrnl_vjpyz8ia_105,jrnl_vjpyz8ia,2026-06-12,Refunds,427.93,0.00,Settlement setl_nm0b740b
+jrnl_vjpyz8ia_106,jrnl_vjpyz8ia,2026-06-12,Razorpay Clearing,0.00,673270.28,Settlement setl_nm0b740b
+jrnl_4zmrbcch_107,jrnl_4zmrbcch,2026-06-12,Bank,244872.49,0.00,Settlement setl_90b3cvas
+jrnl_4zmrbcch_108,jrnl_4zmrbcch,2026-06-12,Payment Gateway Fees,3706.12,0.00,Settlement setl_90b3cvas
+jrnl_4zmrbcch_109,jrnl_4zmrbcch,2026-06-12,GST Input,667.11,0.00,Settlement setl_90b3cvas
+jrnl_4zmrbcch_110,jrnl_4zmrbcch,2026-06-12,Razorpay Clearing,0.00,249245.72,Settlement setl_90b3cvas
+jrnl_32uontc9_111,jrnl_32uontc9,2026-06-15,Bank,562026.52,0.00,Settlement setl_3ej49707
+jrnl_32uontc9_112,jrnl_32uontc9,2026-06-15,Payment Gateway Fees,10846.39,0.00,Settlement setl_3ej49707
+jrnl_32uontc9_113,jrnl_32uontc9,2026-06-15,GST Input,1952.35,0.00,Settlement setl_3ej49707
+jrnl_32uontc9_114,jrnl_32uontc9,2026-06-15,Refunds,54989.40,0.00,Settlement setl_3ej49707
+jrnl_32uontc9_115,jrnl_32uontc9,2026-06-15,Razorpay Clearing,0.00,629814.66,Settlement setl_3ej49707
+jrnl_bj9euphf_120,jrnl_bj9euphf,2026-06-15,Bank,1457350.38,0.00,Settlement setl_l10hhg4h
+jrnl_bj9euphf_121,jrnl_bj9euphf,2026-06-15,Payment Gateway Fees,25339.95,0.00,Settlement setl_l10hhg4h
+jrnl_bj9euphf_122,jrnl_bj9euphf,2026-06-15,GST Input,4561.20,0.00,Settlement setl_l10hhg4h
+jrnl_bj9euphf_123,jrnl_bj9euphf,2026-06-15,Razorpay Clearing,0.00,1487251.53,Settlement setl_l10hhg4h
+jrnl_1pnk6hwt_124,jrnl_1pnk6hwt,2026-06-15,Bank,592638.69,0.00,Settlement setl_w4oqbphn
+jrnl_1pnk6hwt_125,jrnl_1pnk6hwt,2026-06-15,Payment Gateway Fees,8264.37,0.00,Settlement setl_w4oqbphn
+jrnl_1pnk6hwt_126,jrnl_1pnk6hwt,2026-06-15,GST Input,1487.61,0.00,Settlement setl_w4oqbphn
+jrnl_1pnk6hwt_127,jrnl_1pnk6hwt,2026-06-15,Razorpay Clearing,0.00,602390.67,Settlement setl_w4oqbphn
+jrnl_92zagxmg_128,jrnl_92zagxmg,2026-06-15,Bank,564266.70,0.00,Settlement setl_dbvjmvyb
+jrnl_92zagxmg_129,jrnl_92zagxmg,2026-06-15,Payment Gateway Fees,4880.91,0.00,Settlement setl_dbvjmvyb
+jrnl_92zagxmg_130,jrnl_92zagxmg,2026-06-15,GST Input,878.58,0.00,Settlement setl_dbvjmvyb
+jrnl_92zagxmg_131,jrnl_92zagxmg,2026-06-15,Razorpay Clearing,0.00,570026.19,Settlement setl_dbvjmvyb
+jrnl_gkn5jg58_132,jrnl_gkn5jg58,2026-06-15,Bank,683161.58,0.00,Settlement setl_8wopxcb5
+jrnl_gkn5jg58_133,jrnl_gkn5jg58,2026-06-15,Payment Gateway Fees,5378.35,0.00,Settlement setl_8wopxcb5
+jrnl_gkn5jg58_134,jrnl_gkn5jg58,2026-06-15,GST Input,968.10,0.00,Settlement setl_8wopxcb5
+jrnl_gkn5jg58_135,jrnl_gkn5jg58,2026-06-15,Razorpay Clearing,0.00,689508.03,Settlement setl_8wopxcb5
+jrnl_szigd1wr_136,jrnl_szigd1wr,2026-06-15,Bank,991876.47,0.00,Settlement setl_g4f6c78y
+jrnl_szigd1wr_137,jrnl_szigd1wr,2026-06-15,Payment Gateway Fees,7067.93,0.00,Settlement setl_g4f6c78y
+jrnl_szigd1wr_138,jrnl_szigd1wr,2026-06-15,GST Input,1272.19,0.00,Settlement setl_g4f6c78y
+jrnl_szigd1wr_139,jrnl_szigd1wr,2026-06-15,Razorpay Clearing,0.00,1000216.59,Settlement setl_g4f6c78y
+jrnl_ryoagg3u_140,jrnl_ryoagg3u,2026-06-15,Bank,575687.57,0.00,Settlement setl_mpregcyq
+jrnl_ryoagg3u_141,jrnl_ryoagg3u,2026-06-15,Payment Gateway Fees,5194.16,0.00,Settlement setl_mpregcyq
+jrnl_ryoagg3u_142,jrnl_ryoagg3u,2026-06-15,GST Input,934.94,0.00,Settlement setl_mpregcyq
+jrnl_ryoagg3u_143,jrnl_ryoagg3u,2026-06-15,Razorpay Clearing,0.00,581816.67,Settlement setl_mpregcyq
+jrnl_sevb0w7p_144,jrnl_sevb0w7p,2026-06-16,Bank,759774.40,0.00,Settlement setl_snep99nj
+jrnl_sevb0w7p_145,jrnl_sevb0w7p,2026-06-16,Payment Gateway Fees,11299.52,0.00,Settlement setl_snep99nj
+jrnl_sevb0w7p_146,jrnl_sevb0w7p,2026-06-16,GST Input,2033.94,0.00,Settlement setl_snep99nj
+jrnl_sevb0w7p_147,jrnl_sevb0w7p,2026-06-16,Refunds,18462.04,0.00,Settlement setl_snep99nj
+jrnl_sevb0w7p_148,jrnl_sevb0w7p,2026-06-16,Razorpay Clearing,0.00,791569.90,Settlement setl_snep99nj
+jrnl_gfijna6m_149,jrnl_gfijna6m,2026-06-17,Bank,673327.06,0.00,Settlement setl_izwxoold
+jrnl_gfijna6m_150,jrnl_gfijna6m,2026-06-17,Payment Gateway Fees,9909.13,0.00,Settlement setl_izwxoold
+jrnl_gfijna6m_151,jrnl_gfijna6m,2026-06-17,GST Input,1783.68,0.00,Settlement setl_izwxoold
+jrnl_gfijna6m_152,jrnl_gfijna6m,2026-06-17,Refunds,27383.41,0.00,Settlement setl_izwxoold
+jrnl_gfijna6m_153,jrnl_gfijna6m,2026-06-17,Razorpay Clearing,0.00,712403.28,Settlement setl_izwxoold
+jrnl_kr3jazkq_154,jrnl_kr3jazkq,2026-06-17,Bank,541042.82,0.00,Settlement setl_ipxl53op
+jrnl_kr3jazkq_155,jrnl_kr3jazkq,2026-06-17,Payment Gateway Fees,8911.68,0.00,Settlement setl_ipxl53op
+jrnl_kr3jazkq_156,jrnl_kr3jazkq,2026-06-17,GST Input,1604.14,0.00,Settlement setl_ipxl53op
+jrnl_kr3jazkq_157,jrnl_kr3jazkq,2026-06-17,Razorpay Clearing,0.00,551558.64,Settlement setl_ipxl53op
+jrnl_2b8mdoe8_158,jrnl_2b8mdoe8,2026-06-17,Bank,42459.14,0.00,Settlement setl_1pzkluht
+jrnl_2b8mdoe8_159,jrnl_2b8mdoe8,2026-06-17,Payment Gateway Fees,603.14,0.00,Settlement setl_1pzkluht
+jrnl_2b8mdoe8_160,jrnl_2b8mdoe8,2026-06-17,GST Input,108.57,0.00,Settlement setl_1pzkluht
+jrnl_2b8mdoe8_161,jrnl_2b8mdoe8,2026-06-17,Razorpay Clearing,0.00,43170.85,Settlement setl_1pzkluht
+jrnl_8riyxf41_162,jrnl_8riyxf41,2026-06-18,Bank,614886.36,0.00,Settlement setl_ft8r52za
+jrnl_8riyxf41_163,jrnl_8riyxf41,2026-06-18,Payment Gateway Fees,13200.84,0.00,Settlement setl_ft8r52za
+jrnl_8riyxf41_164,jrnl_8riyxf41,2026-06-18,GST Input,2376.14,0.00,Settlement setl_ft8r52za
+jrnl_8riyxf41_165,jrnl_8riyxf41,2026-06-18,Refunds,166329.46,0.00,Settlement setl_ft8r52za
+jrnl_8riyxf41_166,jrnl_8riyxf41,2026-06-18,Chargebacks,381.00,0.00,Settlement setl_ft8r52za
+jrnl_8riyxf41_167,jrnl_8riyxf41,2026-06-18,Razorpay Clearing,0.00,797173.80,Settlement setl_ft8r52za
+jrnl_uxyy0dvx_168,jrnl_uxyy0dvx,2026-06-18,Bank,196979.80,0.00,Settlement setl_fpsq6eny
+jrnl_uxyy0dvx_169,jrnl_uxyy0dvx,2026-06-18,Payment Gateway Fees,1978.97,0.00,Settlement setl_fpsq6eny
+jrnl_uxyy0dvx_170,jrnl_uxyy0dvx,2026-06-18,GST Input,356.22,0.00,Settlement setl_fpsq6eny
+jrnl_uxyy0dvx_171,jrnl_uxyy0dvx,2026-06-18,Razorpay Clearing,0.00,199314.99,Settlement setl_fpsq6eny
+jrnl_e6n0adx9_172,jrnl_e6n0adx9,2026-06-19,Bank,675272.64,0.00,Settlement setl_v9v9gh3l
+jrnl_e6n0adx9_173,jrnl_e6n0adx9,2026-06-19,Payment Gateway Fees,7164.20,0.00,Settlement setl_v9v9gh3l
+jrnl_e6n0adx9_174,jrnl_e6n0adx9,2026-06-19,GST Input,1289.59,0.00,Settlement setl_v9v9gh3l
+jrnl_e6n0adx9_175,jrnl_e6n0adx9,2026-06-19,Refunds,6082.40,0.00,Settlement setl_v9v9gh3l
+jrnl_e6n0adx9_176,jrnl_e6n0adx9,2026-06-19,Razorpay Clearing,0.00,689808.83,Settlement setl_v9v9gh3l
+jrnl_l7xy59wj_177,jrnl_l7xy59wj,2026-06-19,Bank,714181.18,0.00,Settlement setl_kn35na39
+jrnl_l7xy59wj_178,jrnl_l7xy59wj,2026-06-19,Payment Gateway Fees,11500.06,0.00,Settlement setl_kn35na39
+jrnl_l7xy59wj_179,jrnl_l7xy59wj,2026-06-19,GST Input,2070.00,0.00,Settlement setl_kn35na39
+jrnl_l7xy59wj_180,jrnl_l7xy59wj,2026-06-19,Razorpay Clearing,0.00,727751.24,Settlement setl_kn35na39
+jrnl_5kazvqfs_181,jrnl_5kazvqfs,2026-06-19,Bank,538290.92,0.00,Settlement setl_w41ne3f0
+jrnl_5kazvqfs_182,jrnl_5kazvqfs,2026-06-19,Payment Gateway Fees,8049.81,0.00,Settlement setl_w41ne3f0
+jrnl_5kazvqfs_183,jrnl_5kazvqfs,2026-06-19,GST Input,1448.96,0.00,Settlement setl_w41ne3f0
+jrnl_5kazvqfs_184,jrnl_5kazvqfs,2026-06-19,Razorpay Clearing,0.00,547789.69,Settlement setl_w41ne3f0
+jrnl_hpmf9on4_185,jrnl_hpmf9on4,2026-06-22,Bank,489182.41,0.00,Settlement setl_8exge8nk
+jrnl_hpmf9on4_186,jrnl_hpmf9on4,2026-06-22,Payment Gateway Fees,3517.00,0.00,Settlement setl_8exge8nk
+jrnl_hpmf9on4_187,jrnl_hpmf9on4,2026-06-22,GST Input,633.10,0.00,Settlement setl_8exge8nk
+jrnl_hpmf9on4_188,jrnl_hpmf9on4,2026-06-22,Refunds,169677.82,0.00,Settlement setl_8exge8nk
+jrnl_hpmf9on4_189,jrnl_hpmf9on4,2026-06-22,Razorpay Clearing,0.00,663010.33,Settlement setl_8exge8nk
+jrnl_b90cm7dg_194,jrnl_b90cm7dg,2026-06-22,Bank,521197.12,0.00,Settlement setl_mwk8yljg
+jrnl_b90cm7dg_195,jrnl_b90cm7dg,2026-06-22,Payment Gateway Fees,7386.67,0.00,Settlement setl_mwk8yljg
+jrnl_b90cm7dg_196,jrnl_b90cm7dg,2026-06-22,GST Input,1329.60,0.00,Settlement setl_mwk8yljg
+jrnl_b90cm7dg_197,jrnl_b90cm7dg,2026-06-22,Razorpay Clearing,0.00,529913.39,Settlement setl_mwk8yljg
+jrnl_bnr1ngni_198,jrnl_bnr1ngni,2026-06-22,Bank,719456.30,0.00,Settlement setl_k0h36mgg
+jrnl_bnr1ngni_199,jrnl_bnr1ngni,2026-06-22,Payment Gateway Fees,13321.32,0.00,Settlement setl_k0h36mgg
+jrnl_bnr1ngni_200,jrnl_bnr1ngni,2026-06-22,GST Input,2397.86,0.00,Settlement setl_k0h36mgg
+jrnl_bnr1ngni_201,jrnl_bnr1ngni,2026-06-22,Razorpay Clearing,0.00,735175.48,Settlement setl_k0h36mgg
+jrnl_kpqtqnfd_202,jrnl_kpqtqnfd,2026-06-22,Bank,294665.73,0.00,Settlement setl_tb7eymg9
+jrnl_kpqtqnfd_203,jrnl_kpqtqnfd,2026-06-22,Payment Gateway Fees,3084.18,0.00,Settlement setl_tb7eymg9
+jrnl_kpqtqnfd_204,jrnl_kpqtqnfd,2026-06-22,GST Input,555.13,0.00,Settlement setl_tb7eymg9
+jrnl_kpqtqnfd_205,jrnl_kpqtqnfd,2026-06-22,Razorpay Clearing,0.00,298305.04,Settlement setl_tb7eymg9
+jrnl_k5yh29ng_206,jrnl_k5yh29ng,2026-06-22,Bank,375372.26,0.00,Settlement setl_hnq37036
+jrnl_k5yh29ng_207,jrnl_k5yh29ng,2026-06-22,Payment Gateway Fees,3186.60,0.00,Settlement setl_hnq37036
+jrnl_k5yh29ng_208,jrnl_k5yh29ng,2026-06-22,GST Input,573.58,0.00,Settlement setl_hnq37036
+jrnl_k5yh29ng_209,jrnl_k5yh29ng,2026-06-22,Razorpay Clearing,0.00,379132.44,Settlement setl_hnq37036
+jrnl_uhwgblul_210,jrnl_uhwgblul,2026-06-22,Bank,330474.69,0.00,Settlement setl_2b8nfq4k
+jrnl_uhwgblul_213,jrnl_uhwgblul,2026-06-22,Razorpay Clearing,0.00,330474.69,Settlement setl_2b8nfq4k
+jrnl_urtc6bth_214,jrnl_urtc6bth,2026-06-22,Bank,317723.80,0.00,Settlement setl_gkjbsdqn
+jrnl_urtc6bth_215,jrnl_urtc6bth,2026-06-22,Payment Gateway Fees,4154.26,0.00,Settlement setl_gkjbsdqn
+jrnl_urtc6bth_216,jrnl_urtc6bth,2026-06-22,GST Input,747.77,0.00,Settlement setl_gkjbsdqn
+jrnl_urtc6bth_217,jrnl_urtc6bth,2026-06-22,Razorpay Clearing,0.00,322625.83,Settlement setl_gkjbsdqn
+jrnl_k5nh0wdv_218,jrnl_k5nh0wdv,2026-06-23,Bank,504647.46,0.00,Settlement setl_08pkbu12
+jrnl_k5nh0wdv_219,jrnl_k5nh0wdv,2026-06-23,Payment Gateway Fees,5185.18,0.00,Settlement setl_08pkbu12
+jrnl_k5nh0wdv_220,jrnl_k5nh0wdv,2026-06-23,GST Input,933.33,0.00,Settlement setl_08pkbu12
+jrnl_k5nh0wdv_221,jrnl_k5nh0wdv,2026-06-23,Refunds,13488.69,0.00,Settlement setl_08pkbu12
+jrnl_k5nh0wdv_222,jrnl_k5nh0wdv,2026-06-23,Chargebacks,830.70,0.00,Settlement setl_08pkbu12
+jrnl_k5nh0wdv_223,jrnl_k5nh0wdv,2026-06-23,Razorpay Clearing,0.00,525085.36,Settlement setl_08pkbu12
+jrnl_y7i7a5pz_224,jrnl_y7i7a5pz,2026-06-24,Bank,-152591.50,0.00,Settlement setl_an252a2v
+jrnl_y7i7a5pz_225,jrnl_y7i7a5pz,2026-06-24,Payment Gateway Fees,1600.11,0.00,Settlement setl_an252a2v
+jrnl_y7i7a5pz_226,jrnl_y7i7a5pz,2026-06-24,GST Input,288.03,0.00,Settlement setl_an252a2v
+jrnl_y7i7a5pz_227,jrnl_y7i7a5pz,2026-06-24,Refunds,283273.00,0.00,Settlement setl_an252a2v
+jrnl_y7i7a5pz_228,jrnl_y7i7a5pz,2026-06-24,Razorpay Clearing,0.00,132569.64,Settlement setl_an252a2v
+jrnl_ou0x5wp6_229,jrnl_ou0x5wp6,2026-06-24,Bank,981049.58,0.00,Settlement setl_8yugxv7n
+jrnl_ou0x5wp6_230,jrnl_ou0x5wp6,2026-06-24,Payment Gateway Fees,14158.55,0.00,Settlement setl_8yugxv7n
+jrnl_ou0x5wp6_231,jrnl_ou0x5wp6,2026-06-24,GST Input,2548.57,0.00,Settlement setl_8yugxv7n
+jrnl_ou0x5wp6_232,jrnl_ou0x5wp6,2026-06-24,Razorpay Clearing,0.00,997756.70,Settlement setl_8yugxv7n
+jrnl_gmrfmsnu_233,jrnl_gmrfmsnu,2026-06-25,Bank,1003674.52,0.00,Settlement setl_gcw0gthh
+jrnl_gmrfmsnu_234,jrnl_gmrfmsnu,2026-06-25,Payment Gateway Fees,8708.83,0.00,Settlement setl_gcw0gthh
+jrnl_gmrfmsnu_235,jrnl_gmrfmsnu,2026-06-25,GST Input,1567.60,0.00,Settlement setl_gcw0gthh
+jrnl_gmrfmsnu_236,jrnl_gmrfmsnu,2026-06-25,Refunds,1179.11,0.00,Settlement setl_gcw0gthh
+jrnl_gmrfmsnu_237,jrnl_gmrfmsnu,2026-06-25,Chargebacks,766.00,0.00,Settlement setl_gcw0gthh
+jrnl_gmrfmsnu_238,jrnl_gmrfmsnu,2026-06-25,Razorpay Clearing,0.00,1015896.06,Settlement setl_gcw0gthh
+jrnl_ip89tm70_239,jrnl_ip89tm70,2026-06-25,Bank,438248.07,0.00,Settlement setl_cf4d620s
+jrnl_ip89tm70_240,jrnl_ip89tm70,2026-06-25,Payment Gateway Fees,5220.51,0.00,Settlement setl_cf4d620s
+jrnl_ip89tm70_241,jrnl_ip89tm70,2026-06-25,GST Input,939.69,0.00,Settlement setl_cf4d620s
+jrnl_ip89tm70_242,jrnl_ip89tm70,2026-06-25,Razorpay Clearing,0.00,444408.27,Settlement setl_cf4d620s
+jrnl_y8kz24df_243,jrnl_y8kz24df,2026-06-25,Bank,193270.70,0.00,Settlement setl_s5lj56ox
+jrnl_y8kz24df_244,jrnl_y8kz24df,2026-06-25,Payment Gateway Fees,1067.06,0.00,Settlement setl_s5lj56ox
+jrnl_y8kz24df_245,jrnl_y8kz24df,2026-06-25,GST Input,192.08,0.00,Settlement setl_s5lj56ox
+jrnl_y8kz24df_246,jrnl_y8kz24df,2026-06-25,Razorpay Clearing,0.00,194529.84,Settlement setl_s5lj56ox
+jrnl_l43x4h23_247,jrnl_l43x4h23,2026-06-26,Bank,770121.57,0.00,Settlement setl_c48ce0bv
+jrnl_l43x4h23_248,jrnl_l43x4h23,2026-06-26,Payment Gateway Fees,6644.62,0.00,Settlement setl_c48ce0bv
+jrnl_l43x4h23_249,jrnl_l43x4h23,2026-06-26,GST Input,1196.04,0.00,Settlement setl_c48ce0bv
+jrnl_l43x4h23_250,jrnl_l43x4h23,2026-06-26,Refunds,5959.10,0.00,Settlement setl_c48ce0bv
+jrnl_l43x4h23_251,jrnl_l43x4h23,2026-06-26,Razorpay Clearing,0.00,783921.33,Settlement setl_c48ce0bv
+jrnl_ewjg1pyy_252,jrnl_ewjg1pyy,2026-06-26,Bank,381532.56,0.00,Settlement setl_to9v02l5
+jrnl_ewjg1pyy_253,jrnl_ewjg1pyy,2026-06-26,Payment Gateway Fees,4983.21,0.00,Settlement setl_to9v02l5
+jrnl_ewjg1pyy_254,jrnl_ewjg1pyy,2026-06-26,GST Input,896.96,0.00,Settlement setl_to9v02l5
+jrnl_ewjg1pyy_255,jrnl_ewjg1pyy,2026-06-26,Razorpay Clearing,0.00,387412.73,Settlement setl_to9v02l5
+jrnl_bzksrugl_256,jrnl_bzksrugl,2026-06-26,Bank,535919.46,0.00,Settlement setl_xly7zbxs
+jrnl_bzksrugl_257,jrnl_bzksrugl,2026-06-26,Payment Gateway Fees,10278.66,0.00,Settlement setl_xly7zbxs
+jrnl_bzksrugl_258,jrnl_bzksrugl,2026-06-26,GST Input,1850.14,0.00,Settlement setl_xly7zbxs
+jrnl_bzksrugl_259,jrnl_bzksrugl,2026-06-26,Razorpay Clearing,0.00,548048.26,Settlement setl_xly7zbxs
+jrnl_bx5w20jf_260,jrnl_bx5w20jf,2026-06-29,Bank,-74198.64,0.00,Settlement setl_2778ayd0
+jrnl_bx5w20jf_261,jrnl_bx5w20jf,2026-06-29,Payment Gateway Fees,4273.38,0.00,Settlement setl_2778ayd0
+jrnl_bx5w20jf_262,jrnl_bx5w20jf,2026-06-29,GST Input,769.22,0.00,Settlement setl_2778ayd0
+jrnl_bx5w20jf_263,jrnl_bx5w20jf,2026-06-29,Refunds,715882.59,0.00,Settlement setl_2778ayd0
+jrnl_bx5w20jf_264,jrnl_bx5w20jf,2026-06-29,Chargebacks,206.00,0.00,Settlement setl_2778ayd0
+jrnl_bx5w20jf_265,jrnl_bx5w20jf,2026-06-29,Razorpay Clearing,0.00,646932.55,Settlement setl_2778ayd0
+jrnl_kn8a1liw_266,jrnl_kn8a1liw,2026-06-29,Bank,1102953.94,0.00,Settlement setl_0c3ajj7k
+jrnl_kn8a1liw_267,jrnl_kn8a1liw,2026-06-29,Payment Gateway Fees,6574.28,0.00,Settlement setl_0c3ajj7k
+jrnl_kn8a1liw_268,jrnl_kn8a1liw,2026-06-29,GST Input,1183.35,0.00,Settlement setl_0c3ajj7k
+jrnl_kn8a1liw_269,jrnl_kn8a1liw,2026-06-29,Razorpay Clearing,0.00,1110711.57,Settlement setl_0c3ajj7k
+jrnl_tsilfp2r_270,jrnl_tsilfp2r,2026-06-29,Bank,448295.60,0.00,Settlement setl_zj8gre27
+jrnl_tsilfp2r_271,jrnl_tsilfp2r,2026-06-29,Payment Gateway Fees,4536.57,0.00,Settlement setl_zj8gre27
+jrnl_tsilfp2r_272,jrnl_tsilfp2r,2026-06-29,GST Input,816.58,0.00,Settlement setl_zj8gre27
+jrnl_tsilfp2r_273,jrnl_tsilfp2r,2026-06-29,Razorpay Clearing,0.00,453648.75,Settlement setl_zj8gre27
+jrnl_rdqx3neq_274,jrnl_rdqx3neq,2026-06-29,Bank,634854.42,0.00,Settlement setl_r9lumyrn
+jrnl_rdqx3neq_275,jrnl_rdqx3neq,2026-06-29,Payment Gateway Fees,8137.85,0.00,Settlement setl_r9lumyrn
+jrnl_rdqx3neq_276,jrnl_rdqx3neq,2026-06-29,GST Input,1464.83,0.00,Settlement setl_r9lumyrn
+jrnl_rdqx3neq_277,jrnl_rdqx3neq,2026-06-29,Razorpay Clearing,0.00,644457.10,Settlement setl_r9lumyrn
+jrnl_c6gyahq1_278,jrnl_c6gyahq1,2026-06-29,Bank,112467.46,0.00,Settlement setl_ecmm3jt9
+jrnl_c6gyahq1_279,jrnl_c6gyahq1,2026-06-29,Payment Gateway Fees,1084.53,0.00,Settlement setl_ecmm3jt9
+jrnl_c6gyahq1_280,jrnl_c6gyahq1,2026-06-29,GST Input,195.23,0.00,Settlement setl_ecmm3jt9
+jrnl_c6gyahq1_281,jrnl_c6gyahq1,2026-06-29,Razorpay Clearing,0.00,113747.22,Settlement setl_ecmm3jt9
+jrnl_rdqhwpgz_282,jrnl_rdqhwpgz,2026-06-29,Bank,672732.06,0.00,Settlement setl_whi3d6ev
+jrnl_rdqhwpgz_283,jrnl_rdqhwpgz,2026-06-29,Payment Gateway Fees,6598.08,0.00,Settlement setl_whi3d6ev
+jrnl_rdqhwpgz_284,jrnl_rdqhwpgz,2026-06-29,GST Input,1187.62,0.00,Settlement setl_whi3d6ev
+jrnl_rdqhwpgz_285,jrnl_rdqhwpgz,2026-06-29,Razorpay Clearing,0.00,680517.76,Settlement setl_whi3d6ev
+jrnl_kqqbpu6a_286,jrnl_kqqbpu6a,2026-06-29,Bank,1414958.62,0.00,Settlement setl_jgwp24q0
+jrnl_kqqbpu6a_287,jrnl_kqqbpu6a,2026-06-29,Payment Gateway Fees,17644.47,0.00,Settlement setl_jgwp24q0
+jrnl_kqqbpu6a_288,jrnl_kqqbpu6a,2026-06-29,GST Input,3176.03,0.00,Settlement setl_jgwp24q0
+jrnl_kqqbpu6a_289,jrnl_kqqbpu6a,2026-06-29,Razorpay Clearing,0.00,1435779.12,Settlement setl_jgwp24q0
+jrnl_kvwiiu0i_290,jrnl_kvwiiu0i,2026-06-29,Bank,115322.68,0.00,Settlement setl_5bb20drh
+jrnl_kvwiiu0i_291,jrnl_kvwiiu0i,2026-06-29,Payment Gateway Fees,2077.15,0.00,Settlement setl_5bb20drh
+jrnl_kvwiiu0i_292,jrnl_kvwiiu0i,2026-06-29,GST Input,373.87,0.00,Settlement setl_5bb20drh
+jrnl_kvwiiu0i_293,jrnl_kvwiiu0i,2026-06-29,Razorpay Clearing,0.00,117773.70,Settlement setl_5bb20drh
+jrnl_7ldy8jri_294,jrnl_7ldy8jri,2026-06-30,Bank,807506.73,0.00,Settlement setl_v26vfx9r
+jrnl_7ldy8jri_295,jrnl_7ldy8jri,2026-06-30,Payment Gateway Fees,13727.27,0.00,Settlement setl_v26vfx9r
+jrnl_7ldy8jri_296,jrnl_7ldy8jri,2026-06-30,GST Input,2470.90,0.00,Settlement setl_v26vfx9r
+jrnl_7ldy8jri_297,jrnl_7ldy8jri,2026-06-30,Refunds,9849.28,0.00,Settlement setl_v26vfx9r
+jrnl_7ldy8jri_298,jrnl_7ldy8jri,2026-06-30,Razorpay Clearing,0.00,833554.18,Settlement setl_v26vfx9r
+jrnl_e2y5pya5_299,jrnl_e2y5pya5,2026-07-01,Bank,409171.44,0.00,Settlement setl_fivehu9p
+jrnl_e2y5pya5_302,jrnl_e2y5pya5,2026-07-01,Refunds,23972.06,0.00,Settlement setl_fivehu9p
+jrnl_e2y5pya5_303,jrnl_e2y5pya5,2026-07-01,Razorpay Clearing,0.00,433143.50,Settlement setl_fivehu9p
+jrnl_dz88qtj6_304,jrnl_dz88qtj6,2026-07-01,Bank,748612.16,0.00,Settlement setl_7xj5vbfg
+jrnl_dz88qtj6_305,jrnl_dz88qtj6,2026-07-01,Payment Gateway Fees,8742.81,0.00,Settlement setl_7xj5vbfg
+jrnl_dz88qtj6_306,jrnl_dz88qtj6,2026-07-01,GST Input,1573.73,0.00,Settlement setl_7xj5vbfg
+jrnl_dz88qtj6_307,jrnl_dz88qtj6,2026-07-01,Razorpay Clearing,0.00,758928.70,Settlement setl_7xj5vbfg
+jrnl_ivv3rasf_308,jrnl_ivv3rasf,2026-07-01,Bank,19297.34,0.00,Settlement setl_w6owwfz4
+jrnl_ivv3rasf_309,jrnl_ivv3rasf,2026-07-01,Payment Gateway Fees,134.98,0.00,Settlement setl_w6owwfz4
+jrnl_ivv3rasf_310,jrnl_ivv3rasf,2026-07-01,GST Input,24.30,0.00,Settlement setl_w6owwfz4
+jrnl_ivv3rasf_311,jrnl_ivv3rasf,2026-07-01,Razorpay Clearing,0.00,19456.62,Settlement setl_w6owwfz4
+jrnl_hu9ws7ho_312,jrnl_hu9ws7ho,2026-07-02,Bank,566743.34,0.00,Settlement setl_ci80o49d
+jrnl_hu9ws7ho_313,jrnl_hu9ws7ho,2026-07-02,Payment Gateway Fees,8245.23,0.00,Settlement setl_ci80o49d
+jrnl_hu9ws7ho_314,jrnl_hu9ws7ho,2026-07-02,GST Input,1484.17,0.00,Settlement setl_ci80o49d
+jrnl_hu9ws7ho_315,jrnl_hu9ws7ho,2026-07-02,Refunds,138.00,0.00,Settlement setl_ci80o49d
+jrnl_hu9ws7ho_316,jrnl_hu9ws7ho,2026-07-02,Razorpay Clearing,0.00,576610.74,Settlement setl_ci80o49d
+jrnl_5zecdk3u_317,jrnl_5zecdk3u,2026-07-02,Bank,1043862.77,0.00,Settlement setl_wftxo8vz
+jrnl_5zecdk3u_318,jrnl_5zecdk3u,2026-07-02,Payment Gateway Fees,17047.23,0.00,Settlement setl_wftxo8vz
+jrnl_5zecdk3u_319,jrnl_5zecdk3u,2026-07-02,GST Input,3068.50,0.00,Settlement setl_wftxo8vz
+jrnl_5zecdk3u_320,jrnl_5zecdk3u,2026-07-02,Razorpay Clearing,0.00,1063978.50,Settlement setl_wftxo8vz
+jrnl_a4q7yjht_321,jrnl_a4q7yjht,2026-07-02,Bank,104156.91,0.00,Settlement setl_b436ugq7
+jrnl_a4q7yjht_322,jrnl_a4q7yjht,2026-07-02,Payment Gateway Fees,635.84,0.00,Settlement setl_b436ugq7
+jrnl_a4q7yjht_323,jrnl_a4q7yjht,2026-07-02,GST Input,114.44,0.00,Settlement setl_b436ugq7
+jrnl_a4q7yjht_324,jrnl_a4q7yjht,2026-07-02,Razorpay Clearing,0.00,104907.19,Settlement setl_b436ugq7
+jrnl_9uiwsriu_325,jrnl_9uiwsriu,2026-07-03,Bank,872852.12,0.00,Settlement setl_j4f1kj4x
+jrnl_9uiwsriu_326,jrnl_9uiwsriu,2026-07-03,Payment Gateway Fees,6777.18,0.00,Settlement setl_j4f1kj4x
+jrnl_9uiwsriu_327,jrnl_9uiwsriu,2026-07-03,GST Input,1219.90,0.00,Settlement setl_j4f1kj4x
+jrnl_9uiwsriu_328,jrnl_9uiwsriu,2026-07-03,Refunds,2037.91,0.00,Settlement setl_j4f1kj4x
+jrnl_9uiwsriu_329,jrnl_9uiwsriu,2026-07-03,Razorpay Clearing,0.00,882887.11,Settlement setl_j4f1kj4x
+jrnl_53wst1v5_330,jrnl_53wst1v5,2026-07-03,Bank,736750.05,0.00,Settlement setl_gw5g6u01
+jrnl_53wst1v5_331,jrnl_53wst1v5,2026-07-03,Payment Gateway Fees,12575.10,0.00,Settlement setl_gw5g6u01
+jrnl_53wst1v5_332,jrnl_53wst1v5,2026-07-03,GST Input,2263.52,0.00,Settlement setl_gw5g6u01
+jrnl_53wst1v5_333,jrnl_53wst1v5,2026-07-03,Razorpay Clearing,0.00,751588.67,Settlement setl_gw5g6u01
+jrnl_gqwuqtag_334,jrnl_gqwuqtag,2026-07-06,Bank,68389.09,0.00,Settlement setl_3qu4bbqy
+jrnl_gqwuqtag_335,jrnl_gqwuqtag,2026-07-06,Payment Gateway Fees,2738.36,0.00,Settlement setl_3qu4bbqy
+jrnl_gqwuqtag_336,jrnl_gqwuqtag,2026-07-06,GST Input,492.93,0.00,Settlement setl_3qu4bbqy
+jrnl_gqwuqtag_337,jrnl_gqwuqtag,2026-07-06,Refunds,117077.25,0.00,Settlement setl_3qu4bbqy
+jrnl_gqwuqtag_338,jrnl_gqwuqtag,2026-07-06,Razorpay Clearing,0.00,188697.63,Settlement setl_3qu4bbqy
+jrnl_0cz7xfim_339,jrnl_0cz7xfim,2026-07-06,Bank,323176.50,0.00,Settlement setl_zr3775l7
+jrnl_0cz7xfim_340,jrnl_0cz7xfim,2026-07-06,Payment Gateway Fees,3952.43,0.00,Settlement setl_zr3775l7
+jrnl_0cz7xfim_341,jrnl_0cz7xfim,2026-07-06,GST Input,711.42,0.00,Settlement setl_zr3775l7
+jrnl_0cz7xfim_342,jrnl_0cz7xfim,2026-07-06,Razorpay Clearing,0.00,327840.35,Settlement setl_zr3775l7
+jrnl_8h3x75lo_343,jrnl_8h3x75lo,2026-07-06,Bank,373566.81,0.00,Settlement setl_yq01pe7c
+jrnl_8h3x75lo_344,jrnl_8h3x75lo,2026-07-06,Payment Gateway Fees,3915.57,0.00,Settlement setl_yq01pe7c
+jrnl_8h3x75lo_345,jrnl_8h3x75lo,2026-07-06,GST Input,704.80,0.00,Settlement setl_yq01pe7c
+jrnl_8h3x75lo_346,jrnl_8h3x75lo,2026-07-06,Razorpay Clearing,0.00,378187.18,Settlement setl_yq01pe7c
+jrnl_2g9gbnrw_347,jrnl_2g9gbnrw,2026-07-06,Bank,327709.78,0.00,Settlement setl_zawnofos
+jrnl_2g9gbnrw_348,jrnl_2g9gbnrw,2026-07-06,Payment Gateway Fees,2858.54,0.00,Settlement setl_zawnofos
+jrnl_2g9gbnrw_349,jrnl_2g9gbnrw,2026-07-06,GST Input,514.56,0.00,Settlement setl_zawnofos
+jrnl_2g9gbnrw_350,jrnl_2g9gbnrw,2026-07-06,Razorpay Clearing,0.00,331082.88,Settlement setl_zawnofos
+jrnl_r08ludqq_351,jrnl_r08ludqq,2026-07-06,Bank,687708.26,0.00,Settlement setl_xz0kvpql
+jrnl_r08ludqq_352,jrnl_r08ludqq,2026-07-06,Payment Gateway Fees,9831.13,0.00,Settlement setl_xz0kvpql
+jrnl_r08ludqq_353,jrnl_r08ludqq,2026-07-06,GST Input,1769.66,0.00,Settlement setl_xz0kvpql
+jrnl_r08ludqq_354,jrnl_r08ludqq,2026-07-06,Razorpay Clearing,0.00,699309.05,Settlement setl_xz0kvpql
+jrnl_kr9zxlm5_355,jrnl_kr9zxlm5,2026-07-06,Bank,332043.13,0.00,Settlement setl_azdj3v0l
+jrnl_kr9zxlm5_356,jrnl_kr9zxlm5,2026-07-06,Payment Gateway Fees,5417.40,0.00,Settlement setl_azdj3v0l
+jrnl_kr9zxlm5_357,jrnl_kr9zxlm5,2026-07-06,GST Input,975.12,0.00,Settlement setl_azdj3v0l
+jrnl_kr9zxlm5_358,jrnl_kr9zxlm5,2026-07-06,Razorpay Clearing,0.00,338435.65,Settlement setl_azdj3v0l
+jrnl_qrj3hi1h_359,jrnl_qrj3hi1h,2026-07-06,Bank,382793.64,0.00,Settlement setl_s84o2lii
+jrnl_qrj3hi1h_360,jrnl_qrj3hi1h,2026-07-06,Payment Gateway Fees,6037.20,0.00,Settlement setl_s84o2lii
+jrnl_qrj3hi1h_361,jrnl_qrj3hi1h,2026-07-06,GST Input,1086.69,0.00,Settlement setl_s84o2lii
+jrnl_qrj3hi1h_362,jrnl_qrj3hi1h,2026-07-06,Razorpay Clearing,0.00,389917.53,Settlement setl_s84o2lii
+jrnl_rekn5q5a_363,jrnl_rekn5q5a,2026-07-06,Bank,11436.52,0.00,Settlement setl_dgs7dsu2
+jrnl_rekn5q5a_364,jrnl_rekn5q5a,2026-07-06,Payment Gateway Fees,60.51,0.00,Settlement setl_dgs7dsu2
+jrnl_rekn5q5a_365,jrnl_rekn5q5a,2026-07-06,GST Input,10.88,0.00,Settlement setl_dgs7dsu2
+jrnl_rekn5q5a_366,jrnl_rekn5q5a,2026-07-06,Razorpay Clearing,0.00,11507.91,Settlement setl_dgs7dsu2
+jrnl_72w6x9e7_367,jrnl_72w6x9e7,2026-07-07,Bank,225136.89,0.00,Settlement setl_tyg8u0l3
+jrnl_72w6x9e7_368,jrnl_72w6x9e7,2026-07-07,Payment Gateway Fees,6371.34,0.00,Settlement setl_tyg8u0l3
+jrnl_72w6x9e7_369,jrnl_72w6x9e7,2026-07-07,GST Input,1146.85,0.00,Settlement setl_tyg8u0l3
+jrnl_72w6x9e7_370,jrnl_72w6x9e7,2026-07-07,Refunds,226352.09,0.00,Settlement setl_tyg8u0l3
+jrnl_72w6x9e7_371,jrnl_72w6x9e7,2026-07-07,Razorpay Clearing,0.00,459007.17,Settlement setl_tyg8u0l3
+jrnl_hlwyaw3n_372,jrnl_hlwyaw3n,2026-07-08,Bank,347852.97,0.00,Settlement setl_u1psikqz
+jrnl_hlwyaw3n_373,jrnl_hlwyaw3n,2026-07-08,Payment Gateway Fees,4714.26,0.00,Settlement setl_u1psikqz
+jrnl_hlwyaw3n_374,jrnl_hlwyaw3n,2026-07-08,GST Input,848.55,0.00,Settlement setl_u1psikqz
+jrnl_hlwyaw3n_375,jrnl_hlwyaw3n,2026-07-08,Refunds,3129.36,0.00,Settlement setl_u1psikqz
+jrnl_hlwyaw3n_376,jrnl_hlwyaw3n,2026-07-08,Razorpay Clearing,0.00,356545.14,Settlement setl_u1psikqz
+jrnl_j73eojvj_377,jrnl_j73eojvj,2026-07-08,Bank,201820.30,0.00,Settlement setl_qgdh850a
+jrnl_j73eojvj_378,jrnl_j73eojvj,2026-07-08,Payment Gateway Fees,2648.14,0.00,Settlement setl_qgdh850a
+jrnl_j73eojvj_379,jrnl_j73eojvj,2026-07-08,GST Input,476.68,0.00,Settlement setl_qgdh850a
+jrnl_j73eojvj_380,jrnl_j73eojvj,2026-07-08,Razorpay Clearing,0.00,204945.12,Settlement setl_qgdh850a
+jrnl_us4nf3om_381,jrnl_us4nf3om,2026-07-08,Bank,36525.26,0.00,Settlement setl_weojo5qx
+jrnl_us4nf3om_382,jrnl_us4nf3om,2026-07-08,Payment Gateway Fees,317.30,0.00,Settlement setl_weojo5qx
+jrnl_us4nf3om_383,jrnl_us4nf3om,2026-07-08,GST Input,57.12,0.00,Settlement setl_weojo5qx
+jrnl_us4nf3om_384,jrnl_us4nf3om,2026-07-08,Razorpay Clearing,0.00,36899.68,Settlement setl_weojo5qx
+jrnl_mb01pj4y_385,jrnl_mb01pj4y,2026-07-09,Bank,116113.13,0.00,Settlement setl_fk38jn8g
+jrnl_mb01pj4y_386,jrnl_mb01pj4y,2026-07-09,Payment Gateway Fees,1012.25,0.00,Settlement setl_fk38jn8g
+jrnl_mb01pj4y_387,jrnl_mb01pj4y,2026-07-09,GST Input,182.21,0.00,Settlement setl_fk38jn8g
+jrnl_mb01pj4y_388,jrnl_mb01pj4y,2026-07-09,Refunds,15602.72,0.00,Settlement setl_fk38jn8g
+jrnl_mb01pj4y_389,jrnl_mb01pj4y,2026-07-09,Chargebacks,195.20,0.00,Settlement setl_fk38jn8g
+jrnl_mb01pj4y_390,jrnl_mb01pj4y,2026-07-09,Razorpay Clearing,0.00,133105.51,Settlement setl_fk38jn8g
+jrnl_xwcfgzjt_391,jrnl_xwcfgzjt,2026-07-09,Bank,759500.04,0.00,Settlement setl_at5g0ham
+jrnl_xwcfgzjt_392,jrnl_xwcfgzjt,2026-07-09,Payment Gateway Fees,6748.13,0.00,Settlement setl_at5g0ham
+jrnl_xwcfgzjt_393,jrnl_xwcfgzjt,2026-07-09,GST Input,1214.63,0.00,Settlement setl_at5g0ham
+jrnl_xwcfgzjt_394,jrnl_xwcfgzjt,2026-07-09,Razorpay Clearing,0.00,767462.80,Settlement setl_at5g0ham
+jrnl_49ofrhth_395,jrnl_49ofrhth,2026-07-09,Bank,23107.17,0.00,Settlement setl_ystm76io
+jrnl_49ofrhth_396,jrnl_49ofrhth,2026-07-09,Payment Gateway Fees,233.97,0.00,Settlement setl_ystm76io
+jrnl_49ofrhth_397,jrnl_49ofrhth,2026-07-09,GST Input,42.12,0.00,Settlement setl_ystm76io
+jrnl_49ofrhth_398,jrnl_49ofrhth,2026-07-09,Razorpay Clearing,0.00,23383.26,Settlement setl_ystm76io
+jrnl_om0es7ll_399,jrnl_om0es7ll,2026-07-10,Bank,712702.94,0.00,Settlement setl_f4aqvlxb
+jrnl_om0es7ll_400,jrnl_om0es7ll,2026-07-10,Payment Gateway Fees,8570.27,0.00,Settlement setl_f4aqvlxb
+jrnl_om0es7ll_401,jrnl_om0es7ll,2026-07-10,GST Input,1542.63,0.00,Settlement setl_f4aqvlxb
+jrnl_om0es7ll_402,jrnl_om0es7ll,2026-07-10,Refunds,78573.51,0.00,Settlement setl_f4aqvlxb
+jrnl_om0es7ll_403,jrnl_om0es7ll,2026-07-10,Razorpay Clearing,0.00,801389.35,Settlement setl_f4aqvlxb
+jrnl_mv6uvjxh_404,jrnl_mv6uvjxh,2026-07-10,Bank,327868.15,0.00,Settlement setl_p4oqdtmc
+jrnl_mv6uvjxh_405,jrnl_mv6uvjxh,2026-07-10,Payment Gateway Fees,5580.04,0.00,Settlement setl_p4oqdtmc
+jrnl_mv6uvjxh_406,jrnl_mv6uvjxh,2026-07-10,GST Input,1004.41,0.00,Settlement setl_p4oqdtmc
+jrnl_mv6uvjxh_407,jrnl_mv6uvjxh,2026-07-10,Razorpay Clearing,0.00,334452.60,Settlement setl_p4oqdtmc
+jrnl_vyq58zrs_408,jrnl_vyq58zrs,2026-07-13,Bank,355187.49,0.00,Settlement setl_s09vjvtn
+jrnl_vyq58zrs_409,jrnl_vyq58zrs,2026-07-13,Payment Gateway Fees,5651.08,0.00,Settlement setl_s09vjvtn
+jrnl_vyq58zrs_410,jrnl_vyq58zrs,2026-07-13,GST Input,1017.18,0.00,Settlement setl_s09vjvtn
+jrnl_vyq58zrs_411,jrnl_vyq58zrs,2026-07-13,Refunds,61540.42,0.00,Settlement setl_s09vjvtn
+jrnl_vyq58zrs_412,jrnl_vyq58zrs,2026-07-13,Razorpay Clearing,0.00,423396.17,Settlement setl_s09vjvtn
+jrnl_scw29s31_413,jrnl_scw29s31,2026-07-13,Bank,552435.27,0.00,Settlement setl_e23dlu74
+jrnl_scw29s31_414,jrnl_scw29s31,2026-07-13,Payment Gateway Fees,3585.12,0.00,Settlement setl_e23dlu74
+jrnl_scw29s31_415,jrnl_scw29s31,2026-07-13,GST Input,645.33,0.00,Settlement setl_e23dlu74
+jrnl_scw29s31_416,jrnl_scw29s31,2026-07-13,Razorpay Clearing,0.00,556665.72,Settlement setl_e23dlu74
+jrnl_7xx9l2yi_417,jrnl_7xx9l2yi,2026-07-13,Bank,896922.04,0.00,Settlement setl_vs3c8dgg
+jrnl_7xx9l2yi_418,jrnl_7xx9l2yi,2026-07-13,Payment Gateway Fees,10101.83,0.00,Settlement setl_vs3c8dgg
+jrnl_7xx9l2yi_419,jrnl_7xx9l2yi,2026-07-13,GST Input,1818.34,0.00,Settlement setl_vs3c8dgg
+jrnl_7xx9l2yi_420,jrnl_7xx9l2yi,2026-07-13,Razorpay Clearing,0.00,908842.21,Settlement setl_vs3c8dgg
+jrnl_j4yhxtwn_421,jrnl_j4yhxtwn,2026-07-13,Bank,633736.60,0.00,Settlement setl_6a5qbbyf
+jrnl_j4yhxtwn_422,jrnl_j4yhxtwn,2026-07-13,Payment Gateway Fees,4265.68,0.00,Settlement setl_6a5qbbyf
+jrnl_j4yhxtwn_423,jrnl_j4yhxtwn,2026-07-13,GST Input,767.84,0.00,Settlement setl_6a5qbbyf
+jrnl_j4yhxtwn_424,jrnl_j4yhxtwn,2026-07-13,Razorpay Clearing,0.00,638770.12,Settlement setl_6a5qbbyf
+jrnl_556apuhf_425,jrnl_556apuhf,2026-07-13,Bank,480177.53,0.00,Settlement setl_2g593c2z
+jrnl_556apuhf_426,jrnl_556apuhf,2026-07-13,Payment Gateway Fees,5228.48,0.00,Settlement setl_2g593c2z
+jrnl_556apuhf_427,jrnl_556apuhf,2026-07-13,GST Input,941.15,0.00,Settlement setl_2g593c2z
+jrnl_556apuhf_428,jrnl_556apuhf,2026-07-13,Razorpay Clearing,0.00,486347.16,Settlement setl_2g593c2z
+jrnl_8ymwcbm1_429,jrnl_8ymwcbm1,2026-07-13,Bank,1472133.35,0.00,Settlement setl_616618pp
+jrnl_8ymwcbm1_430,jrnl_8ymwcbm1,2026-07-13,Payment Gateway Fees,11566.66,0.00,Settlement setl_616618pp
+jrnl_8ymwcbm1_431,jrnl_8ymwcbm1,2026-07-13,GST Input,2082.02,0.00,Settlement setl_616618pp
+jrnl_8ymwcbm1_432,jrnl_8ymwcbm1,2026-07-13,Razorpay Clearing,0.00,1485782.03,Settlement setl_616618pp
+jrnl_dca9fwoh_433,jrnl_dca9fwoh,2026-07-13,Bank,651700.20,0.00,Settlement setl_dhl88r86
+jrnl_dca9fwoh_434,jrnl_dca9fwoh,2026-07-13,Payment Gateway Fees,8049.95,0.00,Settlement setl_dhl88r86
+jrnl_dca9fwoh_435,jrnl_dca9fwoh,2026-07-13,GST Input,1449.00,0.00,Settlement setl_dhl88r86
+jrnl_dca9fwoh_436,jrnl_dca9fwoh,2026-07-13,Razorpay Clearing,0.00,661199.15,Settlement setl_dhl88r86
+jrnl_xl9kuz24_437,jrnl_xl9kuz24,2026-07-13,Bank,153102.59,0.00,Settlement setl_fgb8vb0o
+jrnl_xl9kuz24_438,jrnl_xl9kuz24,2026-07-13,Payment Gateway Fees,1931.31,0.00,Settlement setl_fgb8vb0o
+jrnl_xl9kuz24_439,jrnl_xl9kuz24,2026-07-13,GST Input,347.60,0.00,Settlement setl_fgb8vb0o
+jrnl_xl9kuz24_440,jrnl_xl9kuz24,2026-07-13,Razorpay Clearing,0.00,155381.50,Settlement setl_fgb8vb0o
+jrnl_5s2ku5w8_441,jrnl_5s2ku5w8,2026-07-14,Bank,251762.38,0.00,Settlement setl_wzapd7mw
+jrnl_5s2ku5w8_442,jrnl_5s2ku5w8,2026-07-14,Payment Gateway Fees,1940.98,0.00,Settlement setl_wzapd7mw
+jrnl_5s2ku5w8_443,jrnl_5s2ku5w8,2026-07-14,GST Input,349.39,0.00,Settlement setl_wzapd7mw
+jrnl_5s2ku5w8_444,jrnl_5s2ku5w8,2026-07-14,Refunds,10536.25,0.00,Settlement setl_wzapd7mw
+jrnl_5s2ku5w8_445,jrnl_5s2ku5w8,2026-07-14,Razorpay Clearing,0.00,264589.00,Settlement setl_wzapd7mw
+jrnl_emoxc4xi_446,jrnl_emoxc4xi,2026-07-15,Bank,951184.63,0.00,Settlement setl_5dv8nwsd
+jrnl_emoxc4xi_447,jrnl_emoxc4xi,2026-07-15,Payment Gateway Fees,11691.86,0.00,Settlement setl_5dv8nwsd
+jrnl_emoxc4xi_448,jrnl_emoxc4xi,2026-07-15,GST Input,2104.54,0.00,Settlement setl_5dv8nwsd
+jrnl_emoxc4xi_449,jrnl_emoxc4xi,2026-07-15,Refunds,243.83,0.00,Settlement setl_5dv8nwsd
+jrnl_emoxc4xi_450,jrnl_emoxc4xi,2026-07-15,Razorpay Clearing,0.00,965224.86,Settlement setl_5dv8nwsd
+jrnl_m04espde_451,jrnl_m04espde,2026-07-15,Bank,506704.08,0.00,Settlement setl_on4ik9j7
+jrnl_m04espde_452,jrnl_m04espde,2026-07-15,Payment Gateway Fees,4128.00,0.00,Settlement setl_on4ik9j7
+jrnl_m04espde_453,jrnl_m04espde,2026-07-15,GST Input,743.05,0.00,Settlement setl_on4ik9j7
+jrnl_m04espde_454,jrnl_m04espde,2026-07-15,Razorpay Clearing,0.00,511575.13,Settlement setl_on4ik9j7
+jrnl_h8johdth_455,jrnl_h8johdth,2026-07-15,Bank,45795.78,0.00,Settlement setl_3629hw87
+jrnl_h8johdth_456,jrnl_h8johdth,2026-07-15,Payment Gateway Fees,272.33,0.00,Settlement setl_3629hw87
+jrnl_h8johdth_457,jrnl_h8johdth,2026-07-15,GST Input,49.01,0.00,Settlement setl_3629hw87
+jrnl_h8johdth_458,jrnl_h8johdth,2026-07-15,Razorpay Clearing,0.00,46117.12,Settlement setl_3629hw87
+jrnl_1ywzh48q_459,jrnl_1ywzh48q,2026-07-16,Bank,742701.29,0.00,Settlement setl_wk46mnp8
+jrnl_1ywzh48q_460,jrnl_1ywzh48q,2026-07-16,Payment Gateway Fees,4357.97,0.00,Settlement setl_wk46mnp8
+jrnl_1ywzh48q_461,jrnl_1ywzh48q,2026-07-16,GST Input,784.45,0.00,Settlement setl_wk46mnp8
+jrnl_1ywzh48q_462,jrnl_1ywzh48q,2026-07-16,Refunds,19110.42,0.00,Settlement setl_wk46mnp8
+jrnl_1ywzh48q_463,jrnl_1ywzh48q,2026-07-16,Razorpay Clearing,0.00,766954.13,Settlement setl_wk46mnp8
+jrnl_f7pl67j7_464,jrnl_f7pl67j7,2026-07-16,Bank,251866.83,0.00,Settlement setl_h8kkdiky
+jrnl_f7pl67j7_465,jrnl_f7pl67j7,2026-07-16,Payment Gateway Fees,1551.61,0.00,Settlement setl_h8kkdiky
+jrnl_f7pl67j7_466,jrnl_f7pl67j7,2026-07-16,GST Input,279.31,0.00,Settlement setl_h8kkdiky
+jrnl_f7pl67j7_467,jrnl_f7pl67j7,2026-07-16,Razorpay Clearing,0.00,253697.75,Settlement setl_h8kkdiky
+jrnl_30odhy62_468,jrnl_30odhy62,2026-07-17,Bank,690869.90,0.00,Settlement setl_cjbb0mjq
+jrnl_30odhy62_469,jrnl_30odhy62,2026-07-17,Payment Gateway Fees,9149.71,0.00,Settlement setl_cjbb0mjq
+jrnl_30odhy62_470,jrnl_30odhy62,2026-07-17,GST Input,1646.97,0.00,Settlement setl_cjbb0mjq
+jrnl_30odhy62_471,jrnl_30odhy62,2026-07-17,Refunds,10984.45,0.00,Settlement setl_cjbb0mjq
+jrnl_30odhy62_472,jrnl_30odhy62,2026-07-17,Chargebacks,355.00,0.00,Settlement setl_cjbb0mjq
+jrnl_30odhy62_473,jrnl_30odhy62,2026-07-17,Razorpay Clearing,0.00,713006.03,Settlement setl_cjbb0mjq
+jrnl_pykvbrc1_474,jrnl_pykvbrc1,2026-07-17,Bank,398958.95,0.00,Settlement setl_om3aueq3
+jrnl_pykvbrc1_475,jrnl_pykvbrc1,2026-07-17,Payment Gateway Fees,3185.01,0.00,Settlement setl_om3aueq3
+jrnl_pykvbrc1_476,jrnl_pykvbrc1,2026-07-17,GST Input,573.31,0.00,Settlement setl_om3aueq3
+jrnl_pykvbrc1_477,jrnl_pykvbrc1,2026-07-17,Razorpay Clearing,0.00,402717.27,Settlement setl_om3aueq3
+jrnl_lps3tj9c_478,jrnl_lps3tj9c,2026-07-20,Bank,1268597.34,0.00,Settlement setl_30c17e5x
+jrnl_lps3tj9c_479,jrnl_lps3tj9c,2026-07-20,Payment Gateway Fees,20884.49,0.00,Settlement setl_30c17e5x
+jrnl_lps3tj9c_480,jrnl_lps3tj9c,2026-07-20,GST Input,3759.18,0.00,Settlement setl_30c17e5x
+jrnl_lps3tj9c_481,jrnl_lps3tj9c,2026-07-20,Refunds,62213.63,0.00,Settlement setl_30c17e5x
+jrnl_lps3tj9c_482,jrnl_lps3tj9c,2026-07-20,Chargebacks,4362.94,0.00,Settlement setl_30c17e5x
+jrnl_lps3tj9c_483,jrnl_lps3tj9c,2026-07-20,Razorpay Clearing,0.00,1359817.58,Settlement setl_30c17e5x
+jrnl_ezoni219_484,jrnl_ezoni219,2026-07-20,Bank,1086476.14,0.00,Settlement setl_mhpg3mvr
+jrnl_ezoni219_485,jrnl_ezoni219,2026-07-20,Payment Gateway Fees,10386.76,0.00,Settlement setl_mhpg3mvr
+jrnl_ezoni219_486,jrnl_ezoni219,2026-07-20,GST Input,1869.61,0.00,Settlement setl_mhpg3mvr
+jrnl_ezoni219_487,jrnl_ezoni219,2026-07-20,Razorpay Clearing,0.00,1098732.51,Settlement setl_mhpg3mvr
+jrnl_82wnkzy7_488,jrnl_82wnkzy7,2026-07-20,Bank,251888.85,0.00,Settlement setl_3207cvd6
+jrnl_82wnkzy7_489,jrnl_82wnkzy7,2026-07-20,Payment Gateway Fees,4372.56,0.00,Settlement setl_3207cvd6
+jrnl_82wnkzy7_490,jrnl_82wnkzy7,2026-07-20,GST Input,787.07,0.00,Settlement setl_3207cvd6
+jrnl_82wnkzy7_491,jrnl_82wnkzy7,2026-07-20,Razorpay Clearing,0.00,257048.48,Settlement setl_3207cvd6
+jrnl_bj3sw8yo_492,jrnl_bj3sw8yo,2026-07-20,Bank,667430.43,0.00,Settlement setl_oe95yyiv
+jrnl_bj3sw8yo_493,jrnl_bj3sw8yo,2026-07-20,Payment Gateway Fees,11600.45,0.00,Settlement setl_oe95yyiv
+jrnl_bj3sw8yo_494,jrnl_bj3sw8yo,2026-07-20,GST Input,2088.10,0.00,Settlement setl_oe95yyiv
+jrnl_bj3sw8yo_495,jrnl_bj3sw8yo,2026-07-20,Razorpay Clearing,0.00,681118.98,Settlement setl_oe95yyiv
+jrnl_lj6aw4dc_496,jrnl_lj6aw4dc,2026-07-20,Bank,716808.97,0.00,Settlement setl_4ybnui8n
+jrnl_lj6aw4dc_497,jrnl_lj6aw4dc,2026-07-20,Payment Gateway Fees,7753.97,0.00,Settlement setl_4ybnui8n
+jrnl_lj6aw4dc_498,jrnl_lj6aw4dc,2026-07-20,GST Input,1395.72,0.00,Settlement setl_4ybnui8n
+jrnl_lj6aw4dc_499,jrnl_lj6aw4dc,2026-07-20,Razorpay Clearing,0.00,725958.66,Settlement setl_4ybnui8n
+jrnl_lrpf7gob_500,jrnl_lrpf7gob,2026-07-20,Bank,581499.92,0.00,Settlement setl_mjidsako
+jrnl_lrpf7gob_501,jrnl_lrpf7gob,2026-07-20,Payment Gateway Fees,5208.32,0.00,Settlement setl_mjidsako
+jrnl_lrpf7gob_502,jrnl_lrpf7gob,2026-07-20,GST Input,937.49,0.00,Settlement setl_mjidsako
+jrnl_lrpf7gob_503,jrnl_lrpf7gob,2026-07-20,Razorpay Clearing,0.00,587645.73,Settlement setl_mjidsako
+jrnl_lbhpnd0y_504,jrnl_lbhpnd0y,2026-07-20,Bank,258989.66,0.00,Settlement setl_drmg3zwk
+jrnl_lbhpnd0y_505,jrnl_lbhpnd0y,2026-07-20,Payment Gateway Fees,2386.60,0.00,Settlement setl_drmg3zwk
+jrnl_lbhpnd0y_506,jrnl_lbhpnd0y,2026-07-20,GST Input,429.60,0.00,Settlement setl_drmg3zwk
+jrnl_lbhpnd0y_507,jrnl_lbhpnd0y,2026-07-20,Razorpay Clearing,0.00,261805.86,Settlement setl_drmg3zwk
+jrnl_47v03l06_508,jrnl_47v03l06,2026-07-21,Bank,225889.79,0.00,Settlement setl_pn9q7po0
+jrnl_47v03l06_509,jrnl_47v03l06,2026-07-21,Payment Gateway Fees,4190.53,0.00,Settlement setl_pn9q7po0
+jrnl_47v03l06_510,jrnl_47v03l06,2026-07-21,GST Input,754.30,0.00,Settlement setl_pn9q7po0
+jrnl_47v03l06_511,jrnl_47v03l06,2026-07-21,Refunds,156948.21,0.00,Settlement setl_pn9q7po0
+jrnl_47v03l06_512,jrnl_47v03l06,2026-07-21,Razorpay Clearing,0.00,387782.83,Settlement setl_pn9q7po0
+jrnl_krami3ca_513,jrnl_krami3ca,2026-07-22,Bank,431039.10,0.00,Settlement setl_995t3toc
+jrnl_krami3ca_514,jrnl_krami3ca,2026-07-22,Payment Gateway Fees,5305.60,0.00,Settlement setl_995t3toc
+jrnl_krami3ca_515,jrnl_krami3ca,2026-07-22,GST Input,954.96,0.00,Settlement setl_995t3toc
+jrnl_krami3ca_516,jrnl_krami3ca,2026-07-22,Refunds,3274.93,0.00,Settlement setl_995t3toc
+jrnl_krami3ca_517,jrnl_krami3ca,2026-07-22,Razorpay Clearing,0.00,440574.59,Settlement setl_995t3toc
+jrnl_ehlc48b2_518,jrnl_ehlc48b2,2026-07-22,Bank,725719.77,0.00,Settlement setl_i6i3gzqr
+jrnl_ehlc48b2_519,jrnl_ehlc48b2,2026-07-22,Payment Gateway Fees,4279.99,0.00,Settlement setl_i6i3gzqr
+jrnl_ehlc48b2_520,jrnl_ehlc48b2,2026-07-22,GST Input,770.40,0.00,Settlement setl_i6i3gzqr
+jrnl_ehlc48b2_521,jrnl_ehlc48b2,2026-07-22,Razorpay Clearing,0.00,730770.16,Settlement setl_i6i3gzqr
+jrnl_bkxg6cvn_522,jrnl_bkxg6cvn,2026-07-22,Bank,566891.83,0.00,Settlement setl_s0s98y1t
+jrnl_bkxg6cvn_523,jrnl_bkxg6cvn,2026-07-22,Payment Gateway Fees,8087.38,0.00,Settlement setl_s0s98y1t
+jrnl_bkxg6cvn_524,jrnl_bkxg6cvn,2026-07-22,GST Input,1455.74,0.00,Settlement setl_s0s98y1t
+jrnl_bkxg6cvn_525,jrnl_bkxg6cvn,2026-07-22,Razorpay Clearing,0.00,576434.95,Settlement setl_s0s98y1t
+jrnl_qhc2f6yx_526,jrnl_qhc2f6yx,2026-07-23,Bank,403665.79,0.00,Settlement setl_cccev0xt
+jrnl_qhc2f6yx_527,jrnl_qhc2f6yx,2026-07-23,Payment Gateway Fees,6862.16,0.00,Settlement setl_cccev0xt
+jrnl_qhc2f6yx_528,jrnl_qhc2f6yx,2026-07-23,GST Input,1235.20,0.00,Settlement setl_cccev0xt
+jrnl_qhc2f6yx_529,jrnl_qhc2f6yx,2026-07-23,Refunds,39637.15,0.00,Settlement setl_cccev0xt
+jrnl_qhc2f6yx_530,jrnl_qhc2f6yx,2026-07-23,Razorpay Clearing,0.00,451400.30,Settlement setl_cccev0xt
+jrnl_8qh7rk8g_531,jrnl_8qh7rk8g,2026-07-23,Bank,641140.64,0.00,Settlement setl_ol2zvgsm
+jrnl_8qh7rk8g_532,jrnl_8qh7rk8g,2026-07-23,Payment Gateway Fees,4136.50,0.00,Settlement setl_ol2zvgsm
+jrnl_8qh7rk8g_533,jrnl_8qh7rk8g,2026-07-23,GST Input,744.57,0.00,Settlement setl_ol2zvgsm
+jrnl_8qh7rk8g_534,jrnl_8qh7rk8g,2026-07-23,Razorpay Clearing,0.00,646021.71,Settlement setl_ol2zvgsm
+jrnl_99215if9_535,jrnl_99215if9,2026-07-24,Bank,230803.67,0.00,Settlement setl_o3uzkrc6
+jrnl_99215if9_536,jrnl_99215if9,2026-07-24,Payment Gateway Fees,2546.77,0.00,Settlement setl_o3uzkrc6
+jrnl_99215if9_537,jrnl_99215if9,2026-07-24,GST Input,458.42,0.00,Settlement setl_o3uzkrc6
+jrnl_99215if9_538,jrnl_99215if9,2026-07-24,Refunds,29528.37,0.00,Settlement setl_o3uzkrc6
+jrnl_99215if9_539,jrnl_99215if9,2026-07-24,Razorpay Clearing,0.00,263337.23,Settlement setl_o3uzkrc6
+jrnl_cecr4f9h_540,jrnl_cecr4f9h,2026-07-24,Bank,854033.71,0.00,Settlement setl_o9ww0hl0
+jrnl_cecr4f9h_541,jrnl_cecr4f9h,2026-07-24,Payment Gateway Fees,13399.67,0.00,Settlement setl_o9ww0hl0
+jrnl_cecr4f9h_542,jrnl_cecr4f9h,2026-07-24,GST Input,2411.92,0.00,Settlement setl_o9ww0hl0
+jrnl_cecr4f9h_543,jrnl_cecr4f9h,2026-07-24,Razorpay Clearing,0.00,869845.30,Settlement setl_o9ww0hl0
+jrnl_tohdv7a7_544,jrnl_tohdv7a7,2026-07-24,Bank,66329.62,0.00,Settlement setl_348tiyex
+jrnl_tohdv7a7_545,jrnl_tohdv7a7,2026-07-24,Payment Gateway Fees,1111.41,0.00,Settlement setl_348tiyex
+jrnl_tohdv7a7_546,jrnl_tohdv7a7,2026-07-24,GST Input,200.05,0.00,Settlement setl_348tiyex
+jrnl_tohdv7a7_547,jrnl_tohdv7a7,2026-07-24,Razorpay Clearing,0.00,67641.08,Settlement setl_348tiyex
+jrnl_sf8x6nim_548,jrnl_sf8x6nim,2026-07-27,Bank,426493.47,0.00,Settlement setl_lnduqks9
+jrnl_sf8x6nim_549,jrnl_sf8x6nim,2026-07-27,Payment Gateway Fees,3332.68,0.00,Settlement setl_lnduqks9
+jrnl_sf8x6nim_550,jrnl_sf8x6nim,2026-07-27,GST Input,599.90,0.00,Settlement setl_lnduqks9
+jrnl_sf8x6nim_551,jrnl_sf8x6nim,2026-07-27,Refunds,12558.38,0.00,Settlement setl_lnduqks9
+jrnl_sf8x6nim_552,jrnl_sf8x6nim,2026-07-27,Chargebacks,8676.85,0.00,Settlement setl_lnduqks9
+jrnl_sf8x6nim_553,jrnl_sf8x6nim,2026-07-27,Razorpay Clearing,0.00,451661.28,Settlement setl_lnduqks9
+jrnl_s826ltbt_554,jrnl_s826ltbt,2026-07-27,Bank,823561.24,0.00,Settlement setl_jfu20irg
+jrnl_s826ltbt_555,jrnl_s826ltbt,2026-07-27,Payment Gateway Fees,12400.97,0.00,Settlement setl_jfu20irg
+jrnl_s826ltbt_556,jrnl_s826ltbt,2026-07-27,GST Input,2232.18,0.00,Settlement setl_jfu20irg
+jrnl_s826ltbt_557,jrnl_s826ltbt,2026-07-27,Razorpay Clearing,0.00,838194.39,Settlement setl_jfu20irg
+jrnl_zsv2i2ji_558,jrnl_zsv2i2ji,2026-07-27,Bank,810083.08,0.00,Settlement setl_dcpf94qj
+jrnl_zsv2i2ji_559,jrnl_zsv2i2ji,2026-07-27,Payment Gateway Fees,12745.41,0.00,Settlement setl_dcpf94qj
+jrnl_zsv2i2ji_560,jrnl_zsv2i2ji,2026-07-27,GST Input,2294.18,0.00,Settlement setl_dcpf94qj
+jrnl_zsv2i2ji_561,jrnl_zsv2i2ji,2026-07-27,Razorpay Clearing,0.00,825122.67,Settlement setl_dcpf94qj
+jrnl_pzz6vki2_566,jrnl_pzz6vki2,2026-07-27,Bank,924299.35,0.00,Settlement setl_iggntljj
+jrnl_pzz6vki2_567,jrnl_pzz6vki2,2026-07-27,Payment Gateway Fees,13528.94,0.00,Settlement setl_iggntljj
+jrnl_pzz6vki2_568,jrnl_pzz6vki2,2026-07-27,GST Input,2435.20,0.00,Settlement setl_iggntljj
+jrnl_pzz6vki2_569,jrnl_pzz6vki2,2026-07-27,Razorpay Clearing,0.00,940263.49,Settlement setl_iggntljj
+jrnl_fcj6fvcx_570,jrnl_fcj6fvcx,2026-07-27,Bank,680757.03,0.00,Settlement setl_gd7aym87
+jrnl_fcj6fvcx_571,jrnl_fcj6fvcx,2026-07-27,Payment Gateway Fees,6162.42,0.00,Settlement setl_gd7aym87
+jrnl_fcj6fvcx_572,jrnl_fcj6fvcx,2026-07-27,GST Input,1109.23,0.00,Settlement setl_gd7aym87
+jrnl_fcj6fvcx_573,jrnl_fcj6fvcx,2026-07-27,Razorpay Clearing,0.00,688028.68,Settlement setl_gd7aym87
+jrnl_gbb2x5fj_574,jrnl_gbb2x5fj,2026-07-27,Bank,275669.10,0.00,Settlement setl_iq6cy1c7
+jrnl_gbb2x5fj_575,jrnl_gbb2x5fj,2026-07-27,Payment Gateway Fees,3357.76,0.00,Settlement setl_iq6cy1c7
+jrnl_gbb2x5fj_576,jrnl_gbb2x5fj,2026-07-27,GST Input,604.39,0.00,Settlement setl_iq6cy1c7
+jrnl_gbb2x5fj_577,jrnl_gbb2x5fj,2026-07-27,Razorpay Clearing,0.00,279631.25,Settlement setl_iq6cy1c7
+jrnl_nqub0plt_578,jrnl_nqub0plt,2026-07-27,Bank,66448.34,0.00,Settlement setl_l3u5ydo4
+jrnl_nqub0plt_579,jrnl_nqub0plt,2026-07-27,Payment Gateway Fees,328.53,0.00,Settlement setl_l3u5ydo4
+jrnl_nqub0plt_580,jrnl_nqub0plt,2026-07-27,GST Input,59.13,0.00,Settlement setl_l3u5ydo4
+jrnl_nqub0plt_581,jrnl_nqub0plt,2026-07-27,Razorpay Clearing,0.00,66836.00,Settlement setl_l3u5ydo4
+jrnl_izsaprcb_582,jrnl_izsaprcb,2026-07-28,Bank,589138.10,0.00,Settlement setl_3nm57nky
+jrnl_izsaprcb_583,jrnl_izsaprcb,2026-07-28,Payment Gateway Fees,3777.57,0.00,Settlement setl_3nm57nky
+jrnl_izsaprcb_584,jrnl_izsaprcb,2026-07-28,GST Input,679.95,0.00,Settlement setl_3nm57nky
+jrnl_izsaprcb_585,jrnl_izsaprcb,2026-07-28,Refunds,8458.00,0.00,Settlement setl_3nm57nky
+jrnl_izsaprcb_586,jrnl_izsaprcb,2026-07-28,Chargebacks,1802.82,0.00,Settlement setl_3nm57nky
+jrnl_izsaprcb_587,jrnl_izsaprcb,2026-07-28,Razorpay Clearing,0.00,603856.44,Settlement setl_3nm57nky
+jrnl_klt8wp8y_588,jrnl_klt8wp8y,2026-07-29,Bank,1130852.01,0.00,Settlement setl_6m2ekvdm
+jrnl_klt8wp8y_589,jrnl_klt8wp8y,2026-07-29,Payment Gateway Fees,8834.72,0.00,Settlement setl_6m2ekvdm
+jrnl_klt8wp8y_590,jrnl_klt8wp8y,2026-07-29,GST Input,1590.26,0.00,Settlement setl_6m2ekvdm
+jrnl_klt8wp8y_591,jrnl_klt8wp8y,2026-07-29,Chargebacks,5472.75,0.00,Settlement setl_6m2ekvdm
+jrnl_klt8wp8y_592,jrnl_klt8wp8y,2026-07-29,Razorpay Clearing,0.00,1146749.74,Settlement setl_6m2ekvdm
+jrnl_br9kgkn5_593,jrnl_br9kgkn5,2026-07-29,Bank,372951.08,0.00,Settlement setl_p2ryg7kd
+jrnl_br9kgkn5_594,jrnl_br9kgkn5,2026-07-29,Payment Gateway Fees,5152.31,0.00,Settlement setl_p2ryg7kd
+jrnl_br9kgkn5_595,jrnl_br9kgkn5,2026-07-29,GST Input,927.41,0.00,Settlement setl_p2ryg7kd
+jrnl_br9kgkn5_596,jrnl_br9kgkn5,2026-07-29,Razorpay Clearing,0.00,379030.80,Settlement setl_p2ryg7kd
+jrnl_j4uq5tur_597,jrnl_j4uq5tur,2026-07-29,Bank,202.11,0.00,Settlement setl_9ajcaxg6
+jrnl_j4uq5tur_598,jrnl_j4uq5tur,2026-07-29,Payment Gateway Fees,3.30,0.00,Settlement setl_9ajcaxg6
+jrnl_j4uq5tur_599,jrnl_j4uq5tur,2026-07-29,GST Input,0.59,0.00,Settlement setl_9ajcaxg6
+jrnl_j4uq5tur_600,jrnl_j4uq5tur,2026-07-29,Razorpay Clearing,0.00,206.00,Settlement setl_9ajcaxg6
+jrnl_sig3796g_601,jrnl_sig3796g,2026-07-30,Bank,955671.65,0.00,Settlement setl_1tzay5jl
+jrnl_sig3796g_604,jrnl_sig3796g,2026-07-30,Refunds,3523.46,0.00,Settlement setl_1tzay5jl
+jrnl_sig3796g_605,jrnl_sig3796g,2026-07-30,Chargebacks,6001.00,0.00,Settlement setl_1tzay5jl
+jrnl_sig3796g_606,jrnl_sig3796g,2026-07-30,Razorpay Clearing,0.00,965196.11,Settlement setl_1tzay5jl
+jrnl_9zzw3x0d_607,jrnl_9zzw3x0d,2026-07-30,Bank,349674.91,0.00,Settlement setl_muk2npul
+jrnl_9zzw3x0d_608,jrnl_9zzw3x0d,2026-07-30,Payment Gateway Fees,4620.93,0.00,Settlement setl_muk2npul
+jrnl_9zzw3x0d_609,jrnl_9zzw3x0d,2026-07-30,GST Input,831.74,0.00,Settlement setl_muk2npul
+jrnl_9zzw3x0d_610,jrnl_9zzw3x0d,2026-07-30,Razorpay Clearing,0.00,355127.58,Settlement setl_muk2npul
+jrnl_rwusci9e_611,jrnl_rwusci9e,2026-07-30,Bank,594566.55,0.00,Settlement setl_npvazwc4
+jrnl_rwusci9e_612,jrnl_rwusci9e,2026-07-30,Payment Gateway Fees,3769.28,0.00,Settlement setl_npvazwc4
+jrnl_rwusci9e_613,jrnl_rwusci9e,2026-07-30,GST Input,678.49,0.00,Settlement setl_npvazwc4
+jrnl_rwusci9e_614,jrnl_rwusci9e,2026-07-30,Razorpay Clearing,0.00,599014.32,Settlement setl_npvazwc4
+jrnl_1n3zmw25_615,jrnl_1n3zmw25,2026-07-31,Bank,591589.89,0.00,Settlement setl_r5in9w0n
+jrnl_1n3zmw25_616,jrnl_1n3zmw25,2026-07-31,Payment Gateway Fees,4208.01,0.00,Settlement setl_r5in9w0n
+jrnl_1n3zmw25_617,jrnl_1n3zmw25,2026-07-31,GST Input,757.44,0.00,Settlement setl_r5in9w0n
+jrnl_1n3zmw25_618,jrnl_1n3zmw25,2026-07-31,Refunds,46263.24,0.00,Settlement setl_r5in9w0n
+jrnl_1n3zmw25_619,jrnl_1n3zmw25,2026-07-31,Razorpay Clearing,0.00,642818.58,Settlement setl_r5in9w0n
+jrnl_dox27fg5_620,jrnl_dox27fg5,2026-07-31,Bank,522655.47,0.00,Settlement setl_jvtat9j2
+jrnl_dox27fg5_621,jrnl_dox27fg5,2026-07-31,Payment Gateway Fees,6196.30,0.00,Settlement setl_jvtat9j2
+jrnl_dox27fg5_622,jrnl_dox27fg5,2026-07-31,GST Input,1115.32,0.00,Settlement setl_jvtat9j2
+jrnl_dox27fg5_623,jrnl_dox27fg5,2026-07-31,Razorpay Clearing,0.00,529967.09,Settlement setl_jvtat9j2
+jrnl_aoh9z3yj_624,jrnl_aoh9z3yj,2026-07-31,Bank,90411.75,0.00,Settlement setl_17xe5pio
+jrnl_aoh9z3yj_625,jrnl_aoh9z3yj,2026-07-31,Payment Gateway Fees,367.70,0.00,Settlement setl_17xe5pio
+jrnl_aoh9z3yj_626,jrnl_aoh9z3yj,2026-07-31,GST Input,66.19,0.00,Settlement setl_17xe5pio
+jrnl_aoh9z3yj_627,jrnl_aoh9z3yj,2026-07-31,Razorpay Clearing,0.00,90845.64,Settlement setl_17xe5pio
+jrnl_pncku6gh_628,jrnl_pncku6gh,2026-08-03,Bank,180971.79,0.00,Settlement setl_x3rpn2sv
+jrnl_pncku6gh_631,jrnl_pncku6gh,2026-08-03,Refunds,478220.74,0.00,Settlement setl_x3rpn2sv
+jrnl_pncku6gh_632,jrnl_pncku6gh,2026-08-03,Razorpay Clearing,0.00,659192.53,Settlement setl_x3rpn2sv
+jrnl_c6ooe3y5_633,jrnl_c6ooe3y5,2026-08-03,Bank,1113006.37,0.00,Settlement setl_d5p4qee4
+jrnl_c6ooe3y5_634,jrnl_c6ooe3y5,2026-08-03,Payment Gateway Fees,7663.40,0.00,Settlement setl_d5p4qee4
+jrnl_c6ooe3y5_635,jrnl_c6ooe3y5,2026-08-03,GST Input,1379.41,0.00,Settlement setl_d5p4qee4
+jrnl_c6ooe3y5_636,jrnl_c6ooe3y5,2026-08-03,Razorpay Clearing,0.00,1122049.18,Settlement setl_d5p4qee4
+jrnl_axlqs7sg_637,jrnl_axlqs7sg,2026-08-03,Bank,425345.18,0.00,Settlement setl_o2b8fkr9
+jrnl_axlqs7sg_638,jrnl_axlqs7sg,2026-08-03,Payment Gateway Fees,1872.54,0.00,Settlement setl_o2b8fkr9
+jrnl_axlqs7sg_639,jrnl_axlqs7sg,2026-08-03,GST Input,337.05,0.00,Settlement setl_o2b8fkr9
+jrnl_axlqs7sg_640,jrnl_axlqs7sg,2026-08-03,Razorpay Clearing,0.00,427554.77,Settlement setl_o2b8fkr9

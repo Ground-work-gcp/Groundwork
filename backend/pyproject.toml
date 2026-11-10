@@ -1,0 +1,53 @@
+[project]
+name = "groundwork-backend"
+version = "1.0.0"
+description = "Groundwork: the single backend for evidence-backed inherited-property resolution cases"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlalchemy>=2.0.36",
+    "alembic>=1.14",
+    "pydantic[email]>=2.10",
+    "pydantic-settings>=2.6",
+    "pyjwt>=2.10",
+    "bcrypt>=4.2",
+    "python-multipart>=0.0.18",
+    "pypdf>=5.1",
+    "httpx>=0.28",
+]
+
+[project.optional-dependencies]
+# PostgreSQL driver (Cloud SQL in production).
+postgres = ["psycopg[binary]>=3.2"]
+# Google Cloud adapters. Imported lazily, so the app runs locally without them.
+gcp = [
+    "google-cloud-storage>=2.18",
+    "google-cloud-documentai>=2.33",
+    "google-cloud-dlp>=3.25",
+    "google-genai>=1.0",
+]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.8",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501", "B008", "UP046", "UP047", "SIM102"]

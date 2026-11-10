@@ -1,0 +1,17 @@
+**/.venv
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/*.egg-info
+backend/var
+backend/tests
+backend/live_tests
+frontend/dist
+.env
+.env.*
+docs
+scripts
+.git
+.github
+Groundwork-legacy-backup

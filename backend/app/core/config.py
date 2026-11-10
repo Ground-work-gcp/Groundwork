@@ -1,0 +1,134 @@
+"""One configuration for the whole backend, read from the environment (``.env.example``).
+
+Every external integration has an explicit backend switch with a local default, so local
+development needs no credentials and nothing silently pretends to be a cloud service.
+"""
+
+from __future__ import annotations
+
+from functools import lru_cache
+from pathlib import Path
+from typing import Literal
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT = Path(__file__).resolve().parents[2]  # backend/
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=(str(ROOT.parent / ".env"), str(ROOT / ".env")),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    environment: Literal["development", "test", "production"] = "development"
+    service_name: str = "groundwork"
+
+    # PostgreSQL on Cloud SQL in production, e.g.
+    #   postgresql+psycopg://groundwork:<pw>@/groundwork?host=/cloudsql/<project>:<region>:<instance>
+    # SQLite is the zero-setup local default.
+    database_url: str = f"sqlite:///{(ROOT / 'var' / 'groundwork.db').as_posix()}"
+
+    jwt_secret: str = "dev-only-insecure-secret-change-me-0000000"
+    jwt_ttl_minutes: int = 12 * 60
+    cookie_name: str = "gw_session"
+    cookie_secure: bool | None = None
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    public_base_url: str = "http://localhost:5173"
+
+    # ── storage ────────────────────────────────────────────────────────────
+    storage_backend: Literal["local", "gcs"] = "local"
+    local_storage_dir: str = str(ROOT / "var" / "storage")
+    gcs_bucket: str = ""
+
+    # ── Google Cloud project (application default credentials / Workload Identity) ─
+    gcp_project: str = ""
+    gcp_location: str = "us-central1"
+
+    # ── document extraction ────────────────────────────────────────────────
+    extraction_backend: Literal["local", "documentai"] = "local"
+    documentai_location: str = "us"
+    documentai_processor_id: str = ""
+
+    # ── generative AI (Gemini on Vertex AI) ────────────────────────────────
+    ai_backend: Literal["none", "vertex"] = "none"
+    gemini_model: str = "gemini-2.5-flash"
+
+    # ── PII (Sensitive Data Protection) ────────────────────────────────────
+    pii_backend: Literal["local", "dlp"] = "local"
+
+    # ── workflow safety ────────────────────────────────────────────────────
+    workflow_execution_enabled: bool = True
+    require_separate_approver: bool = True
+    action_ttl_days: int = 14
+
+    notify_webhook_url: str = ""
+    # HMAC-SHA256 key for signing outbound webhooks and verifying scheduler calls (Secret Manager).
+    webhook_signing_secret: str = ""
+    max_upload_mb: int = 25
+    frontend_dist: str = str(ROOT.parent / "frontend" / "dist")
+
+    # ── database pool (Cloud SQL connection limits are per instance; keep this × max instances below them)
+    db_pool_size: int = 5
+    db_max_overflow: int = 5
+    db_pool_timeout_seconds: int = 10
+    db_connect_timeout_seconds: int = 10
+    db_statement_timeout_ms: int = 30_000
+
+    # ── provider limits (every external call is bounded) ──────────────────
+    provider_timeout_seconds: float = 60.0
+    provider_attempts: int = 3
+    documentai_max_mb: int = 20          # online (synchronous) processing limit
+    documentai_max_pages: int = 15       # OCR processor online page limit
+    gemini_max_output_tokens: int = 2048
+    gemini_max_prompt_chars: int = 60_000
+    assistant_rate_per_minute: int = 20
+
+    log_json: bool | None = None         # default: JSON in production, text locally
+    log_level: str = "INFO"
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @property
+    def json_logs(self) -> bool:
+        return self.environment == "production" if self.log_json is None else self.log_json
+
+    @property
+    def secure_cookies(self) -> bool:
+        return self.environment == "production" if self.cookie_secure is None else self.cookie_secure
+
+    def validate_runtime(self) -> None:
+        """Refuse to start production on development defaults."""
+        if self.environment != "production":
+            return
+        problems: list[str] = []
+        if self.jwt_secret.startswith("dev-only") or len(self.jwt_secret) < 32:
+            problems.append("JWT_SECRET must be set to a random value of at least 32 characters")
+        if self.database_url.startswith("sqlite"):
+            problems.append("DATABASE_URL must point at PostgreSQL (Cloud SQL) in production")
+        if self.storage_backend == "gcs" and not self.gcs_bucket:
+            problems.append("GCS_BUCKET is required when STORAGE_BACKEND=gcs")
+        if self.extraction_backend == "documentai" and not (self.gcp_project and self.documentai_processor_id):
+            problems.append("GCP_PROJECT and DOCUMENTAI_PROCESSOR_ID are required for Document AI")
+        if self.ai_backend == "vertex" and not self.gcp_project:
+            problems.append("GCP_PROJECT is required for Gemini on Vertex AI")
+        if self.pii_backend == "dlp" and not self.gcp_project:
+            problems.append("GCP_PROJECT is required for Sensitive Data Protection")
+        if self.storage_backend != "gcs":
+            problems.append("STORAGE_BACKEND must be gcs in production (local disk on Cloud Run is ephemeral)")
+        if any(origin == "*" for origin in self.cors_origin_list):
+            problems.append("CORS_ORIGINS must not be '*' when credentials are allowed")
+        if self.cookie_secure is False:
+            problems.append("COOKIE_SECURE must not be false in production")
+        if self.notify_webhook_url and not self.notify_webhook_url.startswith("https://"):
+            problems.append("NOTIFY_WEBHOOK_URL must use https")
+        if problems:
+            raise RuntimeError("Invalid production configuration: " + "; ".join(problems))
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()

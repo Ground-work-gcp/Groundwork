@@ -1,0 +1,53 @@
+# Staging deploy on main via Workload Identity Federation (no JSON keys), plus a manual,
+# reviewer-gated production promotion. Cloud Build (infra/cloudbuild.yaml) does the work; this
+# workflow only authenticates and triggers it, so there is a single deployment system.
+#
+# Repository secrets (printed by infra/scripts/bootstrap.ps1 -GitHubRepo owner/name):
+#   GCP_PROJECT_ID, GCP_WIF_PROVIDER, GCP_DEPLOYER_SA, GCP_SQL_INSTANCE
+# Create a GitHub environment "production" with required reviewers before using "promote".
+name: deploy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      promote_digest:
+        description: "Image digest to promote to production (…@sha256:…). Leave empty to deploy staging only."
+        required: false
+permissions:
+  contents: read
+  id-token: write
+concurrency: { group: deploy, cancel-in-progress: false }
+jobs:
+  staging:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: build, verify, migrate staging, deploy staging, health-check
+        run: |
+          gcloud builds submit --project "${{ secrets.GCP_PROJECT_ID }}" --config infra/cloudbuild.yaml \
+            --substitutions "_INSTANCE=${{ secrets.GCP_SQL_INSTANCE }},SHORT_SHA=${GITHUB_SHA::7}"
+  promote:
+    if: github.event_name == 'workflow_dispatch' && inputs.promote_digest != ''
+    runs-on: ubuntu-latest
+    environment: production        # required reviewers approve here
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: promote the verified digest
+        shell: pwsh
+        run: |
+          # promote.ps1 asks for a typed confirmation; in CI the GitHub environment review is that confirmation.
+          $d = "${{ inputs.promote_digest }}"
+          ./infra/scripts/promote.ps1 -ProjectId "${{ secrets.GCP_PROJECT_ID }}" -ImageDigest $d -Confirmation "promote $($d.Substring($d.Length - 12))"

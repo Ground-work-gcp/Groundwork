@@ -1,0 +1,99 @@
+# Groundwork — the ONE build-and-deploy pipeline (staging).
+#
+#   gcloud builds submit --config infra/cloudbuild.yaml \
+#     --substitutions=_REGION=us-central1,_INSTANCE=PROJECT:us-central1:groundwork-pg,SHORT_SHA=$(git rev-parse --short HEAD)
+#
+# Triggered by .github/workflows/deploy.yml (Workload Identity Federation) on pushes to main.
+# It verifies, builds one image, migrates the STAGING database, deploys the STAGING service and
+# checks it. Production is never touched here: it is promoted from an already-verified image
+# digest by infra/scripts/promote.ps1 (or the "promote" workflow, behind a GitHub environment
+# with required reviewers).
+substitutions:
+  _REGION: us-central1
+  _REPO: groundwork
+  _ENV: staging
+  _SERVICE: groundwork-staging
+  _INSTANCE: ""
+  _RUNTIME_SA: groundwork-run
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_MEDIUM
+timeout: 1800s
+
+steps:
+  - id: backend-verify
+    name: python:3.13-slim
+    dir: backend
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        pip install -q '.[dev,postgres,gcp]' pip-audit
+        ruff check app tests
+        python -m pytest -q
+        pip-audit --strict --progress-spinner off || (echo "dependency vulnerabilities found" && exit 1)
+
+  - id: frontend-verify
+    name: node:20.18-slim
+    dir: frontend
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        npm ci --no-fund
+        npm run typecheck
+        npm run build
+        npm audit --omit=dev --audit-level=high
+    waitFor: ["-"]
+
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args: ["build", "-t", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/groundwork:$SHORT_SHA", "."]
+    waitFor: ["backend-verify", "frontend-verify"]
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ["push", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/groundwork:$SHORT_SHA"]
+
+  - id: migrate-staging
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        gcloud run jobs deploy groundwork-migrate-${_ENV} --region ${_REGION} \
+          --image ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/groundwork:$SHORT_SHA \
+          --set-cloudsql-instances ${_INSTANCE} \
+          --service-account ${_RUNTIME_SA}@$PROJECT_ID.iam.gserviceaccount.com \
+          --set-secrets DATABASE_URL=groundwork-database-url-${_ENV}:latest,JWT_SECRET=groundwork-jwt-secret:latest \
+          --set-env-vars ENVIRONMENT=test \
+          --command alembic --args upgrade,head --max-retries 0 --task-timeout 600s
+        gcloud run jobs execute groundwork-migrate-${_ENV} --region ${_REGION} --wait
+
+  - id: deploy-staging
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        sed -e "s|__IMAGE__|${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/groundwork:$SHORT_SHA|" \
+            -e "s|__PROJECT__|$PROJECT_ID|g" -e "s|__INSTANCE__|${_INSTANCE}|g" -e "s|__REGION__|${_REGION}|g" \
+            -e "s|__SERVICE__|${_SERVICE}|g" -e "s|__ENV__|${_ENV}|g" -e "s|__SA__|${_RUNTIME_SA}|g" \
+            infra/cloudrun-service.yaml > /workspace/service.yaml
+        gcloud run services replace /workspace/service.yaml --region ${_REGION}
+
+  - id: health-check
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        url=$(gcloud run services describe ${_SERVICE} --region ${_REGION} --format 'value(status.url)')
+        for i in $(seq 1 12); do
+          code=$(curl -s -o /tmp/ready.json -w '%{http_code}' "$url/ready" || true)
+          [ "$code" = "200" ] && { cat /tmp/ready.json; echo; echo "staging ready at $url"; exit 0; }
+          sleep 10
+        done
+        echo "staging /ready did not return 200 (last: $code)"; cat /tmp/ready.json || true; exit 1
+
+images: ["${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/groundwork:$SHORT_SHA"]
