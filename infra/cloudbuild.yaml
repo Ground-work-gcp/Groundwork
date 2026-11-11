@@ -28,10 +28,11 @@ steps:
     args:
       - -ceu
       - |
-        pip install -q '.[dev,postgres,gcp]' pip-audit
+        pip install -q -e '.[dev,postgres,gcp]' pip-audit
         ruff check app tests
         python -m pytest -q
-        pip-audit --strict --progress-spinner off || (echo "dependency vulnerabilities found" && exit 1)
+        pip freeze --exclude-editable > /tmp/locked.txt
+        pip-audit --strict --progress-spinner off --no-deps --disable-pip -r /tmp/locked.txt || (echo "dependency vulnerabilities found" && exit 1)
 
   - id: daml-verify
     # Compile the shared approval contracts and run their Daml Script tests (SDK pinned in daml.yaml).
@@ -47,7 +48,7 @@ steps:
     waitFor: ["-"]
 
   - id: frontend-verify
-    name: node:20.18-slim
+    name: node:22-slim
     dir: frontend
     entrypoint: bash
     args:

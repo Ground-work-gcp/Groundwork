@@ -2,7 +2,7 @@
 # The same image runs the migration job (alembic) and the scheduled jobs (python -m app.jobs).
 # Build:  docker build -t groundwork .      (or Cloud Build: infra/cloudbuild.yaml)
 
-FROM node:20.18-slim AS web
+FROM node:22-slim AS web
 WORKDIR /web
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund

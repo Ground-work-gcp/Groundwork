@@ -16,25 +16,29 @@ jobs:
         options: --health-cmd pg_isready --health-interval 5s --health-retries 10
     defaults: { run: { working-directory: backend } }
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with: { python-version: "3.13" }
-      - run: pip install -q '.[dev,postgres,gcp]' pip-audit
+      - run: pip install -q -e '.[dev,postgres,gcp]' pip-audit
       - run: ruff check app tests
       - name: tests (SQLite)
         run: python -m pytest -q
       - name: tests (PostgreSQL 16)
         run: python -m pytest -q
         env: { GROUNDWORK_TEST_DATABASE_URL: "postgresql+psycopg://postgres:postgres@localhost:5432/groundwork_test" }
+      # Audit the exact installed third-party set. The project itself is not on PyPI, so it is
+      # excluded (editable install); --strict still fails on any dependency that can't be audited.
       - name: dependency audit
-        run: pip-audit --strict --progress-spinner off
+        run: |
+          pip freeze --exclude-editable > "$RUNNER_TEMP/locked.txt"
+          pip-audit --strict --progress-spinner off --no-deps --disable-pip -r "$RUNNER_TEMP/locked.txt"
   frontend:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: frontend } }
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: "20", cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with: { node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json }
       - run: npm ci --no-fund
       - run: npm run typecheck
       - run: npm run build
@@ -43,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend, frontend]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: build the production image (not pushed)
         run: docker build -t groundwork:ci .
       - name: container starts and answers /health as non-root

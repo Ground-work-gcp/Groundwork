@@ -19,32 +19,61 @@ permissions:
   id-token: write
 concurrency: { group: deploy, cancel-in-progress: false }
 jobs:
+  # Until bootstrap.ps1 has been run and its secrets added, pushes to main skip the deploy with a
+  # notice instead of failing. Secrets can't be read in job-level `if`, so a tiny job reports it.
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - id: check
+        env:
+          WIF: ${{ secrets.GCP_WIF_PROVIDER }}
+          SA: ${{ secrets.GCP_DEPLOYER_SA }}
+          PROJECT: ${{ secrets.GCP_PROJECT_ID }}
+          SQL: ${{ secrets.GCP_SQL_INSTANCE }}
+        run: |
+          missing=""
+          for v in WIF SA PROJECT SQL; do [ -n "${!v}" ] || missing="$missing $v"; done
+          if [ -n "$missing" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Deploy skipped::Google Cloud is not connected yet. Add repository secrets GCP_PROJECT_ID, GCP_WIF_PROVIDER, GCP_DEPLOYER_SA, GCP_SQL_INSTANCE (printed by infra/scripts/bootstrap.ps1). See docs/deployment/google-cloud-setup.md."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
   staging:
-    if: github.event_name == 'push'
+    needs: preflight
+    if: github.event_name == 'push' && needs.preflight.outputs.configured == 'true'
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v2
+      - uses: actions/checkout@v6
+      - uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_DEPLOYER_SA }}
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
       - name: build, verify, migrate staging, deploy staging, health-check
         run: |
           gcloud builds submit --project "${{ secrets.GCP_PROJECT_ID }}" --config infra/cloudbuild.yaml \
             --substitutions "_INSTANCE=${{ secrets.GCP_SQL_INSTANCE }},SHORT_SHA=${GITHUB_SHA::7}"
   promote:
+    needs: preflight
     if: github.event_name == 'workflow_dispatch' && inputs.promote_digest != ''
     runs-on: ubuntu-latest
     environment: production        # required reviewers approve here
     steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v2
+      - name: require Google Cloud secrets
+        if: needs.preflight.outputs.configured != 'true'
+        run: |
+          echo "::error::Cannot promote: Google Cloud secrets are not configured (see docs/deployment/google-cloud-setup.md)."
+          exit 1
+      - uses: actions/checkout@v6
+      - uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_DEPLOYER_SA }}
-      - uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v3
       - name: promote the verified digest
         shell: pwsh
         run: |
