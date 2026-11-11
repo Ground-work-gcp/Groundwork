@@ -57,11 +57,24 @@ const q = (params: Record<string, string | undefined | null>) => {
   return s ? `?${s}` : "";
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type StudioResult = Record<string, any>;
+const STUDIO = {
+  requirements: (b: unknown) => post<StudioResult>(`/studio/requirements`, b),
+  stack: (b: unknown) => post<StudioResult>(`/studio/stack`, b),
+  architecture: (b: unknown) => post<StudioResult>(`/studio/architecture`, b),
+  scaffold: (b: unknown) => post<StudioResult>(`/studio/scaffold`, b),
+  stories: (b: unknown) => post<StudioResult>(`/studio/stories`, b),
+  "code-health": (b: unknown) => post<StudioResult>(`/studio/code-health`, b),
+  visualize: (b: unknown) => post<StudioResult>(`/studio/visualize`, b),
+  tests: (b: unknown) => post<StudioResult>(`/studio/tests`, b),
+};
+export type StudioTool = keyof typeof STUDIO;
+
 export const api = {
   // engineering studio
   studioStatus: () => get<{ ai: { backend: string; model: string | null; configured: boolean }; tools: string[] }>(`/studio/status`),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  studio: (tool: string, body: unknown) => post<Record<string, any>>(`/studio/${tool}`, body),
+  studio: (tool: StudioTool, body: unknown) => STUDIO[tool](body),
   health: () => get<T.Health>(`/health`),
   // auth
   me: () => get<{ user: T.Me }>(`/auth/me`),
