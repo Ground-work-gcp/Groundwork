@@ -15,7 +15,7 @@ Built by **[vsrupeshkumar](https://github.com/vsrupeshkumar)** for the **Google 
 ![PostgreSQL](https://img.shields.io/badge/Cloud_SQL-PostgreSQL_16-4169E1?logo=postgresql&logoColor=white)
 ![Google Cloud](https://img.shields.io/badge/Google_Cloud-Cloud_Run-4285F4?logo=googlecloud&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini-Vertex_AI-8E75B2?logo=googlegemini&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-131_passing-success)
+![Tests](https://img.shields.io/badge/tests-141_passing-success)
 
 [The problem](#-the-problem) · [What it does](#-what-groundwork-does) · [How it works](#-how-it-works-step-by-step) · [Architecture](#%EF%B8%8F-architecture) · [Google Cloud](#%EF%B8%8F-built-on-google-cloud) · [Run it](#-run-it-locally) · [Deploy](#-deploy-to-google-cloud)
 
@@ -74,7 +74,10 @@ The same evidence-first approach, applied to **farm land that is too unclear to 
 | 🗣️ | **Explained in Tamil / Hindi** | The family's own records explained in their language, for free |
 | 💸 | **Following the money** | Rupees and days spent, unreceipted payments, excess over official fees, and the premium paid to moneylenders |
 | 🔎 | **Field research** | The six field questions answered from field visits *and* from the organisation's cases, side by side |
-| 🤖 | **Land case agent** | Plans and runs all of the above, audited as AI; hands off what only people and offices can do; proposes, never executes |
+| 🧭 | **Land lifecycle** | Its own stages — plot, records, reconciled, heirs, consent, mutation, lender-ready — gated on the case's records, with its own Flow graph and Needs-you items |
+| 🏛️ | **Office proceedings** | Legal heir certificate, mutation, EC, survey, appeal, mediation tracked as the office processes them: dated events, objection windows, indicative service timelines, overdue/stalled detection, and drafted escalations up the chain |
+| 🛤️ | **Family pathways** | Joint mutation vs. release to the farming heir vs. partition vs. a collateral-free bridge loan — days, fees, stamp duty, signatures, and borrowing power per heir, side by side |
+| 🤖 | **Land case agent** | Plans and runs all of the above, drafts the office applications, watches their timelines, audited as AI; hands off what only people and offices can do; proposes, never executes |
 
 Details, and how every line of the brief maps to code: [`docs/land/rural-india.md`](docs/land/rural-india.md).
 

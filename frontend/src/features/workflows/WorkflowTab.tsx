@@ -31,7 +31,7 @@ export function WorkflowTab({ c }: { c: CaseCtx }) {
           {c.can("action:propose") && c.detail.case.status === "open" ? (
             <div className="stack small">
               {c.detail.case.stage === "review" ? <button className="btn" disabled={busy} onClick={() => void propose("case.advance_stage", { to_stage: "resolution" }, "Proposed: move to resolution")}>Propose: move to resolution</button> : null}
-              {c.detail.case.stage === "resolution" ? (
+              {c.detail.case.stage === (c.detail.stages[c.detail.stages.length - 2]?.key ?? "resolution") ? (
                 <div className="row">
                   <input className="input" style={{ maxWidth: 360 }} placeholder="written resolution" value={resolution} onChange={(e) => setResolution(e.target.value)} />
                   <button className="btn" disabled={busy || !resolution.trim()} onClick={() => void propose("case.resolve", { resolution }, "Proposed: resolve the case")}>Propose: resolve</button>
@@ -46,7 +46,7 @@ export function WorkflowTab({ c }: { c: CaseCtx }) {
                   action {a.seq}: {a.summary ?? a.action} <StatusPill status={a.status} />
                 </div>
                 <div className="small dim">
-                  {a.proposed_by_kind === "system" ? "proposed by detection rules" : `proposed by ${names[a.proposed_by_id ?? ""] ?? "—"}`} · {formatStamp(a.created_at)}
+                  {a.proposed_by_kind === "system" ? (a.rationale?.includes("readiness") ? "proposed by the land case agent" : "proposed by detection rules") : `proposed by ${names[a.proposed_by_id ?? ""] ?? "—"}`} · {formatStamp(a.created_at)}
                   {a.rationale ? ` · ${a.rationale}` : ""}
                 </div>
                 {a.status === "proposed" ? <div className="small">awaiting approval: <span className="phrase">{a.confirmation_phrase}</span> on the <a href="#approvals">Approvals</a> page</div> : null}

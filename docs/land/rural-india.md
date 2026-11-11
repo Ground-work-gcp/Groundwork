@@ -29,6 +29,44 @@ in the app as the **Land records** case tab and the **Field** page.
 | Disputes that run for years; moneylenders | The **cost ledger** records rupees and days, receipted or not, flags payments above the official fee, and prices informal loans against the formal rate | `money.py` |
 | Agentic AI | The **land case agent** plans over an allowlisted toolset, runs the deterministic engines, records each step in the audit chain as `actor_kind = ai`, turns what only people can do into **hand-offs**, and *proposes* (never executes) evidence requests for the critical path | `agent.py` |
 
+## The workflow, as it happens in the field
+
+A land case (`kind = rural_land`) has its own lifecycle, and every gate is computed from the case:
+
+| Stage | Done when |
+|---|---|
+| Plot and family | survey number entered and at least one family member or the recorded holder |
+| Records gathered | record of rights, survey sketch and encumbrance certificate on file |
+| Records reconciled | compared, and every name/extent/survey/boundary difference acknowledged with (or resolved by) the office |
+| Heirs and shares | draft shares computed — or no deceased holder |
+| Co-heir consent | **signed** consent from every living co-owner, no objection (an online "yes" is intent, not consent an office can file) |
+| Mutation recorded | the mutation proceeding has an order — or the record shows living holders |
+| Lender-ready | readiness verdict *ready* for the chosen lender, or an active land credit passport |
+| Verified case history | resolved through a two-person approval |
+
+**Office proceedings** (`domain/land/proceedings.py`) model each application — legal heir certificate,
+mutation, EC, survey, name correction, appeal, grievance, DLSA mediation — as the office processes it:
+filed → field verification → objection window → hearing → order. Status moves only on dated events.
+Each file carries the region's indicative service timeline and objection window, a health signal
+(on track · at risk · overdue · stalled · done), and who it is waiting on (the office, the family,
+the notice period, a hearing date). An overdue or stalled file gets a drafted representation to the
+next authority — RDO/SDO/SDM/Assistant Commissioner (citing the state's right-to-services law where
+one exists), then the Collector, then the state grievance portal — and the escalation is itself
+tracked as a child proceeding. A filing check lists what the office will ask for before filing.
+An objection proposes free pre-litigation mediation through the District Legal Services Authority.
+
+**Family pathways** (`domain/land/pathways.py`) compare the real routes once heirs are known — joint
+mutation, release deeds to the heir who farms the land, registered partition with survey subdivision,
+and a collateral-free crop loan as a bridge — each as a scheduled dependency graph with fees, stamp
+duty and registration fees on the guideline value transferred, the signatures required (and who must
+travel or give a power of attorney), borrowing capacity per heir after the route's fixes, what each
+releasing heir gives up, and a transparent weighted score. The family decides.
+
+The **Flow** graph for a land case is its own DAG (documents → records → concordance; family →
+shares → consents → proceedings → mutation → readiness), with the critical path and a Dijkstra
+least-effort route that includes the collateral-free crop loan as an alternative edge. Overdue
+files, objections and co-heir questions appear in **Needs you**.
+
 ## The six field questions
 
 The **Field** page records field visits against the six questions and answers each one twice —

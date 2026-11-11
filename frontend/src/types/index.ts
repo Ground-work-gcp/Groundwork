@@ -4,7 +4,7 @@ export interface User { id: string; username: string; full_name: string; email: 
 export interface Me extends User { organization: { id: string; name: string }; permissions: string[] }
 export interface Health { ok: boolean; service: string; version: string; environment: string; database: { ok: boolean; dialect?: string }; storage: string; extraction: string; ai: string; pii: string }
 
-export interface Case { id: string; reference: string; title: string; description: string; stage: string; status: string; resolution_summary: string; assigned_to_id: string | null; detection_ran_at: string | null; created_at: string; updated_at: string; resolved_at: string | null }
+export interface Case { id: string; reference: string; kind?: string; title: string; description: string; stage: string; status: string; resolution_summary: string; assigned_to_id: string | null; detection_ran_at: string | null; created_at: string; updated_at: string; resolved_at: string | null }
 export interface Property { id: string; case_id: string; address_line: string; city: string; county: string; state: string; postal_code: string; parcel_number: string; legal_description: string }
 export interface CaseRow extends Case { property: Property | null; findings_open: number }
 export interface PropertyRow extends Property { case: { id: string; reference: string; title: string; stage: string; status: string } }
@@ -12,7 +12,7 @@ export interface Party { id: string; name: string; party_type: string; roles: st
 export interface Stage { key: string; label: string }
 export interface Gate { stage: string; done: boolean; detail: string }
 export interface MoneySummary { obligations_total_cents: number; confirmed_paid_cents: number; outstanding_cents: number; unverified_cents: number; obligation_count?: number }
-export interface CaseDetail { case: Case; property: Property | null; parties: Party[]; stages: Stage[]; checklist: Gate[]; counts: Record<string, number>; financials: MoneySummary }
+export interface CaseDetail { case: Case; property: Property | null; parties: Party[]; stages: Stage[]; checklist: Gate[]; counts: Record<string, number>; financials: MoneySummary; land?: { region: string | null; district?: string; taluk?: string; village?: string; survey?: string; extent?: string; holder?: string } | null }
 
 export interface Doc { id: string; filename: string; content_type: string; size_bytes: number; sha256: string; storage_uri: string; doc_type: string; doc_type_source: string; status: string; page_count: number; extraction_engine: string; extraction_error: string; pii_summary: { engine?: string; total?: number; by_type?: Record<string, number> }; ai_extraction: { status?: string; accepted?: number; rejected?: unknown[] }; created_at: string; fact_count?: number }
 export interface Page { page_number: number; text: string; confidence: number | null }
@@ -82,7 +82,7 @@ export interface LandRecord {
 export interface FamilyMember {
   id: string; name: string; sex: string; is_alive: boolean; date_of_death: string | null; parent_ids: string[]; spouse_ids: string[];
   is_recorded_holder: boolean; lives_in_village: boolean; location: string; consent_status: string; consent_note: string; consent_at: string | null;
-  consent_link_active: boolean;
+  consent_link_active: boolean; consent_evidence: string; consent_document_id: string | null;
 }
 export interface Analysis<R = Record<string, unknown>> { id: string; kind: string; created_at: string; result_hash: string; inputs: Record<string, unknown>; result: R }
 export interface LandIssue {
@@ -95,7 +95,7 @@ export interface Concordance {
   rows: Array<{ attribute: string; cells: Array<{ record_id: string; value: string; status: string }> }>;
   boundary_edges: Array<{ direction: string; neighbour: string; status: string; detail: string }>; ec_years: number; deceased_holders: string[]; holders: string[];
 }
-export interface Share { member_id: string; name: string; share: string; value: number; alive: boolean; lives_in_village: boolean; consent_status: string }
+export interface Share { member_id: string; name: string; share: string; value: number; alive: boolean; lives_in_village: boolean; consent_status: string; consent_evidence?: string }
 export interface Succession {
   status: string; law?: string; law_name?: string; holder?: string; shares: Share[]; total?: string;
   steps: Array<{ date: string; person: string; held: string; rule: string; text: string }>; assumptions: string[]; warnings: string[];
@@ -157,3 +157,31 @@ export interface ConsentView {
   name: string; plot: { survey_number: string; village: string; taluk: string; region: string }; recorded_holder: string; law: string | null;
   your_share: string | null; co_owners: Array<{ name: string; share: string }>; how: string[]; status: string; letter: string; disclaimer: string; what_consent_means: string;
 }
+
+export interface ProceedingHealth {
+  status_label: string; flow: Array<{ status: string; label: string; reached: boolean }>; elapsed_days: number; sla_days: number; due_on: string | null;
+  days_left: number | null; last_event_days: number | null; progress: number; signal: string; waiting_on: string; overdue_days?: number;
+  objection_days_left?: number; objection?: boolean;
+}
+export interface ProceedingEvent { id: string; event_date: string; kind: string; note: string; document_id: string | null; status_after: string; created_at: string }
+export interface Proceeding {
+  id: string; kind: string; label: string; office: string; application_no: string; status: string; filed_on: string | null; sla_days: number; due_on: string | null;
+  objection_until: string | null; hearing_on: string | null; decided_on: string | null; outcome: string; parent_id: string | null; escalation_level: number;
+  applicants: string[]; notes: string; events: ProceedingEvent[]; health: ProceedingHealth;
+}
+export interface ProceedingsPayload {
+  proceedings: Proceeding[]; kinds: Record<string, { label: string; flow: string[]; office: string; sla_days: number }>; status_labels: Record<string, string>;
+  event_kinds: string[]; region: { code: string; objection_days: number; appellate_office: string; collector: string; grievance_portal: string; rts_law: string; online: string }; note: string;
+}
+export interface RouteStep { id: string; name: string; office: string; days: number; fee_inr: number; needs: string[]; start_day: number; finish_day: number; critical: boolean }
+export interface Route {
+  id: string; label: string; summary: string; steps: RouteStep[]; days: number; cost_inr: number; duty_inr: number; signatures: string[]; away_signatures: string[];
+  borrower: string; capacity_inr: number; per_heir: Array<{ name: string; capacity_inr: number; share?: string; area_sqm?: number; below_min_plot?: boolean }>;
+  value_transfers: Array<{ from: string; share: string; market_value_inr: number; guideline_value_inr: number; stamp_inr: number; registration_inr: number }>;
+  fair_settlement_inr?: number; risks: string[]; score?: number; score_parts?: Record<string, number>; recommended?: boolean; bridge?: boolean;
+}
+export interface Pathways {
+  status: string; reason?: string; routes: Route[]; weights: Record<string, number>; beneficiary: { name: string; why: string } | null;
+  lending_value_after_fix_inr: number; first_rupee_days: number; assumptions: string[]; disclaimer: string;
+}
+export interface Journey { stage: string; status: string; stages: Stage[]; checklist: Gate[]; proceedings: Proceeding[]; next_action: { node: string; label: string; step: string; href: string; remaining: number } | null; critical_path: string[]; needs_you: NeedsItem[] }

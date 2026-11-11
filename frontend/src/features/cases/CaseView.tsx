@@ -13,6 +13,7 @@ import { CaseFindings } from "../risk-analysis/Findings";
 import { WorkflowTab } from "../workflows/WorkflowTab";
 import { FlowCanvas } from "../flow/FlowCanvas";
 import { LandTab } from "../land/LandTab";
+import { Journey } from "../land/LandWorkflow";
 
 export interface CaseCtx extends Ctx {
   caseId: string;
@@ -26,6 +27,8 @@ export function CaseView({ ctx, caseId, tab, item }: { ctx: Ctx; caseId: string;
   if (!d) return <main className="main route-in">{q.error ? <Empty title="Case not found.">{q.error}</Empty> : <p className="faint">Loading…</p>}</main>;
   const cctx: CaseCtx = { ...ctx, caseId, detail: d, refresh: () => void q.refresh() };
   const current = d.stages.findIndex((s) => s.key === d.case.stage);
+  const land = d.case.kind === "rural_land";
+  const tabs = CASE_TABS.filter((t) => (land ? !["ownership", "financials"].includes(t.key) : t.key !== "land"));
   return (
     <main className="main route-in">
       <div className="page-h">
@@ -35,7 +38,9 @@ export function CaseView({ ctx, caseId, tab, item }: { ctx: Ctx; caseId: string;
         </div>
         <h1 className="display">{d.case.title}</h1>
         <p className="lede">
-          {[d.property?.address_line, d.property?.county && `${d.property.county} County`, d.property?.state, d.property?.parcel_number && `parcel ${d.property.parcel_number}`].filter(Boolean).join(" · ")}
+          {land && d.land
+            ? [d.land.survey && `S.No. ${d.land.survey}`, d.land.village && `${d.land.village} village`, d.land.taluk && `${d.land.taluk} taluk`, d.land.district, d.land.region, d.land.extent].filter(Boolean).join(" · ")
+            : [d.property?.address_line, d.property?.county && `${d.property.county} County`, d.property?.state, d.property?.parcel_number && `parcel ${d.property.parcel_number}`].filter(Boolean).join(" · ")}
         </p>
       </div>
       <ol className="stepper" aria-label="Case stages">
@@ -51,7 +56,7 @@ export function CaseView({ ctx, caseId, tab, item }: { ctx: Ctx; caseId: string;
         })}
       </ol>
       <nav className="tabs" aria-label="Case sections">
-        {CASE_TABS.map((t) => (
+        {tabs.map((t) => (
           <a key={t.key} href={`#case/${caseId}/${t.key}`} className={tab === t.key ? "on" : ""}>
             {t.label}
             {t.key === "findings" && d.counts.findings_open ? <span className="count">{d.counts.findings_open}</span> : null}
@@ -83,6 +88,34 @@ export function CaseView({ ctx, caseId, tab, item }: { ctx: Ctx; caseId: string;
 }
 
 function CaseOverview({ c }: { c: CaseCtx }) {
+  if (c.detail.case.kind === "rural_land") {
+    return (
+      <div className="stack">
+        <Journey c={c} rail={false} />
+        <LandBasics c={c} />
+      </div>
+    );
+  }
+  return <HeirsOverview c={c} />;
+}
+
+function LandBasics({ c }: { c: CaseCtx }) {
+  const d = c.detail;
+  const next = d.stages[d.stages.findIndex((s) => s.key === d.case.stage) + 1];
+  const { busy, error, run } = useAction(c.toast);
+  return (
+    <Panel title="Stage" meta={label(d.case.stage)}>
+      <p className="dim small">{d.checklist.find((g) => g.stage === d.case.stage)?.detail}</p>
+      {next && next.key !== "resolved" && c.can("case:write") && d.case.status === "open" ? (
+        <button className="btn" disabled={busy} onClick={async () => { if (await run(() => api.moveStage(c.caseId, next.key), `Moved to ${next.label}`)) c.refresh(); }}>Advance to {next.label}</button>
+      ) : next ? <p className="faint small">Closing the case is an approved action — see Workflow.</p> : null}
+      <ErrorLine error={error} />
+      <p className="faint small">{d.case.description}</p>
+    </Panel>
+  );
+}
+
+function HeirsOverview({ c }: { c: CaseCtx }) {
   const d = c.detail;
   const [question, setQuestion] = useState("");
   const qs = usePoll(() => api.questions(c.caseId), 60_000, [c.caseId], true);
@@ -92,15 +125,17 @@ function CaseOverview({ c }: { c: CaseCtx }) {
   return (
     <div className="split">
       <div className="stack">
-        <div className="money-band">
-          <Tile i={0} n={d.financials.obligations_total_cents} l="obligations recorded" fmt={usd} />
-          <Tile i={1} n={d.financials.confirmed_paid_cents} l="confirmed paid" fmt={usd} />
-          <Tile i={2} n={d.financials.outstanding_cents} l="outstanding" fmt={usd} />
-          <Tile i={3} n={d.financials.unverified_cents} l="unverified" fmt={usd} moon />
-        </div>
+        {d.case.kind === "rural_land" ? null : (
+          <div className="money-band">
+            <Tile i={0} n={d.financials.obligations_total_cents} l="obligations recorded" fmt={usd} />
+            <Tile i={1} n={d.financials.confirmed_paid_cents} l="confirmed paid" fmt={usd} />
+            <Tile i={2} n={d.financials.outstanding_cents} l="outstanding" fmt={usd} />
+            <Tile i={3} n={d.financials.unverified_cents} l="unverified" fmt={usd} moon />
+          </div>
+        )}
         <Panel title="Stage" meta={label(d.case.stage)}>
           <p className="dim small">{d.checklist.find((g) => g.stage === d.case.stage)?.detail}</p>
-          {next && c.can("case:write") && d.case.status === "open" && !["resolution", "resolved"].includes(next.key) ? (
+          {next && c.can("case:write") && d.case.status === "open" && !(d.case.kind === "rural_land" ? ["resolved"] : ["resolution", "resolved"]).includes(next.key) ? (
             <button className="btn" disabled={busy} onClick={async () => { if (await run(() => api.moveStage(c.caseId, next.key), `Moved to ${next.label}`)) c.refresh(); }}>
               Advance to {next.label}
             </button>

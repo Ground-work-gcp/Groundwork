@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.domain import audit
 from app.domain.evidence import is_organization, normalize_name, normalize_parcel
 from app.domain.reconciliation.service import latest_run, summary
-from app.domain.workflows import APPROVAL_STAGES, STAGE_KEYS, can_advance
+from app.domain.workflows import STAGE_KEYS, approval_stages, can_advance, stage_keys
 from app.infrastructure.database.models import (
     AuditEvent,
     Case,
@@ -35,6 +35,7 @@ def create_case(
     description: str = "",
     prop: dict[str, str] | None = None,
     parties: list[dict[str, Any]] | None = None,
+    kind: str = "heirs_property",
 ) -> Case:
     org = db.scalar(select(Organization).where(Organization.id == actor.organization_id).with_for_update())
     assert org is not None
@@ -42,6 +43,7 @@ def create_case(
     case = Case(
         organization_id=org.id,
         reference=f"GW-{org.case_seq:04d}",
+        kind=kind,
         title=title.strip(),
         description=description.strip(),
         created_by_id=actor.id,
@@ -67,7 +69,7 @@ def create_case(
         add_party(db, case, party)
     audit.record(
         db, organization_id=org.id, event="case.created", actor=actor, case_id=case.id, entity_type="case", entity_id=case.id,
-        detail={"reference": case.reference, "title": case.title},
+        detail={"reference": case.reference, "title": case.title, "kind": case.kind},
     )
     return case
 
@@ -100,7 +102,8 @@ def add_party(db: Session, case: Case, data: dict[str, Any]) -> Party:
 
 def move_stage(db: Session, case: Case, actor: User, to_stage: str) -> Case:
     """Direct stage moves for staff; the approval stages must go through an approved action."""
-    if to_stage in APPROVAL_STAGES and STAGE_KEYS.index(to_stage) > STAGE_KEYS.index(case.stage):
+    keys = stage_keys(case)
+    if to_stage in approval_stages(case) and to_stage in keys and keys.index(to_stage) > keys.index(case.stage):
         raise StageError(f"moving to {to_stage} requires an approved action (case.advance_stage / case.resolve)")
     problem = can_advance(db, case, to_stage)
     if problem:
@@ -136,7 +139,7 @@ def overview(db: Session, organization_id: str) -> dict[str, Any]:
     )
     money = {"obligations_total_cents": 0, "confirmed_paid_cents": 0, "outstanding_cents": 0, "unverified_cents": 0}
     for case in cases:
-        if case.status != "open":
+        if case.status != "open" or case.kind == "rural_land":
             continue
         figures = summary(db, case, latest_run(db, case))
         for key in money:

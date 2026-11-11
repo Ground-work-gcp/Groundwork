@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 import httpx
@@ -76,6 +77,7 @@ def main() -> None:
 def seed_land_case(pat: httpx.Client) -> None:
     """A synthetic rural Tamil Nadu case: land still in a grandfather's name, five heirs, two of them away."""
     case = check(pat.post("/cases", json={
+        "kind": "rural_land",
         "title": "Ramasamy heirs — S.No. 123/4A, Keezhaiyur",
         "description": "The patta still shows Ramasamy (died 1987). Kannan wants a crop loan; a co-heir signed an agreement of sale in 2021.",
         "parties": [{"name": "Kannan", "roles": ["client", "heir"]}],
@@ -97,7 +99,7 @@ def seed_land_case(pat: httpx.Client) -> None:
         ("m", {"name": "Muthusamy", "sex": "male", "is_alive": False, "date_of_death": "2019-01-20", "parent_ids": ["r", "l"]}),
         ("v", {"name": "Valli", "sex": "female", "spouse_ids": ["m"]}),
         ("k", {"name": "Kannan", "sex": "male", "parent_ids": ["r", "l"], "lives_in_village": False, "location": "Chennai"}),
-        ("s", {"name": "Selvi", "sex": "female", "parent_ids": ["r", "l"], "consent_status": "consented"}),
+        ("s", {"name": "Selvi", "sex": "female", "parent_ids": ["r", "l"]}),
         ("a", {"name": "Arun", "sex": "male", "parent_ids": ["m", "v"]}),
         ("p", {"name": "Priya", "sex": "female", "parent_ids": ["m", "v"], "lives_in_village": False, "location": "Bengaluru"}),
     ]
@@ -123,6 +125,24 @@ def seed_land_case(pat: httpx.Client) -> None:
         "dispute_settlers": ["village elders (panchayat)", "VAO", "civil court"], "dispute_days_typical": 400, "family_spend_inr_typical": 18000,
         "family_days_typical": 25, "record_readers": ["document writer", "middleman at the taluk office"], "record_reading_fee_inr": 500,
     }))
+    # The family's dealings with offices so far (dated as they happened).
+    def ago(days: int) -> str:
+        return (date.today() - timedelta(days=days)).isoformat()
+
+    lhc = check(pat.post(f"/cases/{cid}/land/proceedings", json={
+        "kind": "legal_heir_certificate", "application_no": "LHC/ORA/2025/0412", "filed_on": ago(52), "applicants": ["Kannan", "Selvi", "Valli", "Arun", "Priya"],
+    }))["proceeding"]
+    check(pat.post(f"/land/proceedings/{lhc['id']}/events", json={"kind": "field_inspection", "event_date": ago(41), "note": "VAO enquiry with two neighbours as witnesses"}))
+    check(pat.post(f"/land/proceedings/{lhc['id']}/events", json={"kind": "follow_up", "event_date": ago(24), "note": "Told the file is with the Revenue Inspector"}))
+    ec = check(pat.post(f"/cases/{cid}/land/proceedings", json={"kind": "encumbrance_certificate", "application_no": "EC/2025/88123", "filed_on": ago(12)}))["proceeding"]
+    check(pat.post(f"/land/proceedings/{ec['id']}/events", json={"kind": "order_passed", "event_date": ago(9), "note": "EC issued for 2000–2025"}))
+    # Consents: Selvi signed a letter; Kannan agreed online; Priya asked for more information.
+    letter = check(pat.post(f"/cases/{cid}/documents", files={"file": ("consent-letter-selvi.txt", b"I, Selvi, consent to the land in S.No. 123/4A being recorded in the names of the legal heirs. Signed.", "text/plain")}))["document"]
+    check(pat.post(f"/land/members/{ids['s']}/consent-evidence", json={"consent_evidence": "signed_letter", "document_id": letter["id"]}))
+    public = httpx.Client(base_url=pat.base_url, timeout=60)
+    for key, decision in (("k", "consented"), ("p", "needs_info")):
+        token = check(pat.post(f"/land/members/{ids[key]}/consent-link"))["token"]
+        check(public.post(f"/public/consent/{token}", json={"decision": decision, "note": "Agreed on the phone" if decision == "consented" else "Why is my share 1/9?"}))
     agent = check(pat.post(f"/cases/{cid}/land/agent", json={"lender": "bank_crop_loan", "loan_amount_inr": 300000}))["run"]
     print(f"  agent: {len(agent['steps'])} steps, {len(agent['handoffs'])} hand-offs, proposed actions {agent['proposed_actions']}")
     print(f"  {agent['narrative'][:300]}…")

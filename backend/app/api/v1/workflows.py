@@ -12,12 +12,14 @@ from sqlalchemy.orm import Session
 from app.domain import audit
 from app.domain.approvals import ApprovalError, propose
 from app.domain.workflows import (
+    LAND_STAGES,
     REGISTRY,
     STAGES,
     ParamError,
     catalog,
     checklist,
     params_hash,
+    stages_for,
     suggest_actions,
 )
 from app.infrastructure.database.models import (
@@ -78,7 +80,7 @@ def workflow_payload(db: Session, case) -> dict:
     return {
         "stage": case.stage,
         "status": case.status,
-        "stages": [{"key": k, "label": label} for k, label in STAGES],
+        "stages": [{"key": k, "label": label} for k, label in stages_for(case)],
         "checklist": checklist(db, case),
         "tasks": [s.task(t) for t in db.scalars(select(Task).where(Task.case_id == case.id).order_by(Task.created_at))],
         "decisions": [s.decision(d) for d in db.scalars(select(Decision).where(Decision.case_id == case.id).order_by(Decision.created_at))],
@@ -89,7 +91,7 @@ def workflow_payload(db: Session, case) -> dict:
 
 @router.get("/workflows/stages")
 def stages() -> dict:
-    return {"stages": [{"key": k, "label": label} for k, label in STAGES]}
+    return {"stages": [{"key": k, "label": label} for k, label in STAGES], "land_stages": [{"key": k, "label": label} for k, label in LAND_STAGES]}
 
 
 @router.get("/workflows/actions")

@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from app.domain import audit
 from app.domain.cases import StageError, add_party, create_case, move_stage, overview
 from app.domain.reconciliation.service import latest_run, summary
-from app.domain.workflows import STAGES, checklist
+from app.domain.workflows import LAND_STAGES, STAGES, checklist, stages_for
 from app.infrastructure.database.models import (
     AuditEvent,
     Case,
@@ -59,6 +59,7 @@ class PartyIn(BaseModel):
 
 class CaseIn(BaseModel):
     title: str = Field(min_length=3, max_length=300)
+    kind: str = Field(default="heirs_property", pattern="^(heirs_property|rural_land)$")
     description: str = ""
     property: PropertyIn = PropertyIn()
     parties: list[PartyIn] = []
@@ -100,7 +101,7 @@ def detail(db: Session, case: Case) -> dict[str, Any]:
         "case": s.case(case),
         "property": s.prop(prop) if prop else None,
         "parties": [s.party(p) for p in parties],
-        "stages": [{"key": k, "label": label} for k, label in STAGES],
+        "stages": [{"key": k, "label": label} for k, label in stages_for(case)],
         "checklist": checklist(db, case),
         "counts": {
             "documents": count(EvidenceDocument, EvidenceDocument.case_id == case.id),
@@ -110,7 +111,20 @@ def detail(db: Session, case: Case) -> dict[str, Any]:
             "actions_pending": count(WorkflowAction, WorkflowAction.case_id == case.id, WorkflowAction.status == "proposed"),
         },
         "financials": summary(db, case, latest_run(db, case)),
+        "land": _land_header(db, case),
     }
+
+
+def _land_header(db: Session, case) -> dict[str, Any] | None:
+    if case.kind != "rural_land":
+        return None
+    from app.domain.land.regions import region
+    from app.domain.land.service import parcel_of
+
+    p = parcel_of(db, case)
+    if p is None:
+        return {"region": None}
+    return {"region": region(p.region_code).name, "district": p.district, "taluk": p.taluk, "village": p.village, "survey": p.survey_key, "extent": p.extent_text, "holder": p.recorded_holder}
 
 
 @router.get("/overview")
@@ -120,6 +134,7 @@ def org_overview(user: User = Depends(current_user), db: Session = Depends(get_d
     refs = {c.id: c.reference for c in db.scalars(select(Case).where(Case.organization_id == user.organization_id))}
     data["recent"] = [s.audit_event(e, names) | {"case_reference": refs.get(e.case_id or "")} for e in data["recent"]]
     data["stages"] = [{"key": k, "label": label} for k, label in STAGES]
+    data["land_stages"] = [{"key": k, "label": label} for k, label in LAND_STAGES]
     return data
 
 
@@ -157,7 +172,8 @@ def list_cases(
 @router.post("/cases", status_code=201)
 def new_case(body: CaseIn, user: User = Depends(require("case:write")), db: Session = Depends(get_db, scope="function")) -> dict:
     case = create_case(
-        db, user, title=body.title, description=body.description, prop=body.property.model_dump(), parties=[p.model_dump() for p in body.parties]
+        db, user, title=body.title, description=body.description, prop=body.property.model_dump(), parties=[p.model_dump() for p in body.parties],
+        kind=body.kind,
     )
     return detail(db, case)
 

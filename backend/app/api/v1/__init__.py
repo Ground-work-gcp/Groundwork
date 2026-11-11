@@ -13,6 +13,7 @@ from . import (
     financials,
     flow,
     land,
+    land_proceedings,
     ops,
     ownership,
     properties,
@@ -24,5 +25,5 @@ from . import (
 )
 
 router = APIRouter()
-for module in (auth, cases, properties, evidence, ownership, financials, reconciliation, risks, workflows, approvals, audit, settings, admin, flow, assistant, ops, land, public):
+for module in (auth, cases, properties, evidence, ownership, financials, reconciliation, risks, workflows, approvals, audit, settings, admin, flow, assistant, ops, land, land_proceedings, public):
     router.include_router(module.router)

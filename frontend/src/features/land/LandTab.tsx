@@ -4,6 +4,7 @@ import { api } from "../../services/api";
 import type * as T from "../../types";
 import { Empty, ErrorLine, Panel, SeverityPill, Tile, label, useAction } from "../../components/ui";
 import type { CaseCtx } from "../cases/CaseView";
+import { Journey, PathwaysView, Proceedings } from "./LandWorkflow";
 
 /* Rural land records (India). The system prepares the case; ownership decisions stay with
    revenue authorities and courts, and every valuation carries a stated range and confidence. */
@@ -19,9 +20,12 @@ export function inr(n: number | null | undefined): string {
   return n == null ? "–" : `₹${Math.round(n).toLocaleString("en-IN")}`;
 }
 const SECTIONS = [
+  { key: "journey", label: "Journey" },
   { key: "records", label: "Records" },
   { key: "family", label: "Family & shares" },
   { key: "value", label: "Value" },
+  { key: "proceedings", label: "Office proceedings" },
+  { key: "pathways", label: "Pathways" },
   { key: "lender", label: "Lender readiness" },
   { key: "costs", label: "Costs" },
   { key: "explain", label: "Explain" },
@@ -32,7 +36,7 @@ type Section = (typeof SECTIONS)[number]["key"];
 export function LandTab({ c, section }: { c: CaseCtx; section?: string }) {
   const land = usePoll(() => api.land(c.caseId), 30_000, [c.caseId], true);
   const cat = usePoll(api.landCatalog, 600_000, [], true);
-  const s: Section = (SECTIONS.find((x) => x.key === section)?.key ?? "records") as Section;
+  const s: Section = (SECTIONS.find((x) => x.key === section)?.key ?? "journey") as Section;
   const refresh = () => { void land.refresh(); c.refresh(); };
   const d = land.data;
   return (
@@ -41,7 +45,10 @@ export function LandTab({ c, section }: { c: CaseCtx; section?: string }) {
         {SECTIONS.map((x) => <a key={x.key} href={`#case/${c.caseId}/land/${x.key}`} className={s === x.key ? "on" : ""}>{x.label}</a>)}
       </nav>
       <p className="faint small">Groundwork prepares the case. Ownership decisions stay with the revenue authorities and the courts; every value is a range with a confidence.</p>
-      {!d || !cat.data ? <p className="faint">Loading…</p> : s === "records" ? <Records c={c} d={d} cat={cat.data} refresh={refresh} />
+      {!d || !cat.data ? <p className="faint">Loading…</p> : s === "journey" ? <Journey c={c} />
+        : s === "proceedings" ? <Proceedings c={c} />
+        : s === "pathways" ? <PathwaysView c={c} d={d} />
+        : s === "records" ? <Records c={c} d={d} cat={cat.data} refresh={refresh} />
         : s === "family" ? <Family c={c} d={d} refresh={refresh} />
         : s === "value" ? <Value c={c} d={d} refresh={refresh} />
         : s === "lender" ? <Lender c={c} d={d} cat={cat.data} refresh={refresh} />
@@ -214,7 +221,9 @@ const EMPTY_MEMBER = { name: "", sex: "male", is_alive: true, date_of_death: "",
 function Family({ c, d, refresh }: P) {
   const [m, setM] = useState(EMPTY_MEMBER);
   const [succ, setSucc] = useState<T.Succession | null>(d.latest.succession?.result ?? null);
-  const [link, setLink] = useState<{ name: string; link: string } | null>(null);
+  const [link, setLink] = useState<{ name: string; link: string; message: string } | null>(null);
+  const [evid, setEvid] = useState<{ id: string; doc: string } | null>(null);
+  const docs = usePoll(() => api.documents(c.caseId), 120_000, [c.caseId], true);
   const { busy, error, run } = useAction(c.toast);
   const names = Object.fromEntries(d.members.map((x) => [x.id, x.name]));
   const write = c.can("evidence:write");
@@ -232,16 +241,39 @@ function Family({ c, d, refresh }: P) {
                 <tr key={x.id}>
                   <td>{x.name}{x.is_recorded_holder ? <span className="chip">on the record</span> : null}<div className="faint small">{[x.parent_ids.length ? `child of ${x.parent_ids.map((p) => names[p]).join(" & ")}` : "", x.spouse_ids.length ? `spouse of ${x.spouse_ids.map((p) => names[p]).join(", ")}` : ""].filter(Boolean).join(" · ")}</div></td>
                   <td className="small">{x.is_alive ? (x.lives_in_village ? "in the village" : `away${x.location ? ` · ${x.location}` : ""}`) : `died ${x.date_of_death ?? "(date unknown)"}`}</td>
-                  <td>{x.is_alive ? <ConsentPill status={x.consent_status} /> : null}</td>
+                  <td>{x.is_alive ? <><ConsentPill status={x.consent_status} />{x.consent_evidence !== "none" ? <div className="small dim">{x.consent_evidence === "online" ? "online — letter pending" : label(x.consent_evidence)}</div> : null}</> : null}</td>
                   <td><div className="row" style={{ flexWrap: "nowrap" }}>
-                    {x.is_alive && c.can("case:write") ? <button className="btn ghost small" disabled={busy} onClick={async () => { const r = await run(() => api.consentLink(x.id)); if (r) { setLink({ name: x.name, link: r.link }); refresh(); } }}>Consent link</button> : null}
+                    {x.is_alive && c.can("case:write") ? <button className="btn ghost small" disabled={busy} onClick={async () => { const r = await run(() => api.consentLink(x.id)); if (r) { setLink({ name: x.name, link: r.link, message: r.message }); refresh(); } }}>Consent link</button> : null}
+                    {x.is_alive && write && x.consent_evidence !== "signed_letter" && x.consent_evidence !== "registered_deed" ? <button className="btn ghost small" onClick={() => setEvid({ id: x.id, doc: "" })}>Signed letter</button> : null}
                     {write ? <button className="btn ghost small" aria-label={`Remove ${x.name}`} onClick={async () => { if (await run(() => api.removeMember(x.id), "Removed")) refresh(); }}>×</button> : null}
                   </div></td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {link ? <div className="fix green"><div className="head">Single-use link for {link.name} (30 days)</div><div className="mono small" style={{ overflowWrap: "anywhere" }}>{link.link}</div><div className="small dim">Send it by SMS or WhatsApp. They see their draft share and reply; the reply goes into the case history.</div></div> : null}
+          {link ? (
+            <div className="fix green">
+              <div className="head">Single-use link for {link.name} (30 days)</div>
+              <div className="small" style={{ overflowWrap: "anywhere" }}>{link.message}</div>
+              <div className="row">
+                <a className="btn small" href={`https://wa.me/?text=${encodeURIComponent(link.message)}`} target="_blank" rel="noreferrer">Send on WhatsApp</a>
+                <a className="btn ghost small" href={`sms:?body=${encodeURIComponent(link.message)}`}>SMS</a>
+                <button className="btn ghost small" onClick={() => void navigator.clipboard?.writeText(link.message).then(() => c.toast("Message copied"))}>Copy</button>
+              </div>
+              <div className="small dim">They see their draft share and how it was worked out, then reply. An online "yes" is intent — the office and the lender still need the signed letter.</div>
+            </div>
+          ) : null}
+          {evid ? (
+            <form className="fix lilac row" onSubmit={async (e) => { e.preventDefault(); if (await run(() => api.consentEvidence(evid.id, { consent_evidence: "signed_letter", document_id: evid.doc }), "Signed consent recorded")) { setEvid(null); refresh(); } }}>
+              <span className="small">Scanned consent letter of <b>{names[evid.id]}</b>:</span>
+              <select className="input" required value={evid.doc} onChange={(e) => setEvid({ ...evid, doc: e.target.value })} style={{ maxWidth: 260 }}>
+                <option value="">choose an uploaded document…</option>
+                {(docs.data?.documents ?? []).map((doc) => <option key={doc.id} value={doc.id}>{doc.filename}</option>)}
+              </select>
+              <button className="btn small" disabled={busy}>Record</button>
+              <button type="button" className="btn ghost small" onClick={() => setEvid(null)}>Cancel</button>
+            </form>
+          ) : null}
           {write ? (
             <form className="form" style={{ marginTop: 12 }} onSubmit={async (e) => { e.preventDefault(); if (await run(() => api.addMember(c.caseId, { ...m, date_of_death: m.is_alive ? null : m.date_of_death || null }), "Added to the tree")) { setM(EMPTY_MEMBER); refresh(); } }}>
               <div className="grid2">

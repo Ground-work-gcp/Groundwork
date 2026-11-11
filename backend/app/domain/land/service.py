@@ -137,7 +137,7 @@ def run_succession(db: Session, case: Case) -> dict[str, Any]:
     people = [
         succession.Person(
             m.id, m.name, m.sex, m.is_alive, m.date_of_death, [p for p in m.parent_ids if isinstance(p, str)],
-            [s for s in m.spouse_ids if isinstance(s, str)], m.lives_in_village, m.consent_status,
+            [s for s in m.spouse_ids if isinstance(s, str)], m.lives_in_village, m.consent_status, m.consent_evidence,
         )
         for m in members
     ]
@@ -426,3 +426,26 @@ def issue_passport(db: Session, case: Case, actor: User, *, lender: str, loan_am
         entity_id=row.id, detail={"code": code, "sha256": sha, "lender": lender, "score": ready["score"], "verdict": ready["verdict"]},
     )
     return {"passport_id": row.id, "code": code, "sha256": sha}
+
+
+# ── family pathways ──────────────────────────────────────────────────────────
+
+
+def run_pathways(db: Session, case: Case, *, lender: str = "bank_crop_loan", beneficiary_id: str | None = None) -> dict[str, Any]:
+    from . import pathways
+
+    conc = run_concordance(db, case)
+    succ = run_succession(db, case)
+    val = run_valuation(db, case, lender=lender, conc=conc, succ=succ)
+    ready = run_readiness(db, case, lender="bank_term_loan", loan_amount_inr=None)
+    parcel = parcel_of(db, case)
+    records = records_of(db, case)
+    cultivators = [h for r in records if r.source_type == "cultivation" for h in r.holders]
+    profile = LENDERS.get(lender, LENDERS["bank_crop_loan"])
+    out = pathways.compare(
+        region_of(db, case), succ=succ, val=val, ready=ready, extent_sqm=_extent(parcel, records),
+        guideline_inr_per_sqm=parcel.guideline_inr_per_sqm if parcel else None, cultivators=cultivators,
+        lender_limit_inr=LENDERS["bank_crop_loan"]["collateral_free_limit_inr"], ltv=profile["ltv"] if lender != "bank_crop_loan" else LENDERS["bank_term_loan"]["ltv"],
+        preferred_beneficiary=beneficiary_id,
+    )
+    return out

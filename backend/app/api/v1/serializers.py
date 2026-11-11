@@ -62,6 +62,7 @@ def case(c: Case) -> dict[str, Any]:
     return {
         "id": c.id,
         "reference": c.reference,
+        "kind": c.kind,
         "title": c.title,
         "description": c.description,
         "stage": c.stage,

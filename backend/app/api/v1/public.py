@@ -85,13 +85,20 @@ def reply_consent(token: str, body: ReplyIn, request: Request, db: Session = Dep
         raise HTTPException(422, detail="decision must be consented, objected or needs_info")
     m, case = _member(db, token)
     m.consent_status, m.consent_note, m.consent_at = body.decision, body.note.strip(), datetime.now(tz=UTC)
+    if body.decision == "consented" and m.consent_evidence == "none":
+        m.consent_evidence = "online"  # intent; the office and the lender still need the signed letter
     m.consent_token_hash, m.consent_token_expires_at = None, None  # single use
     db.flush()
     audit.record(
         db, organization_id=case.organization_id, event="land.consent_reply", actor_kind="heir", case_id=case.id, entity_type="family_member",
         entity_id=m.id, detail={"decision": body.decision, "note_chars": len(m.consent_note)},
     )
-    return {"ok": True, "status": m.consent_status}
+    after = {
+        "consented": "Thank you. Please also sign the consent letter shown on this page and send a photo or the paper to the family; the office needs it on paper.",
+        "objected": "Your objection is recorded. The family's paralegal will contact you. Free mediation is available through the District Legal Services Authority.",
+        "needs_info": "Your request is recorded. The family's paralegal will contact you to explain the shares.",
+    }[body.decision]
+    return {"ok": True, "status": m.consent_status, "next": after}
 
 
 @router.get("/passports/{code}")

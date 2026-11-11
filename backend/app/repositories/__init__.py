@@ -25,6 +25,7 @@ from app.infrastructure.database.models import (
     LandAnalysis,
     LandParcel,
     LandPassport,
+    LandProceeding,
     LandRecord,
     OwnershipEvent,
     Party,
@@ -60,6 +61,7 @@ _CASE_OWNED = (
     LandAnalysis,
     CostEntry,
     LandPassport,
+    LandProceeding,
 )
 
 

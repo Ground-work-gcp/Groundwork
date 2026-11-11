@@ -238,10 +238,10 @@ def case_nodes(db: Session, case: Case) -> dict[str, dict[str, Any]]:
     }
 
 
-def critical_path(nodes: dict[str, dict[str, Any]], target: str = "resolution") -> list[str]:
+def critical_path(nodes: dict[str, dict[str, Any]], target: str = "resolution", edges: list[tuple[str, str, str]] | None = None) -> list[str]:
     """CPM: the longest remaining-work path ending at ``target`` (topological DP over the DAG)."""
     preds: dict[str, list[str]] = defaultdict(list)
-    for a, b, label in EDGES:
+    for a, b, label in edges or EDGES:
         if not label.startswith("alt"):
             preds[b].append(a)
     memo: dict[str, tuple[float, list[str]]] = {}
@@ -258,10 +258,12 @@ def critical_path(nodes: dict[str, dict[str, Any]], target: str = "resolution") 
     return best(target)[1]
 
 
-def shortest_path(nodes: dict[str, dict[str, Any]], source: str = "sources", target: str = "resolution") -> tuple[float, list[str]]:
+def shortest_path(
+    nodes: dict[str, dict[str, Any]], source: str = "sources", target: str = "resolution", edges: list[tuple[str, str, str]] | None = None
+) -> tuple[float, list[str]]:
     """Dijkstra over all edges (alternatives included); entering a node costs 1 + its remaining work."""
     adj: dict[str, list[str]] = defaultdict(list)
-    for a, b, _ in EDGES:
+    for a, b, _ in edges or EDGES:
         adj[a].append(b)
     dist = {source: float(nodes.get(source, {}).get("remaining", 0))}
     prev: dict[str, str] = {}
@@ -300,22 +302,32 @@ NEXT_STEP = {
 }
 
 
-def next_action(nodes: dict[str, dict[str, Any]], path: list[str]) -> dict[str, Any] | None:
+def next_action(nodes: dict[str, dict[str, Any]], path: list[str], steps: dict[str, str] | None = None) -> dict[str, Any] | None:
     for key in path:
         if nodes[key]["remaining"] > 0:
-            return {"node": key, "label": nodes[key]["label"], "remaining": nodes[key]["remaining"], "step": NEXT_STEP.get(key, ""), "href": nodes[key]["href"]}
+            return {"node": key, "label": nodes[key]["label"], "remaining": nodes[key]["remaining"], "step": (steps or NEXT_STEP).get(key, ""), "href": nodes[key]["href"]}
     return None
 
 
-def _graph(nodes: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    cpath = critical_path(nodes)
-    cost, spath = shortest_path(nodes)
-    out_nodes = [{"id": k, "layer": LAYERS[k], "col": POSITIONS[k][0], "row": POSITIONS[k][1], **v} for k, v in nodes.items()]
+HEIRS_SPEC = {"edges": EDGES, "layers": LAYERS, "positions": POSITIONS, "source": "sources", "steps": NEXT_STEP}
+
+
+def land_spec() -> dict[str, Any]:
+    from app.domain.land.lifecycle import LAND_EDGES, LAND_LAYERS, LAND_NEXT_STEP, LAND_POSITIONS
+
+    return {"edges": LAND_EDGES, "layers": LAND_LAYERS, "positions": LAND_POSITIONS, "source": "documents", "steps": LAND_NEXT_STEP}
+
+
+def _graph(nodes: dict[str, dict[str, Any]], spec: dict[str, Any] | None = None) -> dict[str, Any]:
+    spec = spec or HEIRS_SPEC
+    cpath = critical_path(nodes, edges=spec["edges"])
+    cost, spath = shortest_path(nodes, source=spec["source"], edges=spec["edges"])
+    out_nodes = [{"id": k, "layer": spec["layers"][k], "col": spec["positions"][k][0], "row": spec["positions"][k][1], **v} for k, v in nodes.items()]
     crit_edges = set(zip(cpath, cpath[1:], strict=False))
     short_edges = set(zip(spath, spath[1:], strict=False))
     edges = [
         {"from": a, "to": b, "label": label, "critical": (a, b) in crit_edges, "shortest": (a, b) in short_edges, "alt": label.startswith("alt")}
-        for a, b, label in EDGES
+        for a, b, label in spec["edges"]
     ]
     edges += [{"from": k, "to": "audit", "label": "", "critical": False, "shortest": False, "alt": False, "audit": True} for k in ("needs_you", "approvals")]
     return {
@@ -324,7 +336,7 @@ def _graph(nodes: dict[str, dict[str, Any]]) -> dict[str, Any]:
         "critical_path": cpath,
         "shortest_path": {"cost": None if math.isinf(cost) else cost, "nodes": spath},
         "remaining_work": sum(n["remaining"] for n in nodes.values()),
-        "next_action": next_action(nodes, cpath),
+        "next_action": next_action(nodes, cpath, spec["steps"]),
         "algorithms": {
             "critical_path": "Critical Path Method (Kelley & Walker 1959): longest remaining-work path to resolution",
             "shortest_path": "Dijkstra (1959): least-effort route to resolution, alternatives included",
@@ -334,8 +346,13 @@ def _graph(nodes: dict[str, dict[str, Any]]) -> dict[str, Any]:
 
 
 def case_flow(db: Session, case: Case, user: User) -> dict[str, Any]:
-    nodes = case_nodes(db, case)
-    graph = _graph(nodes)
+    if case.kind == "rural_land":
+        from app.domain.land.lifecycle import land_nodes
+
+        graph = _graph(land_nodes(db, case), land_spec())
+        graph["algorithms"]["shortest_path"] = "Dijkstra (1959): least-effort route to credit — including the collateral-free crop loan as an alternative to waiting for mutation"
+    else:
+        graph = _graph(case_nodes(db, case))
     graph["needs_you"] = needs_you(db, user, case_id=case.id)
     graph["generated_at"] = datetime.now(tz=UTC).isoformat()
     graph["scope"] = {"kind": "case", "id": case.id, "reference": case.reference, "title": case.title}
@@ -352,6 +369,17 @@ def org_flow(db: Session, user: User) -> dict[str, Any]:
     total: dict[str, dict[str, Any]] = {}
     per_case = []
     for case in cases:
+        if case.kind == "rural_land":
+            from app.domain.land.lifecycle import land_nodes
+
+            spec = land_spec()
+            lnodes = land_nodes(db, case)
+            per_case.append({
+                "id": case.id, "reference": case.reference, "title": case.title, "stage": case.stage, "kind": case.kind,
+                "remaining": sum(n["remaining"] for n in lnodes.values()),
+                "next_action": next_action(lnodes, critical_path(lnodes, edges=spec["edges"]), spec["steps"]),
+            })
+            continue
         nodes = case_nodes(db, case)
         per_case.append({
             "id": case.id, "reference": case.reference, "title": case.title, "stage": case.stage,
@@ -485,6 +513,11 @@ def needs_you(db: Session, user: User, *, case_id: str | None = None, limit: int
             "kind": "task", "case_id": cid, "case_reference": ref, "title": title, "suggests": f"due {due}" if due else "Assigned to you",
             "severity": "medium", "amount_cents": 0, "href": f"#case/{cid}/workflow", "created_at": created, "count": 1, "id": tid,
         })
+
+    if has_permission(user.role, "evidence:write"):
+        from app.domain.land.lifecycle import needs_you_items
+
+        items += needs_you_items(db, user, scope)
 
     for item in items:
         item["priority"] = priority(item["severity"], item["amount_cents"], item["created_at"])

@@ -58,6 +58,7 @@ class Person:
     spouses: list[str] = field(default_factory=list)
     lives_in_village: bool = True
     consent_status: str = "unknown"
+    consent_evidence: str = "none"
 
 
 class Tree:
@@ -393,7 +394,7 @@ def compute(
         x = t.p[pid]
         shares.append({
             "member_id": pid, "name": x.name, "share": _fmt(amount), "value": float(amount), "alive": x.alive,
-            "lives_in_village": x.lives_in_village, "consent_status": x.consent_status,
+            "lives_in_village": x.lives_in_village, "consent_status": x.consent_status, "consent_evidence": x.consent_evidence,
         })
     shares.sort(key=lambda s: (-s["value"], s["name"]))
     status = "computed" if not unresolved and total == 1 else "partial"

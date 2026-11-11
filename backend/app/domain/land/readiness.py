@@ -79,12 +79,18 @@ def check(
             else:
                 status[req] = ("met", "legal heir certificate on file") if _has(records, "legal_heir") else ("missing", "needed because the holder has died")
         elif req == "co_heir_consent":
+            signed = [s for s in living if s.get("consent_evidence") in ("signed_letter", "registered_deed")]
+            objected = [s["name"] for s in living if s["consent_status"] == "objected"]
             if len(living) <= 1:
                 status[req] = ("not_needed", "a single owner")
-            elif unconsented:
-                status[req] = ("blocked", f"{len(unconsented)} of {len(living)} co-heirs have not consented: " + ", ".join(unconsented))
+            elif objected:
+                status[req] = ("blocked", "objection from " + ", ".join(objected) + " — mediation first")
+            elif len(signed) == len(living):
+                status[req] = ("met", f"signed consent from all {len(living)} co-heirs")
+            elif not unconsented:
+                status[req] = ("partial", "everyone agreed online; signed letters still needed from " + ", ".join(s["name"] for s in living if s not in signed))
             else:
-                status[req] = ("met", f"all {len(living)} co-heirs consented")
+                status[req] = ("blocked", f"{len(unconsented)} of {len(living)} co-heirs have not agreed: " + ", ".join(unconsented))
         elif req in ("encumbrance_13y", "encumbrance_30y"):
             years = 13 if req == "encumbrance_13y" else 30
             if open_charge:
@@ -126,7 +132,8 @@ def check(
     service_done = {
         "death_certificate": not deceased or bool(_has(records, "death_certificate")),
         "legal_heir_certificate": not deceased or bool(_has(records, "legal_heir")),
-        "co_heir_consent": status.get("co_heir_consent", ("met",))[0] in ("met", "not_needed") if "co_heir_consent" in status else len(living) <= 1 or not unconsented,
+        "co_heir_consent": status["co_heir_consent"][0] in ("met", "not_needed") if "co_heir_consent" in status
+        else len(living) <= 1 or all(s.get("consent_evidence") in ("signed_letter", "registered_deed") for s in living),
         "mutation": not deceased,
         "encumbrance_certificate": not open_charge and ec_years >= (30 if "encumbrance_30y" in needed else 13),
         "sketch_copy": bool(_has(records, "sketch")),

@@ -64,11 +64,23 @@ export function CaseList({ ctx, tab }: { ctx: Ctx; tab?: string }) {
 }
 
 function NewCase({ ctx }: { ctx: Ctx }) {
+  const [kind, setKind] = useState<"rural_land" | "heirs_property">("rural_land");
   const [f, setF] = useState({ title: "", description: "", address_line: "", city: "", county: "", state: "", parcel_number: "", client: "", decedent: "" });
+  const [land, setLand] = useState({ region_code: "TN", district: "", taluk: "", village: "", survey_number: "", recorded_holder: "" });
   const { busy, error, run } = useAction(ctx.toast);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const setL = (k: keyof typeof land) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setLand({ ...land, [k]: e.target.value });
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (kind === "rural_land") {
+      const created = await run(async () => {
+        const c = await api.createCase({ kind, title: f.title, description: f.description, parties: f.client ? [{ name: f.client, roles: ["client", "heir"] }] : [] });
+        await api.saveParcel(c.case.id, { ...land, personal_law: "hindu", property_nature: "self_acquired" });
+        return c;
+      }, "Land case opened");
+      if (created) go(`case/${created.case.id}/land/journey`);
+      return;
+    }
     const parties = [
       ...(f.client ? [{ name: f.client, roles: ["client"] }] : []),
       ...(f.decedent ? [{ name: f.decedent, roles: ["decedent"], is_deceased: true }] : []),
@@ -88,8 +100,33 @@ function NewCase({ ctx }: { ctx: Ctx }) {
         <p className="lede">Property identifiers and the people involved. Documents come next, and every fact in them will be traced back to its page.</p>
       </div>
       <form className="form card-form" onSubmit={submit}>
-        <label>Case title<input className="input" required minLength={3} value={f.title} onChange={set("title")} placeholder="Parker heirs — 418 Magnolia Rd" /></label>
-        <label>What the family needs<textarea className="input" value={f.description} onChange={set("description")} /></label>
+        <div className="seg" role="radiogroup" aria-label="Kind of case">
+          <button type="button" role="radio" aria-checked={kind === "rural_land"} className={`chip-btn${kind === "rural_land" ? " on" : ""}`} onClick={() => setKind("rural_land")}>Rural land (India)</button>
+          <button type="button" role="radio" aria-checked={kind === "heirs_property"} className={`chip-btn${kind === "heirs_property" ? " on" : ""}`} onClick={() => setKind("heirs_property")}>Inherited home (US title)</button>
+        </div>
+        <label>Case title<input className="input" required minLength={3} value={f.title} onChange={set("title")} placeholder={kind === "rural_land" ? "Ramasamy heirs — S.No. 123/4A, Keezhaiyur" : "Parker heirs — 418 Magnolia Rd"} /></label>
+        <label>What the family needs<textarea className="input" value={f.description} onChange={set("description")} placeholder={kind === "rural_land" ? "Patta still in the grandfather's name; Kannan needs a crop loan." : ""} /></label>
+        {kind === "rural_land" ? (
+          <>
+            <div className="grid">
+              <label>State<select className="input" value={land.region_code} onChange={setL("region_code")}>
+                {[["TN", "Tamil Nadu"], ["KA", "Karnataka"], ["AP", "Andhra Pradesh"], ["MH", "Maharashtra"], ["UP", "Uttar Pradesh"], ["IN", "Other state"]].map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select></label>
+              <label>District<input className="input" value={land.district} onChange={setL("district")} /></label>
+              <label>Taluk / tehsil / mandal<input className="input" value={land.taluk} onChange={setL("taluk")} /></label>
+              <label>Village<input className="input" required value={land.village} onChange={setL("village")} /></label>
+              <label>Survey number<input className="input" required value={land.survey_number} onChange={setL("survey_number")} placeholder="123/4A" /></label>
+              <label>Name on the record<input className="input" value={land.recorded_holder} onChange={setL("recorded_holder")} /></label>
+            </div>
+            <label>Who came to us (applicant)<input className="input" value={f.client} onChange={set("client")} /></label>
+            <ErrorLine error={error} />
+            <div className="row">
+              <button className="btn primary" type="submit" disabled={busy}>Open land case</button>
+              <a className="btn ghost" href="#cases">Cancel</a>
+            </div>
+          </>
+        ) : null}
+        {kind === "heirs_property" ? (<>
         <div className="grid">
           <label>Street address<input className="input" value={f.address_line} onChange={set("address_line")} /></label>
           <label>City<input className="input" value={f.city} onChange={set("city")} /></label>
@@ -106,6 +143,7 @@ function NewCase({ ctx }: { ctx: Ctx }) {
           <button className="btn primary" type="submit" disabled={busy}>Open case</button>
           <a className="btn ghost" href="#cases">Cancel</a>
         </div>
+        </>) : null}
       </form>
     </main>
   );

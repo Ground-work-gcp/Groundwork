@@ -83,6 +83,7 @@ def member_out(m: FamilyMember) -> dict[str, Any]:
         "id": m.id, "name": m.name, "sex": m.sex, "is_alive": m.is_alive, "date_of_death": m.date_of_death, "parent_ids": m.parent_ids,
         "spouse_ids": m.spouse_ids, "is_recorded_holder": m.is_recorded_holder, "lives_in_village": m.lives_in_village, "location": m.location,
         "consent_status": m.consent_status, "consent_note": m.consent_note, "consent_at": s.ts(m.consent_at),
+        "consent_evidence": m.consent_evidence, "consent_document_id": m.consent_document_id,
         "consent_link_active": bool(m.consent_token_hash and m.consent_token_expires_at and _aware(m.consent_token_expires_at) > datetime.now(tz=UTC)),
     }
 
@@ -145,7 +146,7 @@ def land_overview(case_id: str, user: User = Depends(current_user), db: Session 
         "parcel": parcel_out(service.parcel_of(db, case)),
         "records": [record_out(r) for r in service.records_of(db, case)],
         "members": [member_out(m) for m in service.members_of(db, case)],
-        "latest": {k: analysis_out(service.latest(db, case, k)) for k in (*KINDS, "agent_run")},
+        "latest": {k: analysis_out(service.latest(db, case, k)) for k in (*KINDS, "agent_run", "pathways")},
         "passports": [passport_out(p) for p in passports],
     }
 
@@ -365,7 +366,23 @@ def consent_link(member_id: str, user: User = Depends(require("case:write")), db
     db.flush()
     audit.record(db, organization_id=case.organization_id, event="land.consent_link_issued", actor=user, case_id=case.id, entity_type="family_member", entity_id=m.id, detail={"expires_at": m.consent_token_expires_at.isoformat()})
     base = get_settings().public_base_url.rstrip("/")
-    return {"token": token, "link": f"{base}/#consent/{token}", "expires_at": m.consent_token_expires_at.isoformat(), "single_use": True}
+    link = f"{base}/#consent/{token}"
+    parcel = service.parcel_of(db, case)
+    reg = service.region_of(db, case)
+    survey, village = (parcel.survey_key, parcel.village) if parcel else ("", "")
+    messages = {
+        "en": f"Hello {m.name}. About the family land at survey no. {survey}, {village}: the draft shares of each heir are ready. "
+              f"Please open this link to see your share and reply (it works once, for 30 days): {link}",
+        "ta": f"வணக்கம் {m.name}. {village} கிராமம், சர்வே எண் {survey} குடும்ப நிலம் தொடர்பாக, ஒவ்வொரு வாரிசின் வரைவுப் பங்கும் தயாராக உள்ளது. "
+              f"உங்கள் பங்கைப் பார்த்துப் பதில் அளிக்க இந்த இணைப்பைத் திறக்கவும் (ஒருமுறை மட்டும், 30 நாட்கள்): {link}",
+        "hi": f"नमस्ते {m.name}। गाँव {village}, सर्वे नंबर {survey} की पारिवारिक ज़मीन के बारे में: हर वारिस का प्रस्तावित हिस्सा तैयार है। "
+              f"अपना हिस्सा देखने और जवाब देने के लिए यह लिंक खोलें (एक बार, 30 दिन तक): {link}",
+    }
+    lang = reg.language if reg.language in messages else "en"
+    return {
+        "token": token, "link": link, "expires_at": m.consent_token_expires_at.isoformat(), "single_use": True,
+        "message": messages[lang], "message_en": messages["en"], "language": lang,
+    }
 
 
 @router.get("/land/members/{member_id}/consent-letter", response_class=PlainTextResponse)
@@ -414,7 +431,7 @@ def run_analysis(case_id: str, kind: str, body: AnalysisIn = AnalysisIn(), user:
 @router.get("/cases/{case_id}/land/analyses/{kind}")
 def latest_analysis(case_id: str, kind: str, user: User = Depends(current_user), db: Session = Depends(get_db, scope="function")) -> dict:
     case = get_case(db, user, case_id)
-    if kind not in (*KINDS, "agent_run"):
+    if kind not in (*KINDS, "agent_run", "pathways"):
         raise not_found("Unknown analysis")
     return {"analysis": analysis_out(service.latest(db, case, kind))}
 

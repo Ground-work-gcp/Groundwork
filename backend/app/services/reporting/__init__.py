@@ -14,7 +14,7 @@ from app.domain.ownership import analyze
 from app.domain.reconciliation.engine.money import to_usd
 from app.domain.reconciliation.service import latest_run, summary
 from app.domain.risk import SEVERITY_ORDER
-from app.domain.workflows import STAGES, checklist
+from app.domain.workflows import checklist, stages_for
 from app.infrastructure.database.models import (
     Approval,
     Case,
@@ -52,7 +52,7 @@ def case_report(db: Session, case: Case) -> str:
     decisions = list(db.scalars(select(Decision).where(Decision.case_id == case.id).order_by(Decision.created_at)))
     actions = list(db.scalars(select(WorkflowAction).where(WorkflowAction.case_id == case.id).order_by(WorkflowAction.seq)))
     approvals = {a.action_id: a for a in db.scalars(select(Approval).where(Approval.action_id.in_([a.id for a in actions])))} if actions else {}
-    stage_label = dict(STAGES).get(case.stage, case.stage)
+    stage_label = dict(stages_for(case)).get(case.stage, case.stage)
 
     lines = [
         f"# {case.reference} · {case.title}",
@@ -116,7 +116,7 @@ def case_report(db: Session, case: Case) -> str:
     if not decisions and not actions:
         lines.append("- none yet")
     lines += ["", "## Stage checklist", ""]
-    lines += [f"- [{'x' if g['done'] else ' '}] {dict(STAGES)[g['stage']]} — {g['detail']}" for g in checklist(db, case)]
+    lines += [f"- [{'x' if g['done'] else ' '}] {dict(stages_for(case))[g['stage']]} — {g['detail']}" for g in checklist(db, case)]
     verified = verify_chain(db, case.organization_id)
     lines += [
         "",

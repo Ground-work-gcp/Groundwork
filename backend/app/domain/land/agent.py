@@ -32,6 +32,7 @@ from app.infrastructure.database.models import (
     ComparableSale,
     CostEntry,
     EvidenceDocument,
+    LandProceeding,
     LandRecord,
     Task,
     User,
@@ -39,7 +40,9 @@ from app.infrastructure.database.models import (
 )
 from app.services import ai
 
-from . import explain, service
+from . import explain, lifecycle, service
+from . import proceedings as procs
+from .regions import PROCEEDING_KINDS, TERMINAL
 from .valuation import inr
 
 MAX_STEPS = 12
@@ -146,13 +149,67 @@ def run(db: Session, case: Case, user: User, *, lender: str = "bank_crop_loan", 
     for p in ready["plan"][:6]:
         handoff("office" if p["office"] != "family (notarised)" else "family", p["name"], p["office"], "Unblocks: " + ", ".join(p["unblocks"]) if p["unblocks"] else "Needed by a later step.")
 
-    # 6 · costs
+    # 6 · office proceedings: draft what must be filed, watch what is filed
+    files = lifecycle.proceedings_of(db, case)
+    open_kinds = {p.kind for p, _ in files if p.status not in ("rejected", "withdrawn")}
+    drafted: list[str] = []
+    if conc["deceased_holders"]:
+        applicants = [s["name"] for s in succ.get("shares", []) if s["alive"]]
+        for kind in ("legal_heir_certificate", "mutation"):
+            if kind in open_kinds or (kind == "legal_heir_certificate" and "legal_heir" in have):
+                continue
+            d = procs.defaults(kind, reg)
+            db.add(LandProceeding(case_id=case.id, kind=kind, office=d["office"], sla_days=d["sla_days"], applicants=applicants,
+                                  notes="Drafted by the land case agent — check the filing list, then file and record the acknowledgement.", created_by_id=user.id))
+            drafted.append(d["label"])
+        db.flush()
+    signals: list[str] = []
+    for p, ev in lifecycle.proceedings_of(db, case):
+        if p.status in TERMINAL:
+            continue
+        h = procs.health(p, ev)
+        label = PROCEEDING_KINDS[p.kind]["label"]
+        signals.append(f"{label}: {h['signal'].replace('_', ' ')}")
+        if h["signal"] == "not_filed":
+            handoff("family", f"File the {label.lower()} application", p.office, "Drafted; the filing list under Proceedings shows what to carry.")
+        elif h["signal"] in ("overdue", "stalled"):
+            authority, basis = procs.next_authority(reg, p.escalation_level)
+            why = f"{h.get('overdue_days')} days past the {p.sla_days}-day timeline" if h["signal"] == "overdue" else f"no movement for {h['last_event_days']} days"
+            handoff("paralegal", f"Escalate the {label.lower()} ({why})", authority, f"A {basis} is drafted under Proceedings → Escalate.")
+        if h.get("waiting_on") == "family" and h["signal"] != "not_filed":
+            handoff("family", f"Submit the document the office asked for on the {label.lower()}", p.office, "The file is waiting on the family, not the office.")
+        if h.get("objection"):
+            handoff("advocate", f"Prepare for the hearing on the {label.lower()}", p.office, "An objection was filed; consider DLSA mediation first.")
+    obs["proceedings"] = signals
+    step("proceedings", "ran", f"{len(files)} file(s) with offices", ("drafted " + ", ".join(drafted) + "; " if drafted else "") + ("; ".join(signals) or "nothing filed"))
+    for s in succ.get("shares", []):
+        if s["alive"] and s["consent_status"] == "objected":
+            handoff("paralegal", f"Talk to {s['name']}, who objected", "District Legal Services Authority (pre-litigation mediation)", "Mediation is free and keeps the family out of a partition suit.")
+        elif s["alive"] and s.get("consent_evidence") == "online":
+            handoff("family", f"Collect {s['name']}'s signed consent letter", "by post or in person", "Agreed online; offices and lenders need it on paper.")
+
+    # 7 · family pathways
+    if members and val.get("status") == "estimated":
+        pw = service.run_pathways(db, case, lender=lender)
+        if pw.get("status") == "compared":
+            snap = service.snapshot(db, case, "pathways", {"lender": lender}, pw, user, actor_kind="ai")
+            best = next((r for r in pw["routes"] if r.get("recommended")), None)
+            bridge = next((r for r in pw["routes"] if r.get("bridge")), None)
+            obs["pathways"] = [{"route": r["label"], "days": r["days"], "cost_inr": r["cost_inr"], "capacity_inr": r["capacity_inr"], "score": r.get("score")} for r in pw["routes"]]
+            step(
+                "pathways", "ran", f"{len(pw['routes'])} routes compared for the family",
+                (f"highest score: {best['label']} — about {best['days']} days, {inr(best['cost_inr'])} in fees and duty, borrowing up to {inr(best['capacity_inr'])}" if best else "")
+                + (f"; bridge: {inr(bridge['capacity_inr'])} crop loan in about {bridge['days']} days" if bridge else ""), snap.id,
+            )
+            handoff("family", "Choose a route together (joint, release, partition) — the options are compared under Pathways", "a family meeting", "Every route needs different signatures; agree before anyone signs.")
+
+    # 8 · costs
     if _count(db, CostEntry, CostEntry.case_id == case.id):
         costs = service.run_costs(db, case, lender)
         obs["costs"] = {k: costs[k] for k in ("total_inr", "days", "unreceipted_inr", "excess_total_inr", "informal_premium_inr")}
         step("costs", "ran", "follow the money the family has spent", f"{inr(costs['total_inr'])} and {costs['days']} days so far; {inr(costs['unreceipted_inr'])} without receipts")
 
-    # 7 · proposals for the critical path (a human approves)
+    # 9 · proposals for the critical path (a human approves)
     proposed: list[int] = []
     if propose:
         from app.domain.approvals import ApprovalError

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests.helpers import add_member, new_case, sign_up, upload
+from tests.helpers import add_member, sign_up, upload
 
 LAND = Path(__file__).resolve().parents[1] / "fixtures" / "land_documents"
 FILES = sorted(p.name for p in LAND.glob("*.txt"))
@@ -42,7 +42,9 @@ def _tree(client, case_id: str) -> dict[str, str]:
 
 def _setup(app):
     admin, _ = sign_up(app)
-    case_id = new_case(admin, "Ramasamy heirs — S.No. 123/4A Keezhaiyur")["case"]["id"]
+    created = admin.post("/api/v1/cases", json={"title": "Ramasamy heirs — S.No. 123/4A Keezhaiyur", "kind": "rural_land"})
+    assert created.status_code == 201, created.text
+    case_id = created.json()["case"]["id"]
     r = admin.put(f"/api/v1/cases/{case_id}/land/parcel", json={
         "region_code": "TN", "district": "Thanjavur", "taluk": "Orathanadu", "village": "Keezhaiyur", "survey_number": "S.F. No. 123/4-A",
         "guideline_inr_per_sqm": 150, "personal_law": "hindu",

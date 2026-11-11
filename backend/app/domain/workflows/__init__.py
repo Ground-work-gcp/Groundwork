@@ -50,6 +50,37 @@ STAGES: list[tuple[str, str]] = [
 STAGE_KEYS = [key for key, _ in STAGES]
 APPROVAL_STAGES = {"resolution", "resolved"}
 
+# Rural land (India): the stages a family actually goes through, from a record in a dead parent's
+# name to land a bank will lend against. Gates read the land records, analyses and proceedings.
+LAND_STAGES: list[tuple[str, str]] = [
+    ("intake", "Plot and family"),
+    ("records", "Records gathered"),
+    ("reconciled", "Records reconciled"),
+    ("heirs", "Heirs and shares"),
+    ("consent", "Co-heir consent"),
+    ("mutation", "Mutation recorded"),
+    ("credit", "Lender-ready"),
+    ("resolved", "Verified case history"),
+]
+LAND_APPROVAL_STAGES = {"resolved"}
+
+
+def stages_for(case: Case) -> list[tuple[str, str]]:
+    return LAND_STAGES if case.kind == "rural_land" else STAGES
+
+
+def stage_keys(case: Case) -> list[str]:
+    return [key for key, _ in stages_for(case)]
+
+
+def approval_stages(case: Case) -> set[str]:
+    return LAND_APPROVAL_STAGES if case.kind == "rural_land" else APPROVAL_STAGES
+
+
+def closing_stage(case: Case) -> str:
+    """The stage a case is resolved from (the one before ``resolved``)."""
+    return stage_keys(case)[-2]
+
 
 def _count(db: Session, model: Any, *where: Any) -> int:
     return int(db.scalar(select(func.count()).select_from(model).where(*where)) or 0)
@@ -57,6 +88,10 @@ def _count(db: Session, model: Any, *where: Any) -> int:
 
 def checklist(db: Session, case: Case) -> list[dict[str, Any]]:
     """What each stage needs, and whether the case's records satisfy it."""
+    if case.kind == "rural_land":
+        from app.domain.land.lifecycle import land_checklist
+
+        return land_checklist(db, case)
     prop = db.scalar(select(Property).where(Property.case_id == case.id))
     parties = _count(db, Party, Party.case_id == case.id)
     extracted = _count(db, EvidenceDocument, EvidenceDocument.case_id == case.id, EvidenceDocument.status == "extracted")
@@ -86,11 +121,12 @@ def checklist(db: Session, case: Case) -> list[dict[str, Any]]:
 
 def can_advance(db: Session, case: Case, to_stage: str) -> str | None:
     """None if the move is allowed, else why not."""
-    if to_stage not in STAGE_KEYS:
+    keys = stage_keys(case)
+    if to_stage not in keys:
         return f"unknown stage {to_stage!r}"
     if case.status != "open":
         return f"the case is {case.status}"
-    current, target = STAGE_KEYS.index(case.stage), STAGE_KEYS.index(to_stage)
+    current, target = keys.index(case.stage), keys.index(to_stage)
     if target <= current:
         return None  # stepping back to redo a stage is always allowed
     if target != current + 1:
@@ -138,11 +174,12 @@ def _do_advance(db: Session, case: Case, params: dict[str, Any], _actor: User) -
 def _pre_resolve(db: Session, case: Case, _params: dict[str, Any]) -> str | None:
     if case.status != "open":
         return f"the case is already {case.status}"
-    if case.stage != "resolution":
-        return "a case is resolved from the resolution stage"
-    gate = next(g for g in checklist(db, case) if g["stage"] == "resolution")
+    last = closing_stage(case)
+    if case.stage != last:
+        return f"a case is resolved from the {last} stage"
+    gate = next(g for g in checklist(db, case) if g["stage"] == last)
     if not gate["done"]:
-        return f"resolution is not complete: {gate['detail']}"
+        return f"{last} is not complete: {gate['detail']}"
     open_serious = _count(
         db, RiskFinding, RiskFinding.case_id == case.id, RiskFinding.status == "open", RiskFinding.severity.in_(("critical", "high"))
     )

@@ -88,6 +88,8 @@ class Case(Timestamped, Base):
     __tablename__ = "cases"
     organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
     reference: Mapped[str] = mapped_column(String(32), nullable=False)
+    # heirs_property (US title work) | rural_land (Indian land records) — decides the lifecycle and graph.
+    kind: Mapped[str] = mapped_column(String(20), default="heirs_property", server_default="heirs_property", nullable=False)
     title: Mapped[str] = mapped_column(String(300), nullable=False)
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
     stage: Mapped[str] = mapped_column(String(20), default="intake", nullable=False)
@@ -502,6 +504,10 @@ class FamilyMember(Timestamped, Base):
     consent_status: Mapped[str] = mapped_column(String(20), default="unknown", nullable=False)
     consent_note: Mapped[str] = mapped_column(Text, default="", nullable=False)
     consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # How strong the consent is: none | online (replied to the link) | signed_letter | registered_deed.
+    # Offices and lenders act on paper; an online reply is intent, not consent they can file.
+    consent_evidence: Mapped[str] = mapped_column(String(20), default="none", server_default="none", nullable=False)
+    consent_document_id: Mapped[str | None] = mapped_column(ForeignKey("documents.id", ondelete="SET NULL"))
     # A single-use link for a co-heir who left the village: only the SHA-256 of the token is stored.
     consent_token_hash: Mapped[str | None] = mapped_column(String(64), index=True)
     consent_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -599,3 +605,49 @@ class LandPassport(Timestamped, Base):
     payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="active", nullable=False)  # active|superseded|revoked
     issued_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+
+
+class LandProceeding(Timestamped, Base):
+    """An application the family has made (or will make) to an office: mutation, legal heir certificate, survey…
+
+    Tracked as the office actually processes it — filed, field verification, objection window,
+    hearing, order — against the indicative statutory timeline, so a stalled file is noticed and
+    escalated instead of being chased by middlemen.
+    """
+
+    __tablename__ = "land_proceedings"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    # mutation | legal_heir_certificate | encumbrance_certificate | survey_measurement | name_correction | appeal | grievance | dispute_mediation
+    kind: Mapped[str] = mapped_column(String(30), nullable=False)
+    office: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    application_no: Mapped[str] = mapped_column(String(80), default="", nullable=False)
+    # draft | filed | field_verification | notice_period | hearing | ordered | rejected | withdrawn
+    status: Mapped[str] = mapped_column(String(20), default="draft", nullable=False)
+    filed_on: Mapped[str | None] = mapped_column(String(10))
+    sla_days: Mapped[int] = mapped_column(Integer, default=30, nullable=False)
+    due_on: Mapped[str | None] = mapped_column(String(10))
+    objection_until: Mapped[str | None] = mapped_column(String(10))
+    hearing_on: Mapped[str | None] = mapped_column(String(10))
+    decided_on: Mapped[str | None] = mapped_column(String(10))
+    outcome: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    parent_id: Mapped[str | None] = mapped_column(ForeignKey("land_proceedings.id", ondelete="SET NULL"))
+    escalation_level: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    applicants: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    created_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class ProceedingEvent(Timestamped, Base):
+    """One thing that happened on a proceeding, dated as it happened in the office (not when it was typed)."""
+
+    __tablename__ = "proceeding_events"
+    proceeding_id: Mapped[str] = mapped_column(ForeignKey("land_proceedings.id", ondelete="CASCADE"), index=True, nullable=False)
+    event_date: Mapped[str] = mapped_column(String(10), nullable=False)
+    # filed | acknowledged | field_inspection | notice_published | objection_received | hearing_scheduled | hearing_held |
+    # document_requested | follow_up | order_passed | rejected | escalated | withdrawn | note
+    kind: Mapped[str] = mapped_column(String(30), nullable=False)
+    note: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    document_id: Mapped[str | None] = mapped_column(ForeignKey("documents.id", ondelete="SET NULL"))
+    status_after: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    actor_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))

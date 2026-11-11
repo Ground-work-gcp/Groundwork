@@ -247,3 +247,82 @@ def catalog() -> dict[str, Any]:
         "glossary": GLOSSARY,
         "note": "Fees, days and limits are indicative planning defaults. Check them with the local office and lender.",
     }
+
+
+# ── proceedings: how each office processes an application, and where to go when it stalls ──
+#
+# Timelines are indicative service timelines (citizen charters / right-to-services notifications
+# differ by state and change). They drive reminders and escalation drafts, never a legal claim.
+
+PROCEEDING_KINDS: dict[str, dict[str, Any]] = {
+    "legal_heir_certificate": {"label": "Legal heir certificate", "office": "revenue_office", "service": "legal_heir_certificate",
+                               "flow": ["draft", "filed", "field_verification", "hearing", "ordered"]},
+    "mutation": {"label": "Mutation (name transfer)", "office": "revenue_office", "service": "mutation",
+                 "flow": ["draft", "filed", "field_verification", "notice_period", "hearing", "ordered"]},
+    "encumbrance_certificate": {"label": "Encumbrance certificate", "office": "registration_office", "service": "encumbrance_certificate",
+                                "flow": ["draft", "filed", "ordered"]},
+    "survey_measurement": {"label": "Survey / measurement", "office": "survey_office", "service": "survey_measurement",
+                           "flow": ["draft", "filed", "notice_period", "field_verification", "ordered"]},
+    "name_correction": {"label": "Name correction in the record", "office": "revenue_office", "service": "mutation",
+                        "flow": ["draft", "filed", "field_verification", "hearing", "ordered"]},
+    "appeal": {"label": "Appeal / revision", "office": "appellate_office", "service": "",
+               "flow": ["draft", "filed", "hearing", "ordered"]},
+    "grievance": {"label": "Grievance petition", "office": "grievance_portal", "service": "",
+                  "flow": ["draft", "filed", "ordered"]},
+    "dispute_mediation": {"label": "Pre-litigation mediation (free legal aid)", "office": "District Legal Services Authority (DLSA)", "service": "",
+                          "flow": ["draft", "filed", "hearing", "ordered"]},
+}
+TERMINAL = {"ordered", "rejected", "withdrawn"}
+STATUS_LABELS = {
+    "draft": "Draft — not yet filed", "filed": "Filed, acknowledgement received", "field_verification": "Field verification by the village / revenue officer",
+    "notice_period": "Public notice — objection window open", "hearing": "Hearing", "ordered": "Order passed", "rejected": "Rejected", "withdrawn": "Withdrawn",
+}
+
+# Per-region process facts. sla: indicative days to dispose; objection_days: public-notice window for mutation.
+PROCESS: dict[str, dict[str, Any]] = {
+    "TN": {"sla": {"legal_heir_certificate": 30, "mutation": 30, "encumbrance_certificate": 7, "survey_measurement": 45, "name_correction": 30, "appeal": 60, "grievance": 30, "dispute_mediation": 90},
+           "objection_days": 15, "appellate_office": "Revenue Divisional Officer (RDO)", "collector": "District Collector",
+           "grievance_portal": "CM Helpline (1100) / CM Special Cell", "rts_law": "", "online": "TNeGA e-Sevai / Tamil Nilam",
+           "stamp": {"release": (0.01, 40_000, 0), "partition": (0.01, 25_000, 0), "registration": (0.01, 4_000, 0)}},
+    "KA": {"sla": {"legal_heir_certificate": 21, "mutation": 30, "encumbrance_certificate": 7, "survey_measurement": 60, "name_correction": 30, "appeal": 60, "grievance": 30, "dispute_mediation": 90},
+           "objection_days": 30, "appellate_office": "Assistant Commissioner (sub-division)", "collector": "Deputy Commissioner",
+           "grievance_portal": "IPGRS / Janaspandana", "rts_law": "Karnataka Sakala Services Act, 2011", "online": "Bhoomi / Nadakacheri",
+           "stamp": {"release": (0.0, 0, 1_000), "partition": (0.0, 0, 1_000), "registration": (0.01, 0, 0)}},
+    "AP": {"sla": {"legal_heir_certificate": 30, "mutation": 30, "encumbrance_certificate": 7, "survey_measurement": 45, "name_correction": 30, "appeal": 60, "grievance": 30, "dispute_mediation": 90},
+           "objection_days": 15, "appellate_office": "Revenue Divisional Officer (RDO)", "collector": "District Collector",
+           "grievance_portal": "Spandana (Meekosam)", "rts_law": "", "online": "Meebhoomi / village secretariat",
+           "stamp": {"release": (0.01, 0, 0), "partition": (0.01, 0, 0), "registration": (0.005, 0, 0)}},
+    "MH": {"sla": {"legal_heir_certificate": 21, "mutation": 30, "encumbrance_certificate": 7, "survey_measurement": 60, "name_correction": 30, "appeal": 60, "grievance": 30, "dispute_mediation": 90},
+           "objection_days": 15, "appellate_office": "Sub-Divisional Officer (SDO)", "collector": "District Collector",
+           "grievance_portal": "Aaple Sarkar", "rts_law": "Maharashtra Right to Public Services Act, 2015", "online": "Mahabhumi / e-Ferfar",
+           "stamp": {"release": (0.0, 0, 200), "partition": (0.01, 0, 0), "registration": (0.01, 30_000, 0)}},
+    "UP": {"sla": {"legal_heir_certificate": 15, "mutation": 45, "encumbrance_certificate": 7, "survey_measurement": 60, "name_correction": 45, "appeal": 90, "grievance": 30, "dispute_mediation": 90},
+           "objection_days": 30, "appellate_office": "Sub-Divisional Magistrate (SDM)", "collector": "District Magistrate",
+           "grievance_portal": "IGRS / Jansunwai", "rts_law": "Uttar Pradesh Janhit Guarantee Adhiniyam, 2011", "online": "UP Bhulekh / e-District",
+           "stamp": {"release": (0.0, 0, 5_000), "partition": (0.01, 0, 0), "registration": (0.01, 0, 0)}},
+    "IN": {"sla": {"legal_heir_certificate": 30, "mutation": 30, "encumbrance_certificate": 7, "survey_measurement": 60, "name_correction": 30, "appeal": 60, "grievance": 30, "dispute_mediation": 90},
+           "objection_days": 15, "appellate_office": "Sub-divisional revenue officer", "collector": "District Collector",
+           "grievance_portal": "CPGRAMS / state grievance portal", "rts_law": "", "online": "state land records portal",
+           "stamp": {"release": (0.01, 0, 0), "partition": (0.01, 0, 0), "registration": (0.01, 0, 0)}},
+}
+
+
+def process(code: str | None) -> dict[str, Any]:
+    return PROCESS.get((code or "").upper(), PROCESS["IN"])
+
+
+def duty(code: str | None, instrument: str, value_inr: float) -> int:
+    """Indicative stamp duty or registration fee on ``value_inr``: rate × value, capped, with a floor/flat amount."""
+    rate, cap, flat = process(code)["stamp"][instrument]
+    amount = value_inr * rate
+    if cap:
+        amount = min(amount, cap)
+    return int(round(max(amount, flat)))
+
+
+def office_for(reg: Region, kind: str) -> str:
+    key = PROCEEDING_KINDS[kind]["office"]
+    proc = process(reg.code)
+    if key in proc:
+        return proc[key]
+    return getattr(reg, key, key)
