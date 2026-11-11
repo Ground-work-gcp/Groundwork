@@ -11,7 +11,7 @@ import re
 from pathlib import Path
 
 API_CLIENT = Path(__file__).resolve().parents[3] / "frontend" / "src" / "services" / "api.ts"
-CALL = re.compile(r"""\b(get|post|patch|del|text|upload)\b[^(\n=]*?\(\s*[`"'](/[^`"']*)[`"']""")
+CALL = re.compile(r"""\b(get|post|patch|put|del|text|upload)\b[^(\n=]*?\(\s*[`"'](/[^`"']*)[`"']""")
 
 
 def _normalise(path: str) -> str:
@@ -25,7 +25,7 @@ def test_every_frontend_call_matches_a_backend_route(app):
     source = API_CLIENT.read_text(encoding="utf-8")
     calls = CALL.findall(source)
     assert len(calls) > 40, "the API client should be parsed"
-    verbs = {"get": "GET", "text": "GET", "post": "POST", "upload": "POST", "patch": "PATCH", "del": "DELETE"}
+    verbs = {"get": "GET", "text": "GET", "post": "POST", "upload": "POST", "patch": "PATCH", "put": "PUT", "del": "DELETE"}
     missing = sorted({(verbs[v], _normalise(p)) for v, p in calls} - routes)
     assert missing == [], f"frontend calls with no backend route: {missing}"
 

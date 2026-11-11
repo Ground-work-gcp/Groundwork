@@ -49,6 +49,7 @@ const get = <R>(path: string) => call<R>("GET", path);
 const text = (path: string) => call<string>("GET", path);
 const post = <R>(path: string, body: unknown = {}) => call<R>("POST", path, body);
 const patch = <R>(path: string, body: unknown) => call<R>("PATCH", path, body);
+const put = <R>(path: string, body: unknown) => call<R>("PUT", path, body);
 const del = <R>(path: string) => call<R>("DELETE", path);
 const upload = <R>(path: string, form: FormData) => call<R>("POST", path, form, true);
 
@@ -70,10 +71,27 @@ const STUDIO = {
   tests: (b: unknown) => post<StudioResult>(`/studio/tests`, b),
 };
 export type StudioTool = keyof typeof STUDIO;
+export type StudioStep = "requirements" | "stack" | "architecture" | "stories" | "scaffold";
+export const studioExport = (id: string, kind: "export.md" | "stories.csv" | "scaffold.zip") => `${BASE}/studio/projects/${encodeURIComponent(id)}/${kind}`;
+export const studioProjects = {
+  list: (archived = false) => {
+    const params = { include_archived: archived ? "true" : null };
+    return get<{ projects: StudioResult[] }>(`/studio/projects${q(params)}`);
+  },
+  create: (body: { name: string; idea: string; language: string; scale: string; persona: string }) => post<StudioResult>(`/studio/projects`, body),
+  get: (id: string) => get<StudioResult>(`/studio/projects/${encodeURIComponent(id)}`),
+  update: (id: string, body: unknown) => patch<StudioResult>(`/studio/projects/${encodeURIComponent(id)}`, body),
+  run: (id: string, kind: StudioStep, notes = "") => post<StudioResult>(`/studio/projects/${encodeURIComponent(id)}/steps/${kind}/run`, { notes }),
+  runAll: (id: string) => post<StudioResult>(`/studio/projects/${encodeURIComponent(id)}/run-all`),
+  edit: (id: string, kind: StudioStep, content: unknown) => put<StudioResult>(`/studio/projects/${encodeURIComponent(id)}/steps/${kind}`, { content }),
+  approve: (id: string, kind: StudioStep) => post<StudioResult>(`/studio/projects/${encodeURIComponent(id)}/steps/${kind}/approve`),
+  versions: (id: string, kind: StudioStep) => get<{ versions: StudioResult[] }>(`/studio/projects/${encodeURIComponent(id)}/steps/${kind}/versions`),
+  version: (id: string, kind: StudioStep, v: number) => get<StudioResult>(`/studio/projects/${encodeURIComponent(id)}/steps/${kind}/versions/${v}`),
+};
 
 export const api = {
   // engineering studio
-  studioStatus: () => get<{ ai: { backend: string; model: string | null; configured: boolean }; tools: string[] }>(`/studio/status`),
+  studioStatus: () => get<{ ai: { backend: string; model: string | null; configured: boolean }; tools: string[]; cache: { entries: number; hits: number; misses: number } }>(`/studio/status`),
   studio: (tool: StudioTool, body: unknown) => STUDIO[tool](body),
   health: () => get<T.Health>(`/health`),
   // auth

@@ -29,6 +29,8 @@ PERMISSIONS: dict[str, str] = {
     "finding:review": "paralegal",
     "action:approve": "attorney",
     "decision:record": "attorney",
+    "studio:write": "paralegal",
+    "studio:approve": "attorney",
     "users:manage": "admin",
 }
 

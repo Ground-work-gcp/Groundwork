@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /* Page chrome kept from Beacon: announcement strip, footer with the serif wordmark,
    toasts and the "?" help popover — now explaining the case workflow. */
@@ -72,12 +72,16 @@ export function Toasts({ items, onDismiss }: { items: ToastItem[]; onDismiss: (i
 let toastSeq = 1;
 export function useToasts(ms = 4000) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const dismiss = (id: number) => setToasts((t) => t.filter((x) => x.id !== id));
-  const push = (text: string, tone: ToastItem["tone"] = "ok") => {
-    const id = toastSeq++;
-    setToasts((t) => [...t.slice(-2), { id, text, tone }]);
-    window.setTimeout(() => dismiss(id), ms);
-  };
+  // Stable identities: screens put these in effect/callback dependencies.
+  const dismiss = useCallback((id: number) => setToasts((t) => t.filter((x) => x.id !== id)), []);
+  const push = useCallback(
+    (text: string, tone: ToastItem["tone"] = "ok") => {
+      const id = toastSeq++;
+      setToasts((t) => [...t.slice(-2), { id, text, tone }]);
+      window.setTimeout(() => dismiss(id), ms);
+    },
+    [dismiss, ms],
+  );
   return { toasts, push, dismiss };
 }
 

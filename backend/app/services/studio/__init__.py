@@ -10,9 +10,13 @@ returned with ``source="rules"`` and the failure reason — never an invented or
 from __future__ import annotations
 
 import ast
+import hashlib
 import json
 import logging
 import re
+import threading
+import time
+from collections import OrderedDict
 from collections.abc import Callable
 from typing import Any
 
@@ -35,15 +39,55 @@ def _obj(props: dict[str, Any]) -> dict[str, Any]:
     return {"type": "object", "properties": props, "required": list(props)}
 
 
+class _TTLCache:
+    """Small thread-safe LRU with expiry: identical Gemini requests are answered once (cost + latency)."""
+
+    def __init__(self, size: int = 256, ttl: float = 3600.0) -> None:
+        self.size, self.ttl = size, ttl
+        self._data: OrderedDict[str, tuple[float, dict[str, Any]]] = OrderedDict()
+        self._lock = threading.Lock()
+        self.hits = self.misses = 0
+
+    def get(self, key: str) -> dict[str, Any] | None:
+        with self._lock:
+            item = self._data.get(key)
+            if item and time.monotonic() - item[0] < self.ttl:
+                self._data.move_to_end(key)
+                self.hits += 1
+                return item[1]
+            self._data.pop(key, None)
+            self.misses += 1
+            return None
+
+    def put(self, key: str, value: dict[str, Any]) -> None:
+        with self._lock:
+            self._data[key] = (time.monotonic(), value)
+            self._data.move_to_end(key)
+            while len(self._data) > self.size:
+                self._data.popitem(last=False)
+
+    def stats(self) -> dict[str, int]:
+        return {"entries": len(self._data), "hits": self.hits, "misses": self.misses}
+
+
+CACHE = _TTLCache()
+
+
 def _refine(kind: str, payload: dict[str, Any], draft: dict[str, Any], schema: dict[str, Any]) -> dict[str, Any]:
     """Return Gemini's refinement of ``draft`` or the draft itself, tagged with its source."""
     if not ai.enabled():
         return {**draft, "source": "rules", "note": "Gemini not configured; deterministic engine output."}
     prompt = f"TASK: {kind}\nINPUT:\n{json.dumps(payload)[:20000]}\nDRAFT:\n{json.dumps(draft)[:30000]}"
+    key = hashlib.sha256(f"{ai.model_name()}\0{prompt}".encode()).hexdigest()
+    cached = CACHE.get(key)
+    if cached is not None:
+        return {**cached, "cached": True}
     try:
         refined = ai.generate_json(prompt, schema=schema, system=SYSTEM)
         if isinstance(refined, dict) and refined:
-            return {**draft, **refined, "source": "gemini", "model": ai.model_name()}
+            out = {**draft, **refined, "source": "gemini", "model": ai.model_name()}
+            CACHE.put(key, out)
+            return out
     except Exception as exc:  # provider errors must never break the tool
         log.warning("studio %s refinement failed: %s", kind, type(exc).__name__)
         return {**draft, "source": "rules", "note": f"Gemini refinement failed ({type(exc).__name__}); rule output shown."}
@@ -54,12 +98,35 @@ def _has(text: str, *words: str) -> bool:
     return any(re.search(rf"\b{re.escape(w)}", text, re.I) for w in words)
 
 
+def _mm(text: str) -> str:
+    """Make text safe inside a quoted Mermaid label."""
+    return re.sub(r'["<>{}|`#;]', "", str(text)).strip()[:80]
+
+
 def _slug(text: str, default: str = "app") -> str:
     s = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:40].strip("-")
     return s or default
 
 
 # ── 1. requirements ────────────────────────────────────────────────────────
+
+VAGUE = {"fast": "state a latency target (e.g. p95 < 300 ms)", "quick": "state a time target", "easy": "define a measurable usability goal",
+         "user-friendly": "define a measurable usability goal", "simple": "define what simple means for the user",
+         "secure": "name the standard or threat (e.g. OWASP ASVS L2)", "scalable": "state the expected load (users, req/s)",
+         "etc": "list every item explicitly", "and/or": "choose and, or, or both", "some": "quantify it", "many": "quantify it",
+         "robust": "state the failure mode to survive", "flexible": "name the variation to support", "efficient": "state a resource budget",
+         "as appropriate": "state the rule", "if possible": "decide whether it is required", "real-time": "state the latency bound"}
+
+
+def lint_requirements(lines: list[str]) -> list[dict[str, str]]:
+    """Flag ambiguous wording (ISO/IEC/IEEE 29148 'unambiguous, verifiable')."""
+    found = []
+    for line in lines:
+        for word, fix in VAGUE.items():
+            if re.search(rf"(?<![\w-]){re.escape(word)}(?![\w-])", line, re.I):
+                found.append({"text": line[:160], "term": word, "suggestion": fix})
+    return found[:30]
+
 
 def requirements(idea: str, notes: str = "") -> dict[str, Any]:
     text = f"{idea}\n{notes}"
@@ -92,6 +159,7 @@ def requirements(idea: str, notes: str = "") -> dict[str, Any]:
                  "Which integrations or legacy systems must be supported at launch?",
                  "What is the budget and the target launch date?"]
     draft = {
+        "ambiguities": lint_requirements(sentences),
         "summary": (sentences[0] if sentences else idea)[:300],
         "functional": functional or ["FR-1: Clarify the core user goal — the idea is too short to derive requirements."],
         "non_functional": nfr,
@@ -177,7 +245,7 @@ def architecture(requirements_text: str, stack_rows: list[dict[str, Any]] | None
     flows += [(a, b, lbl) for a, b, lbl in [("client", "idp", "sign-in"), ("api", "ai", "generate"), ("api", "docai", "OCR"),
                                             ("api", "queue", "publish"), ("queue", "api", "push"), ("api", "cache", "get/set"),
                                             ("db", "bq", "export"), ("api", "search", "query")] if a in keys and b in keys]
-    mermaid = ["flowchart LR"] + [f'  {k}["{n}<br/><small>{d}</small>"]' for k, n, d in comps] + [f"  {a} -->|{lbl}| {b}" for a, b, lbl in flows]
+    mermaid = ["flowchart LR"] + [f'  {k}["{_mm(n)} · {_mm(d)}"]' for k, n, d in comps] + [f'  {a} -->|"{_mm(lbl)}"| {b}' for a, b, lbl in flows]
     draft = {
         "style": "Modular monolith on Cloud Run (split into services only when scaling or team boundaries demand it)",
         "components": [{"id": k, "name": n, "technology": d} for k, n, d in comps],
@@ -243,8 +311,9 @@ def stories(requirements_list: list[str], persona: str = "user") -> dict[str, An
         body = re.sub(r"^(FR-\d+:\s*)", "", req).strip()
         body = re.sub(r"^(the system shall|users can|the system)\s+", "", body, flags=re.I).rstrip(".")
         words = len(body.split())
+        fr = re.match(r"(FR-\d+)", req)
         out.append({
-            "id": f"ST-{i + 1}", "title": body[:70][0].upper() + body[1:70] if body else f"Story {i + 1}",
+            "id": f"ST-{i + 1}", "requirement": fr.group(1) if fr else f"FR-{i + 1}", "title": body[:70][0].upper() + body[1:70] if body else f"Story {i + 1}",
             "as_a": persona, "i_want": body, "so_that": "I can achieve my goal without manual workarounds",
             "acceptance": [f"Given a signed-in {persona}, when they {body[:60]}, then the result is saved and confirmed.",
                            "Given invalid input, then a clear validation error is shown and nothing is saved.",
@@ -252,7 +321,9 @@ def stories(requirements_list: list[str], persona: str = "user") -> dict[str, An
             "points": 2 if words < 8 else 3 if words < 15 else 5,
             "priority": "Must" if i < 3 else "Should" if i < 7 else "Could",
         })
-    st = _obj({"id": _STR, "title": _STR, "as_a": _STR, "i_want": _STR, "so_that": _STR, "acceptance": _STRS,
+    for story in out:
+        story["invest_warnings"] = invest(story)
+    st = _obj({"id": _STR, "requirement": _STR, "title": _STR, "as_a": _STR, "i_want": _STR, "so_that": _STR, "acceptance": _STRS,
                "points": {"type": "integer"}, "priority": _STR})
     return _refine("feature story creation (INVEST, Gherkin acceptance)", {"requirements": requirements_list, "persona": persona},
                    {"stories": out}, _obj({"stories": {"type": "array", "items": st}}))
@@ -348,7 +419,15 @@ def visualize(code: str, language: str = "python") -> dict[str, Any]:
                 callee = call.func.id if isinstance(call.func, ast.Name) else call.func.attr if isinstance(call.func, ast.Attribute) else None
                 if callee and callee in defined and callee != f.name:
                     edges.add((f.name, callee))
-    if not classes:
+    if classes:
+        class_names = {c.name for c in classes}
+        if funcs:  # module-level functions as one pseudo-class, linked to the classes they use
+            out.append("  class module {")
+            out += [f"    +{f.name}()" for f in funcs]
+            out.append("  }")
+            used = sorted({b for a, b in edges if b in class_names and a in {f.name for f in funcs}})
+            out += [f"  module ..> {c} : uses" for c in used]
+    else:
         out += [f"  {f.name}[{f.name}]" for f in funcs] + [f"  {a} --> {b}" for a, b in sorted(edges)]
     return {"mermaid": "\n".join(out), "kind": "classes" if classes else "call-graph", "calls": [{"from": a, "to": b} for a, b in sorted(edges)], "source": "rules"}
 
@@ -381,6 +460,21 @@ def unit_tests(code: str, language: str = "python", module: str = "module") -> d
         draft = {"framework": "vitest", "filename": f"{module}.test.ts", "code": "\n".join(body), "count": len(names)}
     return _refine("unit test generation: return complete runnable tests with concrete inputs and assertions, edge cases and mocks for I/O",
                    {"code": code[:15000], "language": language, "module": module}, draft, _obj({"code": _STR}))
+
+
+def invest(story: dict[str, Any]) -> list[str]:
+    """Cheap INVEST checks on a story."""
+    warn = []
+    want = str(story.get("i_want", ""))
+    if int(story.get("points") or 0) > 8:
+        warn.append("Small: more than 8 points; split the story.")
+    if re.search(r"\b(and|also|as well as)\b", want, re.I) and len(want.split()) > 12:
+        warn.append("Independent/Small: covers several behaviours; consider splitting.")
+    if len(story.get("acceptance") or []) < 2:
+        warn.append("Testable: add at least two acceptance criteria.")
+    if lint_requirements([want]):
+        warn.append("Testable: the goal uses vague wording.")
+    return warn
 
 
 TOOLS: dict[str, Callable[..., dict[str, Any]]] = {

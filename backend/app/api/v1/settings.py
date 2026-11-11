@@ -100,7 +100,8 @@ def integrations(_user: User = Depends(current_user)) -> dict:
             "mode": "Document AI" if settings.extraction_backend == "documentai" else "local text layer (pypdf / plain text); no OCR",
             "processor": settings.documentai_processor_id or None,
         },
-        "ai": ai.status() | {"mode": "Gemini on Vertex AI" if ai.enabled() else "off — answers are extractive, no model output"},
+        "ai": ai.status() | {"mode": ({"vertex": "Gemini on Vertex AI (ADC)", "gemini_api": "Gemini API (AI Studio key)"}.get(settings.ai_backend, "off")
+                              if ai.enabled() else "off — answers are extractive, no model output")},
         "pii": {"backend": settings.pii_backend, "mode": "Sensitive Data Protection" if settings.pii_backend == "dlp" else "local high-precision patterns"},
         "notifications": {"webhook": bool(settings.notify_webhook_url)},
         "workflow": {"execution_enabled": settings.workflow_execution_enabled, "separate_approver": settings.require_separate_approver},

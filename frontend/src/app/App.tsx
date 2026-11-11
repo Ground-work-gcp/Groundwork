@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../services/api";
 import type { Me } from "../types";
 import { useClock, usePoll } from "../hooks";
@@ -115,7 +115,7 @@ export default function App() {
     go("home");
   };
 
-  const ctx: Ctx | null = me ? { me, toast: push, can } : null;
+  const ctx: Ctx | null = useMemo(() => (me ? { me, toast: push, can } : null), [me, push, can]);
   const pendingCount = pending.data?.actions.length ?? 0;
   const active = route.page === "case" ? "cases" : route.page;
 
@@ -134,7 +134,7 @@ export default function App() {
   else if (route.page === "findings") body = <FindingsPage ctx={ctx} />;
   else if (route.page === "approvals") body = <ApprovalsPage ctx={ctx} onChanged={() => void pending.refresh()} />;
   else if (route.page === "audit") body = <AuditPage />;
-  else if (route.page === "studio") body = <StudioPage ctx={ctx} tab={route.tab} />;
+  else if (route.page === "studio") body = <StudioPage ctx={ctx} tab={route.tab} projectId={route.id} />;
   else if (route.page === "settings") body = <SettingsPage ctx={ctx} tab={route.tab} />;
   else
     body = (

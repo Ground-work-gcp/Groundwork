@@ -38,6 +38,7 @@ export function parseHash(hash = window.location.hash): Route {
   const [head, ...rest] = hash.replace(/^#/, "").split("?")[0].split("/").map(decodeURIComponent);
   if (!head) return { page: "home" };
   if (head === "case" && rest[0]) return { page: "case", id: rest[0], tab: rest[1] || "overview", item: rest[2] };
+  if (head === "studio" && rest[0] === "p" && rest[1]) return { page: "studio", tab: "project", id: rest[1] };
   if (head === "consent" && rest[0]) return { page: "consent", id: rest[0] };
   if (PAGES.has(head as Page)) return { page: head as Page, tab: rest[0] };
   return { page: "notfound" };

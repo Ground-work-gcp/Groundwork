@@ -744,3 +744,37 @@ class CantonCursor(Base):
     key: Mapped[str] = mapped_column(String(80), primary_key=True)  # <network>:<participant>
     ledger_offset: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
+
+
+# ── Engineering Studio: project plans with versioned, approvable artifacts ───
+
+
+class StudioProject(Timestamped, Base):
+    __tablename__ = "studio_projects"
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    created_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    idea: Mapped[str] = mapped_column(Text, nullable=False)
+    language: Mapped[str] = mapped_column(String(20), default="python", nullable=False)
+    scale: Mapped[str] = mapped_column(String(10), default="small", nullable=False)
+    persona: Mapped[str] = mapped_column(String(60), default="user", nullable=False)
+    status: Mapped[str] = mapped_column(String(12), default="active", nullable=False)  # active | archived
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
+
+
+class StudioArtifact(Timestamped, Base):
+    """One generated version of one pipeline step. Never updated except to record its approval."""
+
+    __tablename__ = "studio_artifacts"
+    project_id: Mapped[str] = mapped_column(ForeignKey("studio_projects.id", ondelete="CASCADE"), index=True, nullable=False)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)  # requirements | stack | architecture | stories | scaffold | review
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    content: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    source: Mapped[str] = mapped_column(String(12), default="rules", nullable=False)  # rules | gemini | edited
+    model: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    based_on: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)  # upstream kind -> version
+    created_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    approved_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (UniqueConstraint("project_id", "kind", "version", name="uq_studio_artifact_version"),)

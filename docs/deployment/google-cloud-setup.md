@@ -115,3 +115,39 @@ Production refuses to start on unsafe defaults (SQLite, local storage, dev JWT s
 | `POST /code-health` | `code`, `language` | score/grade, complexity per function, issues (secrets, bare except, …) |
 | `POST /visualize` | `code`, `language` | Mermaid class diagram / call graph |
 | `POST /tests` | `code`, `language`, `module` | pytest or vitest test file |
+
+### Studio projects (the production workflow)
+
+Projects are org-scoped and every step is audited on the tamper-evident audit chain.
+
+```
+requirements ──► stack + BOM ──► architecture ──┐
+      │                                          ├──► scaffold (repo .zip)
+      └──────────► stories ──────────────────────┘
+```
+
+* **Gated:** a step runs only once its upstream steps exist (`409 Generate … first`).
+* **Versioned:** every run or human edit creates a new immutable version; history is browsable.
+* **Stale detection:** each version records the upstream versions it was built from; changing an
+  upstream marks dependants stale, and `run-all` regenerates only missing or stale steps.
+* **Approval:** `studio:approve` (attorney/admin) baselines a version; stale versions cannot be
+  approved, and with `REQUIRE_SEPARATE_APPROVER=true` nobody approves their own output.
+* **Quality gates:** ambiguous requirement wording (ISO 29148), INVEST warnings on stories, and a
+  requirement → story → acceptance-test traceability matrix with coverage.
+* **Scaffold:** a runnable service plus `infra/main.tf` (Cloud Run v2, Cloud SQL HA + PITR,
+  Artifact Registry, GCS, Secret Manager, least-privilege service account with only the roles
+  the chosen stack needs), `cloudbuild.yaml`, docs, ADRs, BOM and acceptance tests.
+* **Exports:** project brief (`export.md`), Jira/Linear CSV (`stories.csv`), repository (`scaffold.zip`).
+* **Efficiency:** identical Gemini requests are served from a TTL cache; `STUDIO_RATE_PER_MINUTE`
+  (default 60) caps per-user calls.
+
+| Endpoint | Purpose |
+|---|---|
+| `GET/POST /studio/projects` | list / create |
+| `GET/PATCH /studio/projects/{id}` | detail (steps, staleness, traceability) / rename, archive |
+| `POST /studio/projects/{id}/run-all` | generate missing and stale steps in order |
+| `POST /studio/projects/{id}/steps/{step}/run` | (re)generate one step, optional refinement `notes` |
+| `PUT /studio/projects/{id}/steps/{step}` | save a human edit as a new version |
+| `POST /studio/projects/{id}/steps/{step}/approve` | approve the latest version |
+| `GET /studio/projects/{id}/steps/{step}/versions[/{v}]` | version history |
+| `GET /studio/projects/{id}/export.md` · `stories.csv` · `scaffold.zip` | exports |

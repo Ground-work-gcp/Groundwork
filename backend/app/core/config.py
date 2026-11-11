@@ -87,6 +87,7 @@ class Settings(BaseSettings):
     gemini_max_output_tokens: int = 2048
     gemini_max_prompt_chars: int = 60_000
     assistant_rate_per_minute: int = 20
+    studio_rate_per_minute: int = 60
 
     # ── Canton Network: multi-party external approvals (docs/canton) ─────
     # Disabled by default; the rest of Groundwork never depends on it.
