@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 /* Hash routing, as Beacon did it: `#case/<id>/<tab>/<item>` deep-links anything. */
 
-export type Page = "home" | "signin" | "overview" | "flow" | "cases" | "case" | "properties" | "field" | "findings" | "approvals" | "audit" | "settings" | "consent" | "verify" | "notfound";
+export type Page = "home" | "signin" | "overview" | "flow" | "cases" | "case" | "properties" | "field" | "findings" | "approvals" | "audit" | "settings" | "consent" | "verify" | "registry" | "notfound";
 export interface Route { page: Page; id?: string; tab?: string; item?: string }
 
 export const NAV: Array<{ page: Page; label: string; key: string }> = [
@@ -13,6 +13,7 @@ export const NAV: Array<{ page: Page; label: string; key: string }> = [
   { page: "field", label: "Field", key: "l" },
   { page: "findings", label: "Findings", key: "f" },
   { page: "approvals", label: "Approvals", key: "a" },
+  { page: "registry", label: "Registry", key: "r" },
   { page: "audit", label: "Audit", key: "u" },
   { page: "settings", label: "Settings", key: "s" },
 ];
@@ -26,10 +27,11 @@ export const CASE_TABS = [
   { key: "financials", label: "Financials" },
   { key: "findings", label: "Findings" },
   { key: "workflow", label: "Workflow" },
+  { key: "external", label: "External approvals" },
   { key: "history", label: "History" },
 ];
 
-const PAGES = new Set<Page>(["home", "signin", "overview", "flow", "cases", "properties", "field", "findings", "approvals", "audit", "settings", "verify"]);
+const PAGES = new Set<Page>(["home", "signin", "overview", "flow", "cases", "properties", "field", "findings", "approvals", "audit", "settings", "verify", "registry"]);
 
 export function parseHash(hash = window.location.hash): Route {
   const [head, ...rest] = hash.replace(/^#/, "").split("?")[0].split("/").map(decodeURIComponent);

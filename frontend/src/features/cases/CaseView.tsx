@@ -14,6 +14,7 @@ import { WorkflowTab } from "../workflows/WorkflowTab";
 import { FlowCanvas } from "../flow/FlowCanvas";
 import { LandTab } from "../land/LandTab";
 import { Journey } from "../land/LandWorkflow";
+import { CaseExternalApprovals } from "../external/ExternalApprovals";
 
 export interface CaseCtx extends Ctx {
   caseId: string;
@@ -78,6 +79,8 @@ export function CaseView({ ctx, caseId, tab, item }: { ctx: Ctx; caseId: string;
         <CaseFindings c={cctx} />
       ) : tab === "workflow" ? (
         <WorkflowTab c={cctx} />
+      ) : tab === "external" ? (
+        <CaseExternalApprovals c={cctx} />
       ) : tab === "history" ? (
         <History c={cctx} />
       ) : (

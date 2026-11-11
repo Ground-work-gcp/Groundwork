@@ -1,0 +1,12 @@
+sdk-version: 3.4.0-rc2
+name: groundwork-approvals-test
+version: 1.0.0
+source: daml
+dependencies:
+  - daml-prim
+  - daml-stdlib
+  - daml-script
+data-dependencies:
+  - ../groundwork-approvals/.daml/dist/groundwork-approvals-1.0.0.dar
+build-options:
+  - --target=2.1

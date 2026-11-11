@@ -33,6 +33,19 @@ steps:
         python -m pytest -q
         pip-audit --strict --progress-spinner off || (echo "dependency vulnerabilities found" && exit 1)
 
+  - id: daml-verify
+    # Compile the shared approval contracts and run their Daml Script tests (SDK pinned in daml.yaml).
+    name: digitalasset/daml-sdk:3.4.0-rc2
+    dir: contracts
+    entrypoint: bash
+    args:
+      - -ceu
+      - |
+        export PATH=/home/daml/.daml/bin:$PATH HOME=/home/daml
+        daml build --all
+        (cd groundwork-approvals-test && daml test)
+    waitFor: ["-"]
+
   - id: frontend-verify
     name: node:20.18-slim
     dir: frontend
@@ -49,7 +62,7 @@ steps:
   - id: build
     name: gcr.io/cloud-builders/docker
     args: ["build", "-t", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/groundwork:$SHORT_SHA", "."]
-    waitFor: ["backend-verify", "frontend-verify"]
+    waitFor: ["backend-verify", "frontend-verify", "daml-verify"]
 
   - id: push
     name: gcr.io/cloud-builders/docker

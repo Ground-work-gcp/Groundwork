@@ -185,3 +185,17 @@ export interface Pathways {
   lending_value_after_fix_inr: number; first_rupee_days: number; assumptions: string[]; disclaimer: string;
 }
 export interface Journey { stage: string; status: string; stages: Stage[]; checklist: Gate[]; proceedings: Proceeding[]; next_action: { node: string; label: string; step: string; href: string; remaining: number } | null; critical_path: string[]; needs_you: NeedsItem[] }
+
+/* ── Canton external approvals ─────────────────────────────────────────── */
+export interface CantonSummary { enabled: boolean; network: string; role: string | null }
+export interface ExternalApproval {
+  id: string; proposal_id: string; case_reference: string; case_id?: string; action_type: string; case_version: number; status: string; status_label: string;
+  network: string; requesting_organization: string | null; reviewer_organization: string | null; evidence_commitment: string; payload_commitment: string;
+  commitment_verified: boolean; reviewer_verified_commitment: boolean;
+  ledger: { synchronizer_id: string; package_id: string; request_contract_id: string; request_update_id: string; decision_contract_id: string; decision_update_id: string };
+  decision_reason_code: string; requested_evidence: string[]; expires_at: string; submitted_at: string | null; registry_seen_at: string | null; decided_at: string | null;
+  last_synced_at: string | null; error: string; created_at: string; internal_action_id: string | null;
+  manifest?: { documents: Array<{ document_id: string; sha256: string; doc_type: string; pages: number; filename: string }>; reviewed_facts: Array<{ fact_id: string; fact_type: string; value: string; status: string }>; land?: Record<string, unknown> };
+  payload?: Record<string, unknown>; salts?: { evidence: string; payload: string };
+}
+export interface ExternalEvent { kind: string; participant: string; update_id: string; contract_id: string; offset: number | null; record_time: string; detail: Record<string, unknown>; at: string }

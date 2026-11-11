@@ -1,0 +1,162 @@
+-- | Multi-party approval of an ownership-resolution proposal.
+--
+-- * The legal-aid party proposes (signatory); the registry party only observes.
+-- * Only the registry can decide, and a decision consumes the request, so a second
+--   terminal decision is impossible.
+-- * The registry must echo the evidence and payload commitments it actually reviewed; a
+--   decision about a different evidence version than the one proposed is rejected by the
+--   contract itself.
+-- * Expiry is checked against ledger time inside each choice; an expired request can only
+--   be closed out (MarkExpired), never approved.
+-- * The decision is a separate contract signed by the registry and observed by legal aid.
+module Groundwork.Approval.OwnershipApproval where
+
+import qualified DA.Text as T
+import Groundwork.Approval.ApprovalTypes
+
+template OwnershipApprovalRequest
+  with
+    proposalId : Text
+    caseReference : Text          -- opaque random identifier, never the Groundwork case id
+    legalAid : Party
+    registry : Party
+    actionType : ActionType
+    caseVersion : Int
+    evidenceCommitment : Text     -- salted SHA-256 of the evidence manifest (held off-ledger)
+    payloadCommitment : Text      -- salted SHA-256 of the full proposal payload
+    createdAt : Time
+    expiresAt : Time
+    supersedes : Optional Text    -- proposalId of an earlier request this one answers
+  where
+    signatory legalAid
+    observer registry
+    ensure
+      legalAid /= registry
+        && proposalId /= "" && caseReference /= ""
+        && commitmentShape evidenceCommitment && commitmentShape payloadCommitment
+        && caseVersion >= 1
+        && expiresAt > createdAt
+
+    choice ApproveOwnership : ContractId OwnershipApprovalDecision
+      with
+        reviewedEvidenceCommitment : Text
+        reviewedPayloadCommitment : Text
+        reasonCode : ReasonCode
+      controller registry
+      do
+        decide this reviewedEvidenceCommitment reviewedPayloadCommitment Approved reasonCode []
+
+    choice RejectOwnership : ContractId OwnershipApprovalDecision
+      with
+        reviewedEvidenceCommitment : Text
+        reviewedPayloadCommitment : Text
+        reasonCode : ReasonCode
+      controller registry
+      do
+        assertMsg "a rejection needs a reason other than EvidenceSufficient" (reasonCode /= EvidenceSufficient)
+        decide this reviewedEvidenceCommitment reviewedPayloadCommitment Rejected reasonCode []
+
+    choice RequestAdditionalEvidence : ContractId OwnershipApprovalDecision
+      with
+        reviewedEvidenceCommitment : Text
+        reviewedPayloadCommitment : Text
+        reasonCode : ReasonCode
+        requested : [EvidenceItem]
+      controller registry
+      do
+        assertMsg "name at least one evidence item" (not (null requested))
+        decide this reviewedEvidenceCommitment reviewedPayloadCommitment ChangesRequested reasonCode requested
+
+    choice CancelRequest : ContractId OwnershipApprovalClosed
+      with
+        reasonCode : ReasonCode
+      controller legalAid
+      do
+        now <- getTime
+        create OwnershipApprovalClosed with
+          proposalId; caseReference; legalAid; registry; caseVersion; evidenceCommitment; payloadCommitment
+          closure = "cancelled"; reasonCode; closedAt = now
+
+    -- | Expiry needs a transaction: either party may close out a request whose time has passed.
+    choice MarkExpired : ContractId OwnershipApprovalClosed
+      with
+        actor : Party
+      controller actor
+      do
+        assertMsg "only the proposer or the registry can close a request" (actor == legalAid || actor == registry)
+        now <- getTime
+        assertMsg "the request has not expired yet" (now >= expiresAt)
+        create OwnershipApprovalClosed with
+          proposalId; caseReference; legalAid; registry; caseVersion; evidenceCommitment; payloadCommitment
+          closure = "expired"; reasonCode = OtherSeeOffLedgerNote; closedAt = now
+
+-- | The registry's terminal decision on one request.
+template OwnershipApprovalDecision
+  with
+    proposalId : Text
+    caseReference : Text
+    legalAid : Party
+    registry : Party
+    actionType : ActionType
+    decisionStatus : DecisionStatus
+    evidenceCommitment : Text
+    payloadCommitment : Text
+    decisionReasonCode : ReasonCode
+    requestedEvidence : [EvidenceItem]
+    decisionTimestamp : Time
+    caseVersion : Int
+  where
+    signatory registry
+    observer legalAid
+
+    -- | Legal aid acknowledges it has projected the decision into its case (keeps the ACS small).
+    choice AcknowledgeDecision : ()
+      controller legalAid
+      do pure ()
+
+-- | A request closed without a registry decision (cancelled by legal aid, or expired).
+template OwnershipApprovalClosed
+  with
+    proposalId : Text
+    caseReference : Text
+    legalAid : Party
+    registry : Party
+    caseVersion : Int
+    evidenceCommitment : Text
+    payloadCommitment : Text
+    closure : Text
+    reasonCode : ReasonCode
+    closedAt : Time
+  where
+    signatory legalAid
+    observer registry
+
+-- ── helpers ───────────────────────────────────────────────────────────────────
+
+-- | "sha256:" followed by 64 lowercase hex characters.
+commitmentShape : Text -> Bool
+commitmentShape c =
+  T.isPrefixOf "sha256:" c
+    && T.length hexPart == 64
+    && all (`elem` T.explode "0123456789abcdef") (T.explode hexPart)
+  where hexPart = T.drop 7 c
+
+decide : OwnershipApprovalRequest -> Text -> Text -> DecisionStatus -> ReasonCode -> [EvidenceItem] -> Update (ContractId OwnershipApprovalDecision)
+decide req reviewedEvidence reviewedPayload status reason requested = do
+  now <- getTime
+  assertMsg "the request has expired" (now < req.expiresAt)
+  assertMsg "the reviewed evidence is not the evidence that was proposed" (reviewedEvidence == req.evidenceCommitment)
+  assertMsg "the reviewed proposal is not the proposal that was submitted" (reviewedPayload == req.payloadCommitment)
+  create OwnershipApprovalDecision with
+    proposalId = req.proposalId
+    caseReference = req.caseReference
+    legalAid = req.legalAid
+    registry = req.registry
+    actionType = req.actionType
+    decisionStatus = status
+    evidenceCommitment = req.evidenceCommitment
+    payloadCommitment = req.payloadCommitment
+    decisionReasonCode = reason
+    requestedEvidence = requested
+    decisionTimestamp = now
+    caseVersion = req.caseVersion

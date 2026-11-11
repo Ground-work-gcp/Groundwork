@@ -1,0 +1,135 @@
+module Test.OwnershipApprovalTest where
+
+import DA.Time (addRelTime, days, hours)
+import Daml.Script
+import Groundwork.Approval.ApprovalTypes
+import Groundwork.Approval.OwnershipApproval
+
+ev, pl, other : Text
+ev = "sha256:" <> "1111111111111111111111111111111111111111111111111111111111111111"
+pl = "sha256:" <> "2222222222222222222222222222222222222222222222222222222222222222"
+other = "sha256:" <> "3333333333333333333333333333333333333333333333333333333333333333"
+
+data Parties = Parties with legalAid : Party; registry : Party; outsider : Party
+
+setup : Script Parties
+setup = do
+  legalAid <- allocateParty "LegalAidParty"
+  registry <- allocateParty "RegistryParty"
+  outsider <- allocateParty "Outsider"
+  pure Parties with ..
+
+propose : Parties -> Text -> Script (ContractId OwnershipApprovalRequest)
+propose p pid = do
+  now <- getTime
+  submit p.legalAid $ createCmd OwnershipApprovalRequest with
+    proposalId = pid; caseReference = "cr_" <> pid; legalAid = p.legalAid; registry = p.registry
+    actionType = ConfirmSuccession; caseVersion = 1; evidenceCommitment = ev; payloadCommitment = pl
+    createdAt = now; expiresAt = addRelTime now (days 14); supersedes = None
+
+-- | Legal aid creates; the registry sees it; an unrelated party sees nothing.
+test_create_and_visibility : Script ()
+test_create_and_visibility = do
+  p <- setup
+  cid <- propose p "p1"
+  seen <- query @OwnershipApprovalRequest p.registry
+  assertMsg "registry sees its pending request" (map fst seen == [cid])
+  hidden <- query @OwnershipApprovalRequest p.outsider
+  assertMsg "an unrelated party sees nothing" (null hidden)
+
+test_approve : Script ()
+test_approve = do
+  p <- setup
+  cid <- propose p "p2"
+  dcid <- submit p.registry $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  Some d <- queryContractId p.legalAid dcid
+  assertMsg "approved" (d.decisionStatus == Approved)
+  assertMsg "commitments preserved" (d.evidenceCommitment == ev && d.payloadCommitment == pl && d.proposalId == "p2")
+  gone <- queryContractId p.registry cid
+  assertMsg "request consumed" (gone == None)
+  outsiderView <- query @OwnershipApprovalDecision p.outsider
+  assertMsg "decision not visible to outsiders" (null outsiderView)
+  -- a second terminal decision on the consumed request fails
+  submitMustFail p.registry $ exerciseCmd cid RejectOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = ConflictingClaim
+  submit p.legalAid $ exerciseCmd dcid AcknowledgeDecision
+
+test_reject_and_request_changes : Script ()
+test_reject_and_request_changes = do
+  p <- setup
+  r <- propose p "p3"
+  submitMustFail p.registry $ exerciseCmd r RejectOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  rd <- submit p.registry $ exerciseCmd r RejectOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = ConflictingClaim
+  Some d <- queryContractId p.legalAid rd
+  assertMsg "rejected" (d.decisionStatus == Rejected && d.decisionReasonCode == ConflictingClaim)
+  c <- propose p "p4"
+  submitMustFail p.registry $ exerciseCmd c RequestAdditionalEvidence with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = MissingDocument; requested = []
+  cd <- submit p.registry $ exerciseCmd c RequestAdditionalEvidence with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = MissingDocument; requested = [LegalHeirCertificate, ConsentOfCoHeirs]
+  Some d2 <- queryContractId p.legalAid cd
+  assertMsg "changes requested" (d2.decisionStatus == ChangesRequested && d2.requestedEvidence == [LegalHeirCertificate, ConsentOfCoHeirs])
+
+test_only_registry_decides : Script ()
+test_only_registry_decides = do
+  p <- setup
+  cid <- propose p "p5"
+  submitMustFail p.legalAid $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  submitMustFail p.outsider $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  -- the registry cannot impersonate legal aid on the proposal either
+  now <- getTime
+  submitMustFail p.registry $ createCmd OwnershipApprovalRequest with
+    proposalId = "forged"; caseReference = "cr"; legalAid = p.legalAid; registry = p.registry
+    actionType = ConfirmOwnership; caseVersion = 1; evidenceCommitment = ev; payloadCommitment = pl
+    createdAt = now; expiresAt = addRelTime now (days 1); supersedes = None
+
+test_commitment_must_match : Script ()
+test_commitment_must_match = do
+  p <- setup
+  cid <- propose p "p6"
+  submitMustFail p.registry $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = other; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  submitMustFail p.registry $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = other; reasonCode = EvidenceSufficient
+
+test_expiry : Script ()
+test_expiry = do
+  p <- setup
+  cid <- propose p "p7"
+  submitMustFail p.legalAid $ exerciseCmd cid MarkExpired with actor = p.legalAid  -- not expired yet
+  passTime (days 15)
+  submitMustFail p.registry $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  submitMustFail p.outsider $ exerciseCmd cid MarkExpired with actor = p.outsider
+  closed <- submit p.registry $ exerciseCmd cid MarkExpired with actor = p.registry
+  Some c <- queryContractId p.legalAid closed
+  assertMsg "closed as expired" (c.closure == "expired")
+
+test_cancel : Script ()
+test_cancel = do
+  p <- setup
+  cid <- propose p "p8"
+  submitMustFail p.registry $ exerciseCmd cid CancelRequest with reasonCode = OtherSeeOffLedgerNote
+  _ <- submit p.legalAid $ exerciseCmd cid CancelRequest with reasonCode = OtherSeeOffLedgerNote
+  submitMustFail p.registry $ exerciseCmd cid ApproveOwnership with
+    reviewedEvidenceCommitment = ev; reviewedPayloadCommitment = pl; reasonCode = EvidenceSufficient
+  passTime (hours 1)
+
+test_invalid_requests_rejected : Script ()
+test_invalid_requests_rejected = do
+  p <- setup
+  now <- getTime
+  let base = OwnershipApprovalRequest with
+        proposalId = "bad"; caseReference = "cr"; legalAid = p.legalAid; registry = p.registry
+        actionType = ConfirmSuccession; caseVersion = 1; evidenceCommitment = ev; payloadCommitment = pl
+        createdAt = now; expiresAt = addRelTime now (days 1); supersedes = None
+  submitMustFail p.legalAid $ createCmd base with evidenceCommitment = "John Smith's death certificate"
+  submitMustFail p.legalAid $ createCmd base with expiresAt = now
+  submitMustFail p.legalAid $ createCmd base with registry = p.legalAid
+  _ <- submit p.legalAid $ createCmd base
+  pure ()

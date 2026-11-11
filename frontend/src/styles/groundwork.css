@@ -274,3 +274,7 @@ textarea.input { min-height: 84px; resize: vertical; font: inherit; font-size: 1
 
 .file-card form.row { display: grid; grid-template-columns: minmax(0, 1fr) 130px; gap: 6px; width: 100%; }
 .file-card form.row input[placeholder='what happened'] { grid-column: 1 / -1; }
+.kv-grid { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; margin: 6px 0; }
+.kv-grid dt { color: var(--faint); } .kv-grid dd { margin: 0; overflow-wrap: anywhere; }
+.pill.net-localnet { background: var(--raised); color: var(--ink); } .pill.net-devnet { background: var(--warn-soft); color: var(--ink); }
+.pill.net-testnet { background: var(--lavender); color: var(--ink); } .pill.net-mainnet { background: var(--deep); color: var(--cream); }

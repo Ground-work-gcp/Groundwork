@@ -15,7 +15,7 @@ Built by **[vsrupeshkumar](https://github.com/vsrupeshkumar)** for the **Google 
 ![PostgreSQL](https://img.shields.io/badge/Cloud_SQL-PostgreSQL_16-4169E1?logo=postgresql&logoColor=white)
 ![Google Cloud](https://img.shields.io/badge/Google_Cloud-Cloud_Run-4285F4?logo=googlecloud&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini-Vertex_AI-8E75B2?logo=googlegemini&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-141_passing-success)
+![Tests](https://img.shields.io/badge/tests-150_passing-success)
 
 [The problem](#-the-problem) · [What it does](#-what-groundwork-does) · [How it works](#-how-it-works-step-by-step) · [Architecture](#%EF%B8%8F-architecture) · [Google Cloud](#%EF%B8%8F-built-on-google-cloud) · [Run it](#-run-it-locally) · [Deploy](#-deploy-to-google-cloud)
 
@@ -80,6 +80,19 @@ The same evidence-first approach, applied to **farm land that is too unclear to 
 | 🤖 | **Land case agent** | Plans and runs all of the above, drafts the office applications, watches their timelines, audited as AI; hands off what only people and offices can do; proposes, never executes |
 
 Details, and how every line of the brief maps to code: [`docs/land/rural-india.md`](docs/land/rural-india.md).
+
+## 🤝 Multi-party approvals on Canton Network
+
+Some decisions belong to **another institution**. Groundwork sends an ownership-resolution proposal to the land
+registry as a DAML contract on Canton: the legal-aid organisation and the registry each run their own participant
+node and party, only the registry can decide (Canton refuses anything else), a decision consumes the request, and
+each side reads the committed decision from its own participant. Only opaque ids, salted evidence commitments and
+decision codes go on the ledger; the registry recomputes the commitment from the evidence shared off-ledger before
+it may approve. Groundwork's two-person rule still applies before anything is sent.
+
+Verified on a real two-participant Canton 3.4 LocalNet (contracts, failure modes and the CASE-101 end-to-end run).
+DevNet and TestNet are prepared but **not yet deployed** (they need allowlisting and a sponsor) — see
+[`docs/canton`](docs/canton/architecture.md).
 
 ---
 
@@ -409,6 +422,7 @@ The full runbook is in [`docs/deployment/gcp-runbook.md`](docs/deployment/gcp-ru
 | [`docs/architecture/overview.md`](docs/architecture/overview.md) | Modules and boundaries |
 | [`docs/workflows/case-lifecycle.md`](docs/workflows/case-lifecycle.md) | The eight stages in detail |
 | [`docs/security/model.md`](docs/security/model.md) | Threat model and controls |
+| [`docs/canton/architecture.md`](docs/canton/architecture.md) | Canton multi-party approvals: architecture, LocalNet, DevNet, TestNet, security, troubleshooting |
 | [`docs/land/rural-india.md`](docs/land/rural-india.md) | Rural land records (India): the brief, mapped to features |
 | [`docs/migration/inventory.md`](docs/migration/inventory.md) | What came from InHeir, Magpie and Beacon |
 | [`infra/monitoring/alert-policies.md`](infra/monitoring/alert-policies.md) | What to alert on and the log queries |

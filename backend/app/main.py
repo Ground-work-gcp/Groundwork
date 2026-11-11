@@ -38,7 +38,15 @@ async def lifespan(_app: FastAPI):
     configure_logging(json_logs=settings.json_logs, project=settings.gcp_project, level=settings.log_level)
     settings.validate_runtime()
     event(logger, "startup", environment=settings.environment, version=__version__)
+    if settings.groundwork_canton_enabled and settings.canton_background_sync and settings.environment != "test":
+        from app.domain.external_approvals import worker
+
+        worker.start()
     yield
+    if settings.groundwork_canton_enabled:
+        from app.domain.external_approvals import worker
+
+        worker.stop()
     # Cloud Run sends SIGTERM and waits; uvicorn drains in-flight requests, then we release the pool.
     engine().dispose()
     event(logger, "shutdown")

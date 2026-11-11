@@ -17,7 +17,7 @@ def make_engine(url: str | None = None) -> Engine:
     if url.startswith("sqlite"):
         if ":memory:" not in url and "///" in url:
             Path(url.split("///", 1)[1]).parent.mkdir(parents=True, exist_ok=True)
-        engine = create_engine(url, connect_args={"check_same_thread": False})
+        engine = create_engine(url, connect_args={"check_same_thread": False, "timeout": 30})
 
         # SQLAlchemy's documented recipe: let SQLAlchemy own BEGIN so SAVEPOINTs work on pysqlite.
         @event.listens_for(engine, "connect")

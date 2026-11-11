@@ -1,0 +1,38 @@
+-- | Shared vocabulary of the Groundwork cross-organisation approval workflow.
+-- Nothing here identifies a person: case and proposal references are opaque and every
+-- document is represented only by a salted SHA-256 commitment held off-ledger.
+module Groundwork.Approval.ApprovalTypes where
+
+-- | What the legal-aid organisation asks the registry to record.
+data ActionType
+  = ConfirmSuccession   -- ^ record the legal heirs of a deceased holder
+  | RecordMutation      -- ^ change the name on the record of rights / title
+  | CorrectRecord       -- ^ correct a name, extent or boundary in the record
+  | ConfirmOwnership    -- ^ confirm the current owners for a lender or court
+  deriving (Eq, Show)
+
+data DecisionStatus = Approved | Rejected | ChangesRequested
+  deriving (Eq, Show)
+
+-- | Sanitised decision codes. Free text is never put on the ledger.
+data ReasonCode
+  = EvidenceSufficient
+  | EvidenceInsufficient
+  | CommitmentMismatch
+  | ConflictingClaim
+  | JurisdictionMismatch
+  | MissingDocument
+  | OtherSeeOffLedgerNote
+  deriving (Eq, Show)
+
+-- | Categories of evidence the registry can ask for (no document contents).
+data EvidenceItem
+  = DeathCertificate
+  | LegalHeirCertificate
+  | ConsentOfCoHeirs
+  | EncumbranceCertificate
+  | SurveySketch
+  | TitleDeed
+  | CourtOrder
+  | IdentityProof
+  deriving (Eq, Show)

@@ -287,6 +287,30 @@ def _do_passport(db: Session, case: Case, params: dict[str, Any], actor: User) -
     return issue_passport(db, case, actor, lender=params["lender"], loan_amount_inr=params["loan_amount_inr"] or None)
 
 
+def _ext(db: Session, case: Case, approval_id: str):
+    from app.infrastructure.database.models import ExternalApproval
+
+    return db.scalar(select(ExternalApproval).where(ExternalApproval.id == approval_id, ExternalApproval.case_id == case.id))
+
+
+def _pre_external(db: Session, case: Case, params: dict[str, Any]) -> str | None:
+    row = _ext(db, case, params["external_approval_id"])
+    if row is None:
+        return "external approval not found in this case"
+    return None if row.status == "draft" else f"the external approval is {row.status}"
+
+
+def _do_external(db: Session, case: Case, params: dict[str, Any], actor: User) -> dict[str, Any]:
+    from app.domain.external_approvals import process_outbox, release
+
+    row = _ext(db, case, params["external_approval_id"])
+    assert row is not None
+    release(db, row, actor)
+    db.flush()
+    process_outbox(db, approval_id=row.id)  # first attempt now; ledger errors stay in the outbox and are retried
+    return {"external_approval_id": row.id, "status": row.status, "network": row.network}
+
+
 REGISTRY: dict[str, ActionSpec] = {
     spec.id: spec
     for spec in [
@@ -315,6 +339,11 @@ REGISTRY: dict[str, ActionSpec] = {
             "evidence.request", "Open an evidence-request task (e.g. obtain a probate order)",
             {"title": str, "description": str, "assignee_id": str},
             ("paralegal", "attorney", "admin"), True, _pre_request, _do_request, lambda p: f"request evidence: {p['title']}",
+        ),
+        ActionSpec(
+            "external.submit_to_registry", "Send an ownership-resolution proposal to the registry over Canton",
+            {"external_approval_id": str}, ("attorney", "admin"), False, _pre_external, _do_external,
+            lambda p: f"send external approval {p['external_approval_id'][:8]} to the registry over Canton",
         ),
         ActionSpec(
             "land.issue_passport", "Issue a land credit passport (a hashed, verifiable dossier) for a lender",

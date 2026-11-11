@@ -85,6 +85,37 @@ class Settings(BaseSettings):
     gemini_max_prompt_chars: int = 60_000
     assistant_rate_per_minute: int = 20
 
+    # ── Canton Network: multi-party external approvals (docs/canton) ─────
+    # Disabled by default; the rest of Groundwork never depends on it.
+    groundwork_canton_enabled: bool = False
+    groundwork_canton_network: Literal["localnet", "devnet", "testnet", "mainnet"] = "localnet"
+    canton_api_mode: Literal["json"] = "json"           # JSON Ledger API v2 (verified against Canton 3.4)
+    canton_package_name: str = "groundwork-approvals"   # templates are addressed by package name (#name:Module:Entity)
+    canton_approval_package_id: str = ""               # optional pin; recorded with every approval
+    canton_synchronizer_id: str = ""
+    canton_command_timeout_seconds: float = 30.0
+    canton_event_poll_interval_seconds: float = 5.0
+    canton_request_ttl_days: int = 30
+    canton_ca_bundle: str = ""                          # extra CA for participant TLS (self-hosted nodes)
+    canton_background_sync: bool = True
+    # One block per participant. Auth is either a local HMAC secret (LocalNet only) or OIDC client credentials.
+    canton_legal_aid_ledger_url: str = ""
+    canton_legal_aid_party_id: str = ""
+    canton_legal_aid_user_id: str = "groundwork-legalaid"
+    canton_legal_aid_secret_ref: str = ""               # LocalNet HMAC secret (Secret Manager in cloud)
+    canton_legal_aid_oidc_token_url: str = ""
+    canton_legal_aid_oidc_client_id: str = ""
+    canton_legal_aid_oidc_client_secret: str = ""
+    canton_legal_aid_oidc_audience: str = ""
+    canton_registry_ledger_url: str = ""
+    canton_registry_party_id: str = ""
+    canton_registry_user_id: str = "groundwork-registry"
+    canton_registry_secret_ref: str = ""
+    canton_registry_oidc_token_url: str = ""
+    canton_registry_oidc_client_id: str = ""
+    canton_registry_oidc_client_secret: str = ""
+    canton_registry_oidc_audience: str = ""
+
     log_json: bool | None = None         # default: JSON in production, text locally
     log_level: str = "INFO"
 
@@ -125,6 +156,19 @@ class Settings(BaseSettings):
             problems.append("COOKIE_SECURE must not be false in production")
         if self.notify_webhook_url and not self.notify_webhook_url.startswith("https://"):
             problems.append("NOTIFY_WEBHOOK_URL must use https")
+        if self.groundwork_canton_enabled:
+            if self.groundwork_canton_network == "localnet":
+                problems.append("GROUNDWORK_CANTON_NETWORK=localnet is not allowed in production")
+            for role in ("legal_aid", "registry"):
+                url = getattr(self, f"canton_{role}_ledger_url")
+                if not url.startswith("https://"):
+                    problems.append(f"CANTON_{role.upper()}_LEDGER_URL must use https in production")
+                if getattr(self, f"canton_{role}_secret_ref"):
+                    problems.append(f"CANTON_{role.upper()}_SECRET_REF (HMAC tokens) is LocalNet-only; use OIDC client credentials")
+                if not (getattr(self, f"canton_{role}_oidc_token_url") and getattr(self, f"canton_{role}_oidc_client_id")):
+                    problems.append(f"OIDC client credentials are required for the {role} participant")
+                if not getattr(self, f"canton_{role}_party_id"):
+                    problems.append(f"CANTON_{role.upper()}_PARTY_ID is required")
         if problems:
             raise RuntimeError("Invalid production configuration: " + "; ".join(problems))
 

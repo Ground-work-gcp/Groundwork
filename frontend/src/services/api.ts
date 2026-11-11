@@ -199,6 +199,18 @@ export const api = {
   escalate: (pid: string) => post<{ letter: string; authority: string; basis: string; level: number }>(`/land/proceedings/${pid}/escalate`),
   pathways: (id: string, body: Record<string, unknown> = {}) => post<{ analysis: { result: T.Pathways; result_hash?: string } }>(`/cases/${id}/land/pathways`, body),
   consentEvidence: (mid: string, body: unknown) => post<{ member: T.FamilyMember }>(`/land/members/${mid}/consent-evidence`, body),
+  externalApprovals: (id: string) => get<{ approvals: T.ExternalApproval[]; canton: T.CantonSummary }>(`/cases/${id}/external-approvals`),
+  proposeExternal: (id: string, body: unknown) => post<{ approval: T.ExternalApproval }>(`/cases/${id}/external-approvals`, body),
+  externalApproval: (aid: string) => get<{ approval: T.ExternalApproval }>(`/external-approvals/${aid}`),
+  externalEvents: (aid: string) => get<{ events: T.ExternalEvent[]; network: string }>(`/external-approvals/${aid}/events`),
+  cancelExternal: (aid: string) => post<{ approval: T.ExternalApproval }>(`/external-approvals/${aid}/cancel`),
+  syncExternal: () => post<{ ok: boolean }>(`/external-approvals/sync`),
+  registryPending: () => get<{ approvals: T.ExternalApproval[]; can_decide: boolean; canton: T.CantonSummary }>(`/registry/external-approvals/pending`),
+  registryDecide: (aid: string, decision: "approve" | "reject" | "request-changes", body: unknown) =>
+    decision === "approve" ? post<{ approval: T.ExternalApproval }>(`/registry/external-approvals/${aid}/approve`, body)
+      : decision === "reject" ? post<{ approval: T.ExternalApproval }>(`/registry/external-approvals/${aid}/reject`, body)
+        : post<{ approval: T.ExternalApproval }>(`/registry/external-approvals/${aid}/request-changes`, body),
+  cantonStatus: () => get<{ enabled: boolean; network: string; role: string | null; participants: Record<string, { ok: boolean }> }>(`/canton/status`),
   // public (no session): a co-heir's consent link, a lender's passport check
   publicConsent: (token: string) => get<T.ConsentView>(`/public/consent/${encodeURIComponent(token)}`),
   replyConsent: (token: string, decision: string, note: string) => post<{ ok: boolean; status: string; next: string }>(`/public/consent/${encodeURIComponent(token)}`, { decision, note }),

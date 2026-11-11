@@ -55,7 +55,15 @@ def verify_audit(db: Session) -> dict[str, Any]:
     return {"job": "verify-audit", "organizations": len(results), "broken": broken, "ok": not broken}
 
 
-JOBS = {"expire-actions": expire_actions, "verify-audit": verify_audit}
+def canton_sync(db: Session) -> dict[str, Any]:
+    from app.domain.external_approvals import tick
+
+    if not get_settings().groundwork_canton_enabled:
+        return {"job": "canton-sync", "skipped": "disabled"}
+    return {"job": "canton-sync", **{k: v for k, v in tick(db).items() if k != "broken"}}
+
+
+JOBS = {"expire-actions": expire_actions, "verify-audit": verify_audit, "canton-sync": canton_sync}
 
 
 def run(name: str) -> dict[str, Any]:

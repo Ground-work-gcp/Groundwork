@@ -1,0 +1,39 @@
+// Groundwork LocalNet bootstrap: synchronizer, connections, DAR, parties and ledger users.
+import com.digitalasset.canton.config.RequireTypes.PositiveInt
+import com.digitalasset.canton.version.ProtocolVersion
+import com.digitalasset.canton.topology.PartyId
+
+bootstrap.synchronizer(
+  synchronizerName = "groundwork-localnet",
+  sequencers = Seq(sequencer1),
+  mediators = Seq(mediator1),
+  synchronizerOwners = Seq(sequencer1),
+  synchronizerThreshold = PositiveInt.one,
+  staticSynchronizerParameters = StaticSynchronizerParameters.defaultsWithoutKMS(ProtocolVersion.latest),
+)
+
+legalaid.synchronizers.connect_local(sequencer1, "groundwork-localnet")
+registry.synchronizers.connect_local(sequencer1, "groundwork-localnet")
+
+// Each organisation uploads the shared package to its own participant.
+val dar = "/work/contracts/groundwork-approvals/.daml/dist/groundwork-approvals-1.0.0.dar"
+legalaid.dars.upload(dar)
+registry.dars.upload(dar)
+
+// Each party is hosted only by its own organisation's participant.
+val legalAidParty = legalaid.parties.enable("LegalAidParty")
+val registryParty = registry.parties.enable("RegistryParty")
+
+// One ledger user per organisation, with rights only for its own party.
+legalaid.ledger_api.users.create(id = "groundwork-legalaid", actAs = Set(legalAidParty), readAs = Set(legalAidParty), primaryParty = Some(legalAidParty))
+registry.ledger_api.users.create(id = "groundwork-registry", actAs = Set(registryParty), readAs = Set(registryParty), primaryParty = Some(registryParty))
+
+// Wait until each participant sees the other's party on the synchronizer.
+utils.retry_until_true(legalaid.parties.list(filterParty = "RegistryParty").nonEmpty)
+utils.retry_until_true(registry.parties.list(filterParty = "LegalAidParty").nonEmpty)
+
+val synchronizerId = legalaid.synchronizers.list_connected().head.synchronizerId.toProtoPrimitive
+val out = new java.io.PrintWriter("/state/localnet.json")
+out.write(s"""{"legal_aid_party": "${legalAidParty.toProtoPrimitive}", "registry_party": "${registryParty.toProtoPrimitive}", "synchronizer_id": "$synchronizerId"}""")
+out.close()
+println(s"GROUNDWORK_LOCALNET_READY legal_aid=${legalAidParty.toProtoPrimitive} registry=${registryParty.toProtoPrimitive} synchronizer=$synchronizerId")

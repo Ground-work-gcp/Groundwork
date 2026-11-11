@@ -18,6 +18,7 @@ import { SettingsPage } from "../features/settings/SettingsPage";
 import { FlowPage } from "../features/flow/FlowCanvas";
 import { Assistant } from "../components/Assistant";
 import { FieldPage } from "../features/land/FieldPage";
+import { RegistryPortal } from "../features/external/ExternalApprovals";
 import { ConsentPage, VerifyPage } from "../features/land/PublicPages";
 
 export interface Ctx {
@@ -35,6 +36,7 @@ const TITLES: Record<string, string> = {
   case: "Case · Groundwork",
   properties: "Properties · Groundwork",
   field: "Field · Groundwork",
+  registry: "Registry portal · Groundwork",
   consent: "Your share · Groundwork",
   verify: "Verify a land passport · Groundwork",
   findings: "Findings · Groundwork",
@@ -126,6 +128,7 @@ export default function App() {
   else if (route.page === "case" && route.id) body = <CaseView key={route.id} ctx={ctx} caseId={route.id} tab={route.tab ?? "overview"} item={route.item} />;
   else if (route.page === "properties") body = <PropertiesPage />;
   else if (route.page === "field") body = <FieldPage ctx={ctx} />;
+  else if (route.page === "registry") body = <RegistryPortal ctx={ctx} />;
   else if (route.page === "findings") body = <FindingsPage ctx={ctx} />;
   else if (route.page === "approvals") body = <ApprovalsPage ctx={ctx} onChanged={() => void pending.refresh()} />;
   else if (route.page === "audit") body = <AuditPage />;

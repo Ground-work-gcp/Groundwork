@@ -651,3 +651,96 @@ class ProceedingEvent(Timestamped, Base):
     document_id: Mapped[str | None] = mapped_column(ForeignKey("documents.id", ondelete="SET NULL"))
     status_after: Mapped[str] = mapped_column(String(20), default="", nullable=False)
     actor_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+
+
+# ── Canton Network: cross-organisation approvals (Groundwork is the read projection; Canton decides) ──
+
+
+class CantonPartyBinding(Timestamped, Base):
+    """Which Groundwork organisation acts as which configured Canton party. Set by a platform admin, never by users."""
+
+    __tablename__ = "canton_party_bindings"
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    network: Mapped[str] = mapped_column(String(20), nullable=False)
+    role: Mapped[str] = mapped_column(String(20), nullable=False)  # legal_aid | registry
+    party_id: Mapped[str] = mapped_column(String(300), nullable=False)
+
+    __table_args__ = (UniqueConstraint("network", "role", name="uq_canton_binding_role"),)
+
+
+class ExternalApproval(Timestamped, Base):
+    __tablename__ = "external_approvals"
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    reviewer_organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    internal_action_id: Mapped[str | None] = mapped_column(ForeignKey("workflow_actions.id", ondelete="SET NULL"))
+    requested_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    proposal_id: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    case_reference: Mapped[str] = mapped_column(String(64), nullable=False)  # opaque; what the ledger sees
+    action_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    case_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    # Off-ledger: the manifest and salts the commitments are computed from (shared only with the reviewer).
+    manifest: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    evidence_salt: Mapped[str] = mapped_column(String(64), nullable=False)
+    payload_salt: Mapped[str] = mapped_column(String(64), nullable=False)
+    evidence_commitment: Mapped[str] = mapped_column(String(80), nullable=False)
+    payload_commitment: Mapped[str] = mapped_column(String(80), nullable=False)
+    # draft | pending_submission | submitted | awaiting_review | decision_submitted | approved | rejected |
+    # changes_requested | cancel_submitted | cancelled | expired | submission_failed | sync_delayed
+    status: Mapped[str] = mapped_column(String(24), default="draft", nullable=False)
+    network: Mapped[str] = mapped_column(String(20), nullable=False)
+    synchronizer_id: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    package_id: Mapped[str] = mapped_column(String(80), default="", nullable=False)
+    request_contract_id: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    request_update_id: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    decision_contract_id: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    decision_update_id: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    decision_reason_code: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    requested_evidence: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    decided_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))  # the registry human (off-ledger)
+    reviewer_verified_commitment: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    registry_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error: Mapped[str] = mapped_column(Text, default="", nullable=False)  # sanitised
+
+
+class ExternalApprovalEvent(Timestamped, Base):
+    __tablename__ = "external_approval_events"
+    approval_id: Mapped[str] = mapped_column(ForeignKey("external_approvals.id", ondelete="CASCADE"), index=True, nullable=False)
+    kind: Mapped[str] = mapped_column(String(40), nullable=False)
+    participant: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    update_id: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    contract_id: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    ledger_offset: Mapped[int | None] = mapped_column(Integer)
+    record_time: Mapped[str] = mapped_column(String(40), default="", nullable=False)
+    detail: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+    __table_args__ = (UniqueConstraint("approval_id", "kind", "update_id", name="uq_external_event"),)
+
+
+class CantonOutbox(Timestamped, Base):
+    """Commands decided in Groundwork, delivered to a participant at least once, deduplicated by command id."""
+
+    __tablename__ = "canton_outbox"
+    approval_id: Mapped[str] = mapped_column(ForeignKey("external_approvals.id", ondelete="CASCADE"), index=True, nullable=False)
+    participant: Mapped[str] = mapped_column(String(20), nullable=False)  # legal_aid | registry
+    command: Mapped[str] = mapped_column(String(30), nullable=False)      # create | approve | reject | request_changes | cancel | expire
+    command_id: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    status: Mapped[str] = mapped_column(String(12), default="pending", index=True, nullable=False)  # pending | done | failed
+    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    next_attempt_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    last_error: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CantonCursor(Base):
+    """Last ledger offset processed per participant and network; resumes the update stream after restarts."""
+
+    __tablename__ = "canton_cursors"
+    key: Mapped[str] = mapped_column(String(80), primary_key=True)  # <network>:<participant>
+    ledger_offset: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
