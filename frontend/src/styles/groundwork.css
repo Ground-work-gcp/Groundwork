@@ -194,3 +194,36 @@ textarea.input { min-height: 84px; resize: vertical; font: inherit; font-size: 1
   .assistant { top: auto; left: 0; width: 100vw; height: 86vh; border-left: 0; border-top: 1px solid var(--line-strong); border-radius: 18px 18px 0 0; transform: translateY(105%); }
   .ask-fab { right: 16px; bottom: 16px; }
 }
+
+/* ── rural land records ─────────────────────────────────────────────────── */
+.land-matrix td, .land-matrix th { white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.land-matrix .cell-differs { background: var(--red-soft); color: var(--red); font-weight: 600; }
+.land-matrix .cell-missing { color: var(--faint); }
+.land-matrix .cell-agrees { background: var(--green-soft); }
+.compass { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; }
+.compass .cmp-dir { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; fill: var(--faint); }
+.compass .cmp-n { font-size: 12.5px; font-weight: 600; }
+.compass .cmp-key { font-size: 12px; fill: var(--dim); }
+.compass .cmp-key.strong { font-family: var(--font-display); font-size: 20px; fill: var(--ink); }
+.land-range { position: relative; height: 54px; margin: 8px 0 4px; border-bottom: 1px solid var(--line-strong); }
+.land-range .rb-band { position: absolute; top: 18px; height: 16px; border-radius: 8px; background: var(--green-soft); border: 1px solid var(--green); }
+.land-range .rb-mark { position: absolute; top: 10px; width: 2px; height: 32px; background: var(--ink); transform: translateX(-1px); }
+.land-range .rb-mark span { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); font-size: 11px; white-space: nowrap; color: var(--dim); }
+.land-range .rb-mark.lend { background: var(--deep); height: 36px; top: 8px; }
+.land-range .rb-mark.guide { background: var(--faint); }
+.land-range .rb-mark.claim { background: var(--red); }
+.land-range .rb-mark.p50 span { top: -14px; }
+.gantt { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.gantt li { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 10px; align-items: center; }
+.gantt .g-track { position: relative; height: 12px; background: var(--raised); border-radius: 6px; }
+.gantt .g-bar { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: var(--lavender); border: 1px solid var(--line-strong); }
+.gantt li.crit .g-bar { background: var(--coral); }
+@media (max-width: 640px) { .gantt li { grid-template-columns: 1fr; } }
+.chip-btn.on { background: var(--ink); color: var(--cream); }
+.land-sections { display: flex; gap: 2px; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; border-bottom: 1px solid var(--line); padding-bottom: 6px; scrollbar-width: thin; }
+.land-sections a { padding: 6px 12px; border-radius: var(--r-pill); font: 600 13px var(--font-ui); color: var(--dim); white-space: nowrap; text-decoration: none; }
+.land-sections a.on { background: var(--ink); color: var(--cream); }
+.land-tiles .tile .n { font-size: clamp(18px, 2.1vw, 26px); }
+.land-root .split > *, .land-root .stack { min-width: 0; }
+.land-root .row > select.input { flex: 1 1 200px; min-width: 0; width: auto; max-width: 100%; }
+.land-root .row > input.input { flex: 1 1 120px; min-width: 0; }

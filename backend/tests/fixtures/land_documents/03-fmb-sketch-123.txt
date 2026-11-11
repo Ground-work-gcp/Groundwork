@@ -1,0 +1,11 @@
+FIELD MEASUREMENT BOOK (FMB) SKETCH
+Village: Keezhaiyur    Taluk: Orathanadu
+Survey No: 123/4A
+Extent: 1 acre 05 cents
+Corners (metres): (0,0) (62,0) (62,68.5) (0,68.5)
+North: S.F. No. 122
+East: S.F. No. 125
+South: Panchayat road
+West: Irrigation channel
+Date: 11-01-2024
+Issued by: Taluk survey office, Orathanadu

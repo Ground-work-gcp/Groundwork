@@ -302,7 +302,10 @@ def detect(db: Session, case: Case) -> list[Candidate]:
 
 
 def run_detection(db: Session, case: Case) -> dict[str, Any]:
-    candidates = detect(db, case)
+    from app.domain.land.service import finding_candidates
+
+    # Land-record concordance issues (rural India) are findings like any other.
+    candidates = detect(db, case) + finding_candidates(db, case)
     now = utcnow()
     existing = {f.fingerprint: f for f in db.scalars(select(RiskFinding).where(RiskFinding.case_id == case.id))}
     seen: set[str] = set()

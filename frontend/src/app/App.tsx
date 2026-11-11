@@ -17,6 +17,8 @@ import { AuditPage } from "../features/audit/AuditPage";
 import { SettingsPage } from "../features/settings/SettingsPage";
 import { FlowPage } from "../features/flow/FlowCanvas";
 import { Assistant } from "../components/Assistant";
+import { FieldPage } from "../features/land/FieldPage";
+import { ConsentPage, VerifyPage } from "../features/land/PublicPages";
 
 export interface Ctx {
   me: Me;
@@ -32,6 +34,9 @@ const TITLES: Record<string, string> = {
   cases: "Cases · Groundwork",
   case: "Case · Groundwork",
   properties: "Properties · Groundwork",
+  field: "Field · Groundwork",
+  consent: "Your share · Groundwork",
+  verify: "Verify a land passport · Groundwork",
   findings: "Findings · Groundwork",
   approvals: "Approvals · Groundwork",
   audit: "Audit · Groundwork",
@@ -111,13 +116,16 @@ export default function App() {
   const active = route.page === "case" ? "cases" : route.page;
 
   let body: JSX.Element;
-  if (!checked) body = <main className="main route-in"><p className="faint">Loading…</p></main>;
+  if (route.page === "consent" && route.id) body = <ConsentPage token={route.id} />;
+  else if (route.page === "verify") body = <VerifyPage initial={route.tab} />;
+  else if (!checked) body = <main className="main route-in"><p className="faint">Loading…</p></main>;
   else if (!ctx) body = route.page === "signin" ? <SignIn onSignedIn={(u) => { setMe(u); push(`Signed in as ${u.full_name}`); }} /> : <Landing />;
   else if (route.page === "overview" || route.page === "home" || route.page === "signin") body = <Overview ctx={ctx} />;
   else if (route.page === "flow") body = <FlowPage ctx={ctx} />;
   else if (route.page === "cases") body = <CaseList ctx={ctx} tab={route.tab} />;
   else if (route.page === "case" && route.id) body = <CaseView key={route.id} ctx={ctx} caseId={route.id} tab={route.tab ?? "overview"} item={route.item} />;
   else if (route.page === "properties") body = <PropertiesPage />;
+  else if (route.page === "field") body = <FieldPage ctx={ctx} />;
   else if (route.page === "findings") body = <FindingsPage ctx={ctx} />;
   else if (route.page === "approvals") body = <ApprovalsPage ctx={ctx} onChanged={() => void pending.refresh()} />;
   else if (route.page === "audit") body = <AuditPage />;

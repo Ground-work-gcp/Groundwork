@@ -16,10 +16,16 @@ from sqlalchemy.orm import Session
 from app.infrastructure.database.models import (
     Case,
     Comment,
+    CostEntry,
     DocumentPage,
     EvidenceDocument,
     ExtractedFact,
+    FamilyMember,
     FinancialObligation,
+    LandAnalysis,
+    LandParcel,
+    LandPassport,
+    LandRecord,
     OwnershipEvent,
     Party,
     Property,
@@ -48,6 +54,12 @@ _CASE_OWNED = (
     Task,
     Comment,
     WorkflowAction,
+    LandParcel,
+    LandRecord,
+    FamilyMember,
+    LandAnalysis,
+    CostEntry,
+    LandPassport,
 )
 
 

@@ -12,6 +12,7 @@ import { FinancialsTab } from "../financials/FinancialsTab";
 import { CaseFindings } from "../risk-analysis/Findings";
 import { WorkflowTab } from "../workflows/WorkflowTab";
 import { FlowCanvas } from "../flow/FlowCanvas";
+import { LandTab } from "../land/LandTab";
 
 export interface CaseCtx extends Ctx {
   caseId: string;
@@ -62,6 +63,8 @@ export function CaseView({ ctx, caseId, tab, item }: { ctx: Ctx; caseId: string;
         <FlowCanvas ctx={ctx} caseId={caseId} />
       ) : tab === "evidence" ? (
         <EvidenceTab c={cctx} docId={item} />
+      ) : tab === "land" ? (
+        <LandTab c={cctx} section={item} />
       ) : tab === "ownership" ? (
         <OwnershipTab c={cctx} />
       ) : tab === "financials" ? (

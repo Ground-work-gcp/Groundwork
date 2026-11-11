@@ -67,3 +67,93 @@ export interface AssistantReply {
 }
 
 export interface Safety { execution_enabled: boolean; separate_approver: boolean; action_ttl_days: number; allowlist: ActionSpec[]; controls: Array<{ id: string; title: string; rule: string; file: string; test: string }>; never: string[] }
+
+/* ── rural land records (India) ─────────────────────────────────────────── */
+export interface LandParcel {
+  id: string; region_code: string; district: string; taluk: string; village: string; survey_number: string; survey_key: string;
+  extent_text: string; extent_sqm: number | null; land_class: string; patta_number: string; guideline_inr_per_sqm: number | null;
+  road_access: boolean; irrigated: boolean; property_nature: string; personal_law: string; recorded_holder: string; notes: string;
+}
+export interface LandRecord {
+  id: string; source_type: string; document_id: string | null; page_number: number | null; record_date: string | null; issuing_office: string;
+  survey_number: string; survey_key: string; extent_text: string; extent_sqm: number | null; holders: string[];
+  boundaries: Partial<Record<"north" | "east" | "south" | "west", string>>; land_class: string; extra: Record<string, unknown>; source: string; snippet: string;
+}
+export interface FamilyMember {
+  id: string; name: string; sex: string; is_alive: boolean; date_of_death: string | null; parent_ids: string[]; spouse_ids: string[];
+  is_recorded_holder: boolean; lives_in_village: boolean; location: string; consent_status: string; consent_note: string; consent_at: string | null;
+  consent_link_active: boolean;
+}
+export interface Analysis<R = Record<string, unknown>> { id: string; kind: string; created_at: string; result_hash: string; inputs: Record<string, unknown>; result: R }
+export interface LandIssue {
+  type: string; severity: string; title: string; detail: string; office: string; fix_service: string; key: string;
+  records: Array<{ record_id: string; source_type: string; label: string; document_id: string | null; page: number | null; date: string | null }>;
+}
+export interface Concordance {
+  survey_key: string; records_compared: number; neighbour_records: number; issues: LandIssue[]; counts: Record<string, number>;
+  columns: Array<{ record_id: string; label: string; source_type: string; document_id: string | null; date: string | null }>;
+  rows: Array<{ attribute: string; cells: Array<{ record_id: string; value: string; status: string }> }>;
+  boundary_edges: Array<{ direction: string; neighbour: string; status: string; detail: string }>; ec_years: number; deceased_holders: string[]; holders: string[];
+}
+export interface Share { member_id: string; name: string; share: string; value: number; alive: boolean; lives_in_village: boolean; consent_status: string }
+export interface Succession {
+  status: string; law?: string; law_name?: string; holder?: string; shares: Share[]; total?: string;
+  steps: Array<{ date: string; person: string; held: string; rule: string; text: string }>; assumptions: string[]; warnings: string[];
+  unresolved: Array<{ person: string; share?: string; reason: string }>; disclaimer: string; away_from_village?: string[];
+}
+export interface Valuation {
+  status: string; reason?: string; p10_inr: number; p20_inr: number; p50_inr: number; p90_inr: number; confidence: string; effective_comparables: number;
+  market_weight: number; prior: string; guideline_total_inr: number | null; lending_value_inr: number; title_haircut: number; loan_ceiling_inr: number; ltv: number;
+  haircut_reasons: Array<{ kind: string; cut: number; why: string }>; warnings: string[]; method: string; range_ratio: number; claimed_value_inr?: number;
+  comparables: Array<{ id: string; sale_date: string; survey_number: string; village: string; price_per_sqm: number; adjusted_per_sqm: number; weight: number; censored_at_guideline: boolean; outlier_downweighted?: boolean }>;
+}
+export interface Readiness {
+  lender: string; lender_label: string; loan_amount_inr: number | null; collateral_free: boolean; score: number; verdict: string;
+  requirements: Array<{ id: string; label: string; why: string; fix: string; status: string; detail: string; critical: boolean }>;
+  plan: Array<{ service: string; name: string; office: string; fee_inr: number; days: number; start_day: number; finish_day: number; needs: string[]; documents: string[]; critical: boolean; unblocks: string[] }>;
+  days_to_ready: number; official_fees_inr: number; local_branch_asks: string[]; notes: string[]; disclaimer: string;
+}
+export interface AgentRun {
+  goal: string; mode: string; narrative: string; result_hash: string; proposed_actions: number[];
+  steps: Array<{ n: number; tool: string; status: string; why: string; summary: string }>;
+  handoffs: Array<{ who: string; what: string; where: string; why: string }>;
+}
+export interface Passport { id: string; code: string; sha256: string; status: string; created_at: string; payload: Record<string, unknown> }
+export interface LandOverview {
+  parcel: LandParcel | null; records: LandRecord[]; members: FamilyMember[]; passports: Passport[];
+  latest: { concordance: Analysis<Concordance> | null; succession: Analysis<Succession> | null; valuation: Analysis<Valuation> | null; readiness: Analysis<Readiness> | null; agent_run: Analysis<AgentRun> | null };
+}
+export interface LandCatalog {
+  regions: Array<{ code: string; name: string; language: string; units: string[]; records: Record<string, string>; offices: Record<string, string> }>;
+  lenders: Record<string, { label: string; requirements: string[]; ltv: number; collateral_free_limit_inr: number }>;
+  source_types: string[]; land_classes: string[]; cost_categories: string[]; payee_kinds: string[]; languages: string[]; glossary: Record<string, string>; note: string;
+}
+export interface CostEntry { id: string; entry_date: string; category: string; payee_kind: string; service: string; amount_inr: number; days_spent: number; has_receipt: boolean; notes: string; extra: Record<string, unknown> }
+export interface CostSummary {
+  total_inr: number; days: number; receipted_inr: number; unreceipted_inr: number; unreceipted_share: number; by_category: Record<string, number>;
+  excess_over_official: Array<{ service: string; name: string; paid_inr: number; official_fee_inr: number; excess_inr: number }>; excess_total_inr: number;
+  informal_loans: Array<{ id: string; principal_inr: number; annual_rate_pct: number; months: number; interest_paid_inr: number; formal_interest_inr: number; premium_inr: number; lender: string }>;
+  informal_premium_inr: number; formal_rate_pct: number; paid_to_intermediaries_inr: number; note: string;
+}
+export interface Explanation { language: string; lines: string[]; shares: string[]; disclaimer: string; machine_translated: boolean; note?: string }
+export interface FieldObservation {
+  id: string; village: string; taluk: string; district: string; region_code: string; observed_on: string; households_surveyed: number; households_deceased_holder: number;
+  correction_barriers: string[]; branch_name: string; lender_kind: string; branch_requirements: string[]; valuation_practices: string[];
+  disagreement_counts: Record<string, number>; dispute_settlers: string[]; dispute_days_typical: number | null; family_spend_inr_typical: number | null;
+  family_days_typical: number | null; record_readers: string[]; record_reading_fee_inr: number | null; notes: string;
+}
+export type Tally = Array<[string, number]>;
+export interface LandInsights {
+  observations: number; villages: string[];
+  q1_deceased_holder: { field_share: number | null; households_surveyed: number; households_deceased_holder: number; case_share: number | null; land_cases: number; barriers: Tally };
+  q2_branch_asks: Record<string, Tally>; q3_valuation_practices: Tally;
+  q4_disagreements: { field: Record<string, number>; cases: Record<string, number> };
+  q5_disputes: { settlers: Tally; median_days: number | null };
+  q6_family_cost: { field_median_inr: number | null; field_median_days: number | null; case_median_inr: number | null; case_median_days: number | null; cases_with_costs: number };
+  following_the_money: { record_readers: Tally; median_reading_fee_inr: number | null };
+}
+export interface Comparable { id: string; village: string; taluk: string; survey_number: string; sale_date: string; extent_sqm: number; consideration_inr: number; land_class: string; source: string; price_per_sqm: number | null; distance_km: number | null }
+export interface ConsentView {
+  name: string; plot: { survey_number: string; village: string; taluk: string; region: string }; recorded_holder: string; law: string | null;
+  your_share: string | null; co_owners: Array<{ name: string; share: string }>; how: string[]; status: string; letter: string; disclaimer: string; what_consent_means: string;
+}

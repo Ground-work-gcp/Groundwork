@@ -231,6 +231,25 @@ def _do_request(db: Session, case: Case, params: dict[str, Any], actor: User) ->
     return {"task_id": task.id}
 
 
+def _pre_passport(db: Session, case: Case, params: dict[str, Any]) -> str | None:
+    from app.domain.land.regions import LENDERS
+    from app.domain.land.service import parcel_of, records_of
+
+    if params["lender"] not in LENDERS:
+        return f"lender must be one of {', '.join(LENDERS)}"
+    if params["loan_amount_inr"] < 0:
+        return "loan_amount_inr cannot be negative"
+    if parcel_of(db, case) is None or not records_of(db, case):
+        return "the case has no land parcel or land records"
+    return None
+
+
+def _do_passport(db: Session, case: Case, params: dict[str, Any], actor: User) -> dict[str, Any]:
+    from app.domain.land.service import issue_passport
+
+    return issue_passport(db, case, actor, lender=params["lender"], loan_amount_inr=params["loan_amount_inr"] or None)
+
+
 REGISTRY: dict[str, ActionSpec] = {
     spec.id: spec
     for spec in [
@@ -259,6 +278,11 @@ REGISTRY: dict[str, ActionSpec] = {
             "evidence.request", "Open an evidence-request task (e.g. obtain a probate order)",
             {"title": str, "description": str, "assignee_id": str},
             ("paralegal", "attorney", "admin"), True, _pre_request, _do_request, lambda p: f"request evidence: {p['title']}",
+        ),
+        ActionSpec(
+            "land.issue_passport", "Issue a land credit passport (a hashed, verifiable dossier) for a lender",
+            {"lender": str, "loan_amount_inr": int},
+            ("attorney", "admin"), True, _pre_passport, _do_passport, lambda p: f"issue a land credit passport for {p['lender'].replace('_', ' ')}",
         ),
     ]
 }
@@ -301,6 +325,18 @@ def catalog() -> list[dict[str, Any]]:
     ]
 
 
+LAND_REQUESTS = {
+    "land_holder_deceased": "Obtain the legal heir certificate and apply for mutation into the heirs' names",
+    "land_name_mismatch": "Request a name correction in the record of rights",
+    "land_extent_mismatch": "Request a survey sketch copy and re-measurement from the survey office",
+    "land_survey_mismatch": "Obtain the subdivision history of the survey number from the survey office",
+    "land_boundary_conflict": "Request a boundary survey with notice to the neighbouring holders",
+    "land_class_conflict": "Confirm the land classification with the revenue office",
+    "land_government_land": "Confirm with the revenue and survey offices whether the land is government land",
+    "land_encumbrance_open": "Obtain a release, or the status, of the open entry on the encumbrance certificate",
+}
+
+
 def suggest_actions(db: Session, case: Case) -> list[dict[str, Any]]:
     """Rule-based evidence requests for open findings (proposals only; a human approves)."""
     suggestions = []
@@ -313,6 +349,8 @@ def suggest_actions(db: Session, case: Case) -> list[dict[str, Any]]:
             title = "Request the assessor's parcel history"
         elif finding.finding_type == "unreconciled_obligation":
             title = "Request a current payoff statement from the creditor"
+        elif finding.finding_type in LAND_REQUESTS:
+            title = LAND_REQUESTS[finding.finding_type]
         else:
             continue
         suggestions.append({

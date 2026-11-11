@@ -15,7 +15,7 @@ Built by **[vsrupeshkumar](https://github.com/vsrupeshkumar)** for the **Google 
 ![PostgreSQL](https://img.shields.io/badge/Cloud_SQL-PostgreSQL_16-4169E1?logo=postgresql&logoColor=white)
 ![Google Cloud](https://img.shields.io/badge/Google_Cloud-Cloud_Run-4285F4?logo=googlecloud&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini-Vertex_AI-8E75B2?logo=googlegemini&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-95_passing-success)
+![Tests](https://img.shields.io/badge/tests-131_passing-success)
 
 [The problem](#-the-problem) · [What it does](#-what-groundwork-does) · [How it works](#-how-it-works-step-by-step) · [Architecture](#%EF%B8%8F-architecture) · [Google Cloud](#%EF%B8%8F-built-on-google-cloud) · [Run it](#-run-it-locally) · [Deploy](#-deploy-to-google-cloud)
 
@@ -56,6 +56,27 @@ Groundwork gives a legal-aid team **one case file** that connects everything, an
 | 🏢 | **Multi-tenant isolation** | Organisations can never see each other's cases, documents or records, even by guessing IDs. |
 
 > **Groundwork does not make legal determinations, file documents, or move money.** It organises evidence and surfaces findings for professional review.
+
+## 🌾 Rural land records (India)
+
+The same evidence-first approach, applied to **farm land that is too unclear to sell, inherit or borrow against**: a patta that still shows a grandfather who died in 1987, an FMB sketch that disagrees on the extent, an EC with an open agreement of sale, five heirs of whom two live in the city, and a bank branch that will not look at any of it.
+
+| | Capability | What it does |
+|---|---|---|
+| 📜 | **Record reading** | Patta/chitta, adangal, FMB, EC, sale deeds, death and legal heir certificates read from uploads, with page provenance |
+| 🔀 | **Record concordance** | Names (across Tamil, Devanagari, Kannada and six more scripts), extents (cents, guntas, hectare-are, bigha, shoelace area), survey subdivisions, land class and boundaries compared side by side — each disagreement names **the office that corrects it** |
+| 🧭 | **Boundary reciprocity** | If our record puts S.No. 124 to the east, S.No. 124's record must put us to its west |
+| 👪 | **Succession engine** | Exact draft shares through every death since the record was last changed (Hindu Succession Act incl. s.6 coparcenary, s.15(2); Indian Succession Act). Muslim law is declined, not guessed |
+| 📱 | **Co-heir consent links** | Single-use, hashed, expiring links: a co-heir who left the village sees their share and replies from a phone |
+| 💹 | **Conservative valuation** | P10–P50–P90 with confidence; Bayesian shrinkage to the guideline value; guideline-value deeds treated as floors; lending value = P20 less a title haircut |
+| 🏦 | **Lender readiness** | Each lender's checklist, the RBI collateral-free limit first, a critical-path fix plan with offices, documents, fees and days; local branch asks from field visits |
+| 🛂 | **Land credit passport** | Two-person-approved, SHA-256-anchored dossier a branch can verify publicly without seeing names |
+| 🗣️ | **Explained in Tamil / Hindi** | The family's own records explained in their language, for free |
+| 💸 | **Following the money** | Rupees and days spent, unreceipted payments, excess over official fees, and the premium paid to moneylenders |
+| 🔎 | **Field research** | The six field questions answered from field visits *and* from the organisation's cases, side by side |
+| 🤖 | **Land case agent** | Plans and runs all of the above, audited as AI; hands off what only people and offices can do; proposes, never executes |
+
+Details, and how every line of the brief maps to code: [`docs/land/rural-india.md`](docs/land/rural-india.md).
 
 ---
 
@@ -385,6 +406,7 @@ The full runbook is in [`docs/deployment/gcp-runbook.md`](docs/deployment/gcp-ru
 | [`docs/architecture/overview.md`](docs/architecture/overview.md) | Modules and boundaries |
 | [`docs/workflows/case-lifecycle.md`](docs/workflows/case-lifecycle.md) | The eight stages in detail |
 | [`docs/security/model.md`](docs/security/model.md) | Threat model and controls |
+| [`docs/land/rural-india.md`](docs/land/rural-india.md) | Rural land records (India): the brief, mapped to features |
 | [`docs/migration/inventory.md`](docs/migration/inventory.md) | What came from InHeir, Magpie and Beacon |
 | [`infra/monitoring/alert-policies.md`](infra/monitoring/alert-policies.md) | What to alert on and the log queries |
 

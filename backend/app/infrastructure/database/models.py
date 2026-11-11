@@ -422,3 +422,180 @@ class AuditEvent(Base):
     hash: Mapped[str] = mapped_column(String(64), nullable=False)
 
     __table_args__ = (UniqueConstraint("organization_id", "seq", name="uq_audit_seq"),)
+
+
+# ── rural land records (India): parcels, records, family, valuation, credit readiness ──
+#
+# Groundwork prepares the case; ownership decisions stay with revenue authorities and courts.
+# Areas are square metres (float, converted from the region's units with the original text kept);
+# rupee amounts are whole rupees (int) — land values and fees are never quoted in paise.
+
+
+class LandParcel(Timestamped, Base):
+    """The plot as the family describes it: where it is, how big, and the government's guideline value."""
+
+    __tablename__ = "land_parcels"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    region_code: Mapped[str] = mapped_column(String(8), default="TN", nullable=False)
+    district: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    taluk: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    village: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    survey_number: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    survey_key: Mapped[str] = mapped_column(String(60), default="", index=True, nullable=False)
+    extent_text: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    extent_sqm: Mapped[float | None] = mapped_column(Float)
+    land_class: Mapped[str] = mapped_column(String(20), default="", nullable=False)  # wet|dry|garden|residential|government
+    patta_number: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    guideline_inr_per_sqm: Mapped[float | None] = mapped_column(Float)
+    road_access: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    irrigated: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    # self_acquired | ancestral — decides whether a notional partition applies (Hindu law).
+    property_nature: Mapped[str] = mapped_column(String(20), default="self_acquired", nullable=False)
+    # hindu | christian | muslim | other — the personal law the family says applies.
+    personal_law: Mapped[str] = mapped_column(String(20), default="hindu", nullable=False)
+    recorded_holder: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+    __table_args__ = (UniqueConstraint("case_id", name="uq_land_parcel_case"),)
+
+
+class LandRecord(Timestamped, Base):
+    """One government or private record's view of a plot: the unit concordance compares."""
+
+    __tablename__ = "land_records"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    # ror | cultivation | sketch | encumbrance | sale_deed | legal_heir | death_certificate | tax_receipt | field_survey | other
+    source_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    document_id: Mapped[str | None] = mapped_column(ForeignKey("documents.id", ondelete="SET NULL"))
+    page_number: Mapped[int | None] = mapped_column(Integer)
+    record_date: Mapped[str | None] = mapped_column(String(10))
+    issuing_office: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    survey_number: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    survey_key: Mapped[str] = mapped_column(String(60), default="", index=True, nullable=False)
+    extent_text: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    extent_sqm: Mapped[float | None] = mapped_column(Float)
+    holders: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    # {"north": "...", "east": "...", "south": "...", "west": "..."}
+    boundaries: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    land_class: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    # Free-form, typed by source: encumbrances [{kind, party, date, status}], polygon [[x, y]…], ec_from/ec_to, tax_year …
+    extra: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    source: Mapped[str] = mapped_column(String(20), default="manual", nullable=False)  # manual|extracted
+    snippet: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+
+class FamilyMember(Timestamped, Base):
+    """A person in the holder's family tree. Parents and spouses are ids of other members of the same case."""
+
+    __tablename__ = "family_members"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(300), nullable=False)
+    sex: Mapped[str] = mapped_column(String(10), default="unknown", nullable=False)  # male|female|unknown
+    is_alive: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    date_of_death: Mapped[str | None] = mapped_column(String(10))
+    parent_ids: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    spouse_ids: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    is_recorded_holder: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    lives_in_village: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    location: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    # unknown | located | contacted | consented | objected | needs_info
+    consent_status: Mapped[str] = mapped_column(String(20), default="unknown", nullable=False)
+    consent_note: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # A single-use link for a co-heir who left the village: only the SHA-256 of the token is stored.
+    consent_token_hash: Mapped[str | None] = mapped_column(String(64), index=True)
+    consent_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class LandAnalysis(Timestamped, Base):
+    """A hashed snapshot of one analysis run (concordance, succession, boundaries, valuation, readiness, agent)."""
+
+    __tablename__ = "land_analyses"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    kind: Mapped[str] = mapped_column(String(30), index=True, nullable=False)
+    inputs: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    result: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    result_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+
+
+class ComparableSale(Timestamped, Base):
+    """A registered sale near the plot (from an EC, a sale deed, or the field). Shared across an organisation's cases."""
+
+    __tablename__ = "comparable_sales"
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    region_code: Mapped[str] = mapped_column(String(8), default="TN", nullable=False)
+    district: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    taluk: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    village: Mapped[str] = mapped_column(String(120), default="", index=True, nullable=False)
+    survey_number: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    sale_date: Mapped[str] = mapped_column(String(10), nullable=False)
+    extent_sqm: Mapped[float] = mapped_column(Float, nullable=False)
+    consideration_inr: Mapped[int] = mapped_column(Integer, nullable=False)
+    land_class: Mapped[str] = mapped_column(String(20), default="", nullable=False)
+    distance_km: Mapped[float | None] = mapped_column(Float)
+    road_access: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    source: Mapped[str] = mapped_column(String(20), default="sale_deed", nullable=False)  # encumbrance|sale_deed|field
+    document_id: Mapped[str | None] = mapped_column(ForeignKey("documents.id", ondelete="SET NULL"))
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    created_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+
+
+class CostEntry(Timestamped, Base):
+    """What the family has spent, in money and days, to sort out the land — receipted or not."""
+
+    __tablename__ = "cost_entries"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    entry_date: Mapped[str] = mapped_column(String(10), nullable=False)
+    # official_fee | document_writer | advocate | travel | lost_wages | unreceipted_payment | survey_fee | stamp_duty | informal_loan | other
+    category: Mapped[str] = mapped_column(String(30), nullable=False)
+    payee_kind: Mapped[str] = mapped_column(String(30), default="", nullable=False)  # office|document_writer|advocate|middleman|lender|other
+    service: Mapped[str] = mapped_column(String(40), default="", nullable=False)  # a fee-schedule service id, if any
+    amount_inr: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    days_spent: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    has_receipt: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    extra: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    created_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+
+
+class FieldObservation(Timestamped, Base):
+    """One field visit's answers to the six field questions, for one village (and, optionally, one bank branch)."""
+
+    __tablename__ = "field_observations"
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    region_code: Mapped[str] = mapped_column(String(8), default="TN", nullable=False)
+    district: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    taluk: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    village: Mapped[str] = mapped_column(String(120), nullable=False)
+    observed_on: Mapped[str] = mapped_column(String(10), nullable=False)
+    observer_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    households_surveyed: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    households_deceased_holder: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    correction_barriers: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    branch_name: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    lender_kind: Mapped[str] = mapped_column(String(30), default="", nullable=False)
+    branch_requirements: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    valuation_practices: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    # {"names": n, "extents": n, "boundaries": n, "survey_numbers": n}
+    disagreement_counts: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    dispute_settlers: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    dispute_days_typical: Mapped[int | None] = mapped_column(Integer)
+    family_spend_inr_typical: Mapped[int | None] = mapped_column(Integer)
+    family_days_typical: Mapped[int | None] = mapped_column(Integer)
+    record_readers: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)  # who families pay to read their records
+    record_reading_fee_inr: Mapped[int | None] = mapped_column(Integer)
+    notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
+
+
+class LandPassport(Timestamped, Base):
+    """A lender-ready dossier, issued only after an approval, hashed and anchored in the audit chain."""
+
+    __tablename__ = "land_passports"
+    case_id: Mapped[str] = mapped_column(ForeignKey("cases.id", ondelete="CASCADE"), index=True, nullable=False)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True, nullable=False)
+    code: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default="active", nullable=False)  # active|superseded|revoked
+    issued_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
