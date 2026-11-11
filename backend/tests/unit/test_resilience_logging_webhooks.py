@@ -7,6 +7,8 @@ import logging
 import urllib.error
 
 import pytest
+
+pytest.importorskip("google.api_core")
 from google.api_core.exceptions import (
     InvalidArgument,
     PermissionDenied,

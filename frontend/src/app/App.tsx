@@ -15,6 +15,7 @@ import { FindingsPage } from "../features/risk-analysis/Findings";
 import { ApprovalsPage } from "../features/approvals/ApprovalsPage";
 import { AuditPage } from "../features/audit/AuditPage";
 import { SettingsPage } from "../features/settings/SettingsPage";
+import { StudioPage } from "../features/studio/StudioPage";
 import { FlowPage } from "../features/flow/FlowCanvas";
 import { Assistant } from "../components/Assistant";
 import { FieldPage } from "../features/land/FieldPage";
@@ -43,6 +44,7 @@ const TITLES: Record<string, string> = {
   approvals: "Approvals · Groundwork",
   audit: "Audit · Groundwork",
   settings: "Settings · Groundwork",
+  studio: "Engineering studio · Groundwork",
   notfound: "Nothing here · Groundwork",
 };
 
@@ -132,6 +134,7 @@ export default function App() {
   else if (route.page === "findings") body = <FindingsPage ctx={ctx} />;
   else if (route.page === "approvals") body = <ApprovalsPage ctx={ctx} onChanged={() => void pending.refresh()} />;
   else if (route.page === "audit") body = <AuditPage />;
+  else if (route.page === "studio") body = <StudioPage ctx={ctx} tab={route.tab} />;
   else if (route.page === "settings") body = <SettingsPage ctx={ctx} tab={route.tab} />;
   else
     body = (

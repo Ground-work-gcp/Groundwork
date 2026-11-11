@@ -10,6 +10,8 @@ import hashlib
 from types import SimpleNamespace
 
 import pytest
+
+pytest.importorskip("google.api_core")
 from google.api_core.exceptions import PreconditionFailed, ResourceExhausted
 
 from app.core.config import Settings, get_settings

@@ -1,4 +1,4 @@
-"""Gemini on Vertex AI via the ``google-genai`` SDK (Application Default Credentials; no API key).
+"""Gemini via the ``google-genai`` SDK: Vertex AI (ADC) or a Google AI Studio API key.
 
 Every call is bounded: prompt length is capped before sending, the HTTP request has a timeout,
 output tokens are capped, transient errors (429 / 5xx / deadline) are retried with backoff,
@@ -28,6 +28,9 @@ def _client():
     from google.genai import types
 
     settings = get_settings()
+    http_options = types.HttpOptions(timeout=int(settings.provider_timeout_seconds * 1000))
+    if settings.ai_backend == "gemini_api":
+        return genai.Client(api_key=settings.gemini_api_key, http_options=http_options)
     return genai.Client(
         vertexai=True,
         project=settings.gcp_project,

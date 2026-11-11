@@ -52,8 +52,11 @@ class Settings(BaseSettings):
     documentai_processor_id: str = ""
 
     # ── generative AI (Gemini on Vertex AI) ────────────────────────────────
-    ai_backend: Literal["none", "vertex"] = "none"
+    #   vertex     → Vertex AI with Application Default Credentials (recommended on Cloud Run)
+    #   gemini_api → Google AI Studio API key (GEMINI_API_KEY; quickest for local development)
+    ai_backend: Literal["none", "vertex", "gemini_api"] = "none"
     gemini_model: str = "gemini-2.5-flash"
+    gemini_api_key: str = ""
 
     # ── PII (Sensitive Data Protection) ────────────────────────────────────
     pii_backend: Literal["local", "dlp"] = "local"
@@ -146,6 +149,8 @@ class Settings(BaseSettings):
             problems.append("GCP_PROJECT and DOCUMENTAI_PROCESSOR_ID are required for Document AI")
         if self.ai_backend == "vertex" and not self.gcp_project:
             problems.append("GCP_PROJECT is required for Gemini on Vertex AI")
+        if self.ai_backend == "gemini_api" and not self.gemini_api_key:
+            problems.append("GEMINI_API_KEY is required when AI_BACKEND=gemini_api")
         if self.pii_backend == "dlp" and not self.gcp_project:
             problems.append("GCP_PROJECT is required for Sensitive Data Protection")
         if self.storage_backend != "gcs":

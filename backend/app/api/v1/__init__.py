@@ -22,9 +22,10 @@ from . import (
     reconciliation,
     risks,
     settings,
+    studio,
     workflows,
 )
 
 router = APIRouter()
-for module in (auth, cases, properties, evidence, ownership, financials, reconciliation, risks, workflows, approvals, audit, settings, admin, flow, assistant, ops, land, land_proceedings, public, external_approvals):
+for module in (auth, cases, properties, evidence, ownership, financials, reconciliation, risks, workflows, approvals, audit, settings, admin, flow, assistant, ops, land, land_proceedings, public, external_approvals, studio):
     router.include_router(module.router)

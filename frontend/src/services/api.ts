@@ -58,6 +58,10 @@ const q = (params: Record<string, string | undefined | null>) => {
 };
 
 export const api = {
+  // engineering studio
+  studioStatus: () => get<{ ai: { backend: string; model: string | null; configured: boolean }; tools: string[] }>(`/studio/status`),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  studio: (tool: string, body: unknown) => post<Record<string, any>>(`/studio/${tool}`, body),
   health: () => get<T.Health>(`/health`),
   // auth
   me: () => get<{ user: T.Me }>(`/auth/me`),

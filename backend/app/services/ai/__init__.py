@@ -20,7 +20,11 @@ class AINotConfigured(RuntimeError):
 
 def enabled() -> bool:
     settings = get_settings()
-    return settings.ai_backend == "vertex" and bool(settings.gcp_project)
+    if settings.ai_backend == "vertex":
+        return bool(settings.gcp_project)
+    if settings.ai_backend == "gemini_api":
+        return bool(settings.gemini_api_key)
+    return False
 
 
 def model_name() -> str:
@@ -29,7 +33,7 @@ def model_name() -> str:
 
 def generate_text(prompt: str, *, system: str = "") -> str:
     if not enabled():
-        raise AINotConfigured("AI_BACKEND is not configured (set AI_BACKEND=vertex and GCP_PROJECT)")
+        raise AINotConfigured("AI_BACKEND is not configured (set AI_BACKEND=vertex + GCP_PROJECT, or AI_BACKEND=gemini_api + GEMINI_API_KEY)")
     from app.infrastructure.google_cloud import gemini
 
     return gemini.generate(prompt, system=system)
@@ -37,7 +41,7 @@ def generate_text(prompt: str, *, system: str = "") -> str:
 
 def generate_json(prompt: str, *, schema: dict[str, Any], system: str = "") -> Any:
     if not enabled():
-        raise AINotConfigured("AI_BACKEND is not configured (set AI_BACKEND=vertex and GCP_PROJECT)")
+        raise AINotConfigured("AI_BACKEND is not configured (set AI_BACKEND=vertex + GCP_PROJECT, or AI_BACKEND=gemini_api + GEMINI_API_KEY)")
     from app.infrastructure.google_cloud import gemini
 
     return gemini.generate_json(prompt, schema=schema, system=system)

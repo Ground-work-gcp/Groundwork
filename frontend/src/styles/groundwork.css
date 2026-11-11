@@ -278,3 +278,7 @@ textarea.input { min-height: 84px; resize: vertical; font: inherit; font-size: 1
 .kv-grid dt { color: var(--faint); } .kv-grid dd { margin: 0; overflow-wrap: anywhere; }
 .pill.net-localnet { background: var(--raised); color: var(--ink); } .pill.net-devnet { background: var(--warn-soft); color: var(--ink); }
 .pill.net-testnet { background: var(--lavender); color: var(--ink); } .pill.net-mainnet { background: var(--deep); color: var(--cream); }
+
+/* engineering studio */
+pre.code { overflow: auto; max-height: 420px; padding: 12px; border-radius: 8px; background: rgba(127, 127, 127, 0.08); font-size: 12.5px; white-space: pre; }
+details > summary { cursor: pointer; padding: 4px 0; }

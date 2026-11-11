@@ -199,6 +199,8 @@ gcloud builds submit --config infra/cloudbuild.yaml --substitutions "_INSTANCE=<
 
 Cloud Build runs lint, backend tests, the DAML build and tests, and the frontend build before deploying to Cloud Run. Canton is off unless configured: [deploy-devnet.md](docs/canton/deploy-devnet.md). Runbook: [gcp-runbook.md](docs/deployment/gcp-runbook.md).
 
+**Connect Gemini and Google Cloud step by step:** [google-cloud-setup.md](docs/deployment/google-cloud-setup.md). The **Engineering Studio** (requirements, stack + BOM, architecture, scaffolding, stories, code health, visualisation, unit tests) works offline and is refined by Gemini once connected.
+
 ## 📚 Documentation
 
 | Doc | About |
@@ -211,6 +213,7 @@ Cloud Build runs lint, backend tests, the DAML build and tests, and the frontend
 | [`docs/workflows/case-lifecycle.md`](docs/workflows/case-lifecycle.md) | The heirs'-property case lifecycle |
 | [`docs/security/model.md`](docs/security/model.md) | Threat model and controls |
 | [`docs/deployment/gcp-runbook.md`](docs/deployment/gcp-runbook.md) | Google Cloud deployment |
+| [`docs/deployment/google-cloud-setup.md`](docs/deployment/google-cloud-setup.md) | Manual Google Cloud + Gemini integration (API key or Vertex), Engineering Studio API |
 
 ---
 
